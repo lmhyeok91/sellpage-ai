@@ -46,12 +46,61 @@ export default function App() {
     { email: 'seafood@ocean.co.kr', bizName: '동해수산 주식회사', bizNo: '105-86-99887', status: 'pending_approval' }
   ]);
 
-  // Keep Session Timestamp Renewed
-  useEffect(() => {
-    if (currentUser) {
-      localStorage.setItem('sellpage_session', JSON.stringify({ user: currentUser, loginTime: Date.now() }));
+  // Banking-Grade 1-Hour Session Countdown Engine & Manual Extension (3600 Seconds = 60 Mins)
+  const ONE_HOUR_MS = 60 * 60 * 1000;
+  const ONE_HOUR_SECONDS = 3600;
+
+  const [sessionRemainingSeconds, setSessionRemainingSeconds] = useState(() => {
+    const savedSession = localStorage.getItem('sellpage_session');
+    if (savedSession) {
+      try {
+        const { loginTime } = JSON.parse(savedSession);
+        const elapsed = Math.floor((Date.now() - loginTime) / 1000);
+        return Math.max(0, ONE_HOUR_SECONDS - elapsed);
+      } catch (e) {
+        return ONE_HOUR_SECONDS;
+      }
     }
+    return ONE_HOUR_SECONDS;
+  });
+
+  // Ticker Effect: Decrement timer every second & Auto-Logout when 0
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const interval = setInterval(() => {
+      const savedSession = localStorage.getItem('sellpage_session');
+      if (savedSession) {
+        try {
+          const { loginTime } = JSON.parse(savedSession);
+          const elapsed = Math.floor((Date.now() - loginTime) / 1000);
+          const remaining = Math.max(0, ONE_HOUR_SECONDS - elapsed);
+
+          setSessionRemainingSeconds(remaining);
+
+          if (remaining <= 0) {
+            clearInterval(interval);
+            handleLogout();
+            alert('⚠️ [로그인 세션 만료] 1시간 유지 시간이 만료되어 안전하게 자동 로그아웃되었습니다. 다시 로그인해 주세요.');
+          }
+        } catch (e) {
+          setSessionRemainingSeconds(0);
+        }
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
   }, [currentUser]);
+
+  // Banking-Style Manual Session Extension Button Handler
+  const handleExtendSession = () => {
+    if (!currentUser) return;
+
+    const now = Date.now();
+    localStorage.setItem('sellpage_session', JSON.stringify({ user: currentUser, loginTime: now }));
+    setSessionRemainingSeconds(ONE_HOUR_SECONDS);
+    alert('⏱️ [로그인 세션 연장 완료] 로그인 유지 시간이 1시간(60분) 연장되었습니다!');
+  };
 
   // Navigation tabs: 'dashboard' (01), 'work' (02), 'result' (03), 'webp_promo' (04), 'mp4_fast' (05)
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -207,6 +256,8 @@ export default function App() {
         {/* Top Header Bar */}
         <TopBar 
           currentUser={currentUser}
+          sessionRemainingSeconds={sessionRemainingSeconds}
+          onExtendSession={handleExtendSession}
           onLogout={handleLogout}
           onOpenApiKeyModal={() => setIsApiModalOpen(true)}
           onOpenKnowledgeModal={() => setIsKnowledgeModalOpen(true)}
