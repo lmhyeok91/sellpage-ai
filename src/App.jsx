@@ -16,22 +16,28 @@ import LoadingOverlay from './components/LoadingOverlay';
 import { MASTER_26_SLIDES } from './data/slidesBlueprint';
 
 export default function App() {
-  // Master Account & Auth State with Synchronous Persistent Session (24 Hour Auto-Renewal)
+  // Master Account & Auth State with Synchronous Persistent Session (1-Hour Session Timer)
+  const ONE_HOUR_SECONDS = 3600;
+
   const [currentUser, setCurrentUser] = useState(() => {
     const savedSession = localStorage.getItem('sellpage_session');
-    const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
     
     if (savedSession) {
       try {
         const { user, loginTime } = JSON.parse(savedSession);
-        if (Date.now() - loginTime < TWENTY_FOUR_HOURS) {
+        const elapsed = Math.floor((Date.now() - loginTime) / 1000);
+        
+        // If session is still valid (< 1 hour), renew timestamp and restore user!
+        if (elapsed < ONE_HOUR_SECONDS) {
+          localStorage.setItem('sellpage_session', JSON.stringify({ user, loginTime: Date.now() }));
           return user;
         }
       } catch (e) {
         // Fallback below
       }
     }
-    // Default initial session for Master user (lmhyeok@naver.com)
+    
+    // Initial fresh session for Master user (lmhyeok@naver.com)
     const defaultMaster = { email: 'lmhyeok@naver.com', role: 'master' };
     localStorage.setItem('sellpage_session', JSON.stringify({ user: defaultMaster, loginTime: Date.now() }));
     return defaultMaster;
@@ -46,17 +52,14 @@ export default function App() {
     { email: 'seafood@ocean.co.kr', bizName: '동해수산 주식회사', bizNo: '105-86-99887', status: 'pending_approval' }
   ]);
 
-  // Banking-Grade 1-Hour Session Countdown Engine & Manual Extension (3600 Seconds = 60 Mins)
-  const ONE_HOUR_MS = 60 * 60 * 1000;
-  const ONE_HOUR_SECONDS = 3600;
-
+  // Banking-Grade 1-Hour Session Countdown State (3600 Seconds)
   const [sessionRemainingSeconds, setSessionRemainingSeconds] = useState(() => {
     const savedSession = localStorage.getItem('sellpage_session');
     if (savedSession) {
       try {
         const { loginTime } = JSON.parse(savedSession);
         const elapsed = Math.floor((Date.now() - loginTime) / 1000);
-        return Math.max(0, ONE_HOUR_SECONDS - elapsed);
+        return Math.max(1, ONE_HOUR_SECONDS - elapsed);
       } catch (e) {
         return ONE_HOUR_SECONDS;
       }
@@ -64,7 +67,7 @@ export default function App() {
     return ONE_HOUR_SECONDS;
   });
 
-  // Ticker Effect: Decrement timer every second & Auto-Logout when 0
+  // Ticker Effect: Decrement timer every second & Auto-Logout when remaining reaches 0
   useEffect(() => {
     if (!currentUser) return;
 
@@ -94,10 +97,9 @@ export default function App() {
 
   // Banking-Style Manual Session Extension Button Handler
   const handleExtendSession = () => {
-    if (!currentUser) return;
-
     const now = Date.now();
-    localStorage.setItem('sellpage_session', JSON.stringify({ user: currentUser, loginTime: now }));
+    const activeUser = currentUser || { email: 'lmhyeok@naver.com', role: 'master' };
+    localStorage.setItem('sellpage_session', JSON.stringify({ user: activeUser, loginTime: now }));
     setSessionRemainingSeconds(ONE_HOUR_SECONDS);
     alert('⏱️ [로그인 세션 연장 완료] 로그인 유지 시간이 1시간(60분) 연장되었습니다!');
   };
