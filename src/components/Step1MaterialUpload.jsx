@@ -1,5 +1,6 @@
-import React from 'react';
-import { Upload, FileSpreadsheet, Trash2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Upload, FileSpreadsheet, Trash2, Sparkles, UserCheck, Check } from 'lucide-react';
+import AiModelGeneratorModal from './AiModelGeneratorModal';
 
 export default function Step1MaterialUpload({
   productImages, setProductImages,
@@ -8,6 +9,54 @@ export default function Step1MaterialUpload({
   reviewFile, setReviewFile,
   onNextStep
 }) {
+  const [isModelGenModalOpen, setIsModelGenModalOpen] = useState(false);
+  const [savedBrandModel, setSavedBrandModel] = useState(null);
+  const [savedModelsList, setSavedModelsList] = useState([
+    {
+      id: 1,
+      name: '30대 대표 산지 농부 (기본 브랜딩)',
+      url: '/example_media/1-1.jpg',
+      prompt: '30대 초반의 미소가 친근한 한국인 남성 농부, 성주 참외 농장 배경, 밀짚모자와 선명한 미소'
+    }
+  ]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('saved_brand_model');
+    if (saved) {
+      try {
+        setSavedBrandModel(JSON.parse(saved));
+      } catch (e) {}
+    } else {
+      // Default sample brand model
+      setSavedBrandModel(savedModelsList[0]);
+    }
+  }, []);
+
+  const handleSelectAndSaveModel = (model) => {
+    setSavedBrandModel(model);
+    localStorage.setItem('saved_brand_model', JSON.stringify(model));
+    if (!savedModelsList.some(m => m.id === model.id)) {
+      setSavedModelsList([model, ...savedModelsList]);
+    }
+    // Also add to modelImages so it populates active upload
+    setModelImages([
+      { id: model.id, name: model.name, url: model.url }
+    ]);
+  };
+
+  const handleDeleteSavedBrandModel = () => {
+    setSavedBrandModel(null);
+    localStorage.removeItem('saved_brand_model');
+    alert('저장된 브랜드 인물 레퍼런스가 해제되었습니다.');
+  };
+
+  const handleDeleteModelFromList = (id) => {
+    setSavedModelsList(savedModelsList.filter(m => m.id !== id));
+    if (savedBrandModel?.id === id) {
+      handleDeleteSavedBrandModel();
+    }
+  };
+
   const handleProductUpload = (e) => {
     const files = Array.from(e.target.files);
     const newImgs = files.map(file => ({
@@ -79,26 +128,105 @@ export default function Step1MaterialUpload({
         )}
       </div>
 
-      {/* Numbered Card 2: 모델 이미지 등록 */}
+      {/* Numbered Card 2: 모델 이미지 등록 & 브랜드 인물 레퍼런스 */}
       <div className="card-section">
         <div className="card-header">
           <div className="badge-num">2</div>
           <div className="card-title-group">
             <span className="card-sub-tag">있을 경우</span>
-            <h2 className="card-title">모델 이미지 등록</h2>
+            <h2 className="card-title">모델 이미지 등록 &amp; AI 브랜드 인물 레퍼런스</h2>
             <p className="card-desc">
-              특정 인물은 히어로어나 모델컷 전체에 맞출 때만 업로드하세요.
+              특정 인물 모델을 AI로 생성하거나 사진을 저장하여 브랜드 일관성을 유지하세요.
             </p>
           </div>
         </div>
 
-        {/* Dropzone Box */}
+        {/* 브랜드 인물 레퍼런스 Box (UI Exact Match for Screenshot 2) */}
+        <div style={{
+          backgroundColor: '#1c1917',
+          color: '#ffffff',
+          borderRadius: '16px',
+          padding: '20px 22px',
+          marginBottom: '20px',
+          border: '1px solid #44403c',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+            <div>
+              <span style={{ fontSize: '15px', fontWeight: '900', color: '#22c55e', letterSpacing: '-0.2px' }}>
+                브랜드 인물 레퍼런스
+              </span>
+              <span style={{ fontSize: '12px', color: '#a8a29e', marginLeft: '12px' }}>
+                {savedBrandModel ? '저장된 인물 레퍼런스 자동 사용 중' : '저장된 인물 레퍼런스 없음'}
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                onClick={() => setIsModelGenModalOpen(true)}
+                style={{
+                  backgroundColor: '#15803d',
+                  border: '1.5px solid #22c55e',
+                  color: '#ffffff',
+                  fontWeight: '900',
+                  fontSize: '12px',
+                  padding: '8px 18px',
+                  borderRadius: '10px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
+              >
+                <Sparkles style={{ width: '14px', height: '14px' }} /> 인물 레퍼런스 생성 / 선택
+              </button>
+
+              {savedBrandModel && (
+                <button
+                  onClick={handleDeleteSavedBrandModel}
+                  style={{
+                    backgroundColor: '#451a1a',
+                    border: '1.5px solid #f87171',
+                    color: '#f87171',
+                    fontWeight: '900',
+                    fontSize: '12px',
+                    padding: '8px 18px',
+                    borderRadius: '10px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  인물 레퍼런스 삭제
+                </button>
+              )}
+            </div>
+          </div>
+
+          <p style={{ fontSize: '11px', color: '#d6d3d1', margin: 0, lineHeight: '1.5' }}>
+            산지/출고/선별 장면 생성 시 같은 인물 기준 이미지로 자동 사용합니다.
+          </p>
+
+          {savedBrandModel && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginTop: '14px', backgroundColor: '#292524', padding: '12px 16px', borderRadius: '12px', border: '1px solid #57534e' }}>
+              <img src={savedBrandModel.url} alt="Saved Brand Model" style={{ width: '48px', height: '48px', borderRadius: '10px', objectFit: 'cover', border: '2px solid #22c55e' }} />
+              <div>
+                <span style={{ fontSize: '13px', fontWeight: '900', color: '#ffffff', display: 'block' }}>
+                  {savedBrandModel.name} <span style={{ fontSize: '10px', color: '#22c55e', marginLeft: '6px' }}>[자동 브랜딩 적용 중]</span>
+                </span>
+                <span style={{ fontSize: '11px', color: '#a8a29e' }}>
+                  프롬프트: "{savedBrandModel.prompt}"
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Dropzone Box for Direct File Upload */}
         <label className="dropzone-box">
           <div className="dropzone-icon">
             <Upload style={{ width: '20px', height: '20px', color: '#475569' }} />
           </div>
-          <span className="dropzone-title">모델 이미지 등록(있을 경우)</span>
-          <span className="dropzone-sub">선택 사항입니다. 모델컷 생성 시 참조 이미지로 사용됩니다.</span>
+          <span className="dropzone-title">사진 직접 업로드 (선택 사항)</span>
+          <span className="dropzone-sub">보유하고 계신 인물 사진이 있다면 직접 첨부하셔도 됩니다.</span>
           <span className="dropzone-note">
             권장 최대 10MB
           </span>
@@ -191,6 +319,15 @@ export default function Step1MaterialUpload({
           다음: 생성 설정
         </button>
       </div>
+
+      {/* AI Model Reference Generator & Library Modal */}
+      <AiModelGeneratorModal 
+        isOpen={isModelGenModalOpen}
+        onClose={() => setIsModelGenModalOpen(false)}
+        onSelectAndSaveModel={handleSelectAndSaveModel}
+        savedModels={savedModelsList}
+        onDeleteSavedModel={handleDeleteModelFromList}
+      />
     </div>
   );
 }
