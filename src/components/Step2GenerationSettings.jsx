@@ -156,15 +156,17 @@ export default function Step2GenerationSettings({
             </span>
           </div>
 
-          {/* OpenAI Model Card */}
+          {/* OpenAI Model Card (GPT-5.4 mini + GPT Image 2 / Medium) */}
           <div
             onClick={() => setSelectedAiModel('openai')}
             className={`option-box ${selectedAiModel === 'openai' ? 'active' : ''}`}
           >
-            <div style={{ fontSize: '14px', fontWeight: '900', color: '#0f172a', marginBottom: '4px' }}>
-              🤖 OpenAI Image 2.0
+            <div style={{ fontSize: '13px', fontWeight: '900', color: '#0f172a', marginBottom: '4px' }}>
+              🤖 OpenAI (GPT-5.4 mini + GPT Image 2 / Medium)
             </div>
-            <p style={{ fontSize: '12px', color: '#64748b', marginBottom: '12px' }}>OpenAI 분석과 Image 2.0 생성 경로</p>
+            <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '10px', lineHeight: '1.4' }}>
+              문구: <b>GPT-5.4 mini</b> · 사진 배경: <b>GPT Image 2 / Medium</b>
+            </p>
 
             <span style={{
               fontSize: '10px',

@@ -176,33 +176,23 @@ export default function ApiKeyModal({ isOpen, onClose, openaiKey, setOpenaiKey, 
           </div>
 
           {/* Preset Buttons */}
-          <div style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
             <button style={{
-              flex: 1,
-              padding: '14px',
-              borderRadius: '14px',
-              backgroundColor: '#ffffff',
-              border: '1px solid #e2e8f0',
+              width: '100%',
+              padding: '12px',
+              borderRadius: '12px',
+              backgroundColor: '#f0fdf4',
+              border: '1.5px solid #86efac',
               fontWeight: '900',
-              fontSize: '14px',
-              color: '#0f172a',
-              cursor: 'pointer'
+              fontSize: '12px',
+              color: '#15803d',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px'
             }}>
-              Gemini 기본
-            </button>
-
-            <button style={{
-              flex: 1,
-              padding: '14px',
-              borderRadius: '14px',
-              backgroundColor: '#ffffff',
-              border: '1px solid #e2e8f0',
-              fontWeight: '900',
-              fontSize: '14px',
-              color: '#0f172a',
-              cursor: 'pointer'
-            }}>
-              OpenAI 기본
+              🚀 [내 기존 설정 100% 동기화] 문구: GPT-5.4 mini · 사진 배경: GPT Image 2 / Medium
             </button>
           </div>
 
@@ -254,8 +244,8 @@ export default function ApiKeyModal({ isOpen, onClose, openaiKey, setOpenaiKey, 
               />
             </div>
 
-            <p style={{ fontSize: '11px', color: '#64748b', lineHeight: '1.5', margin: 0 }}>
-              Gemini는 기존 생성 경로를 사용합니다. OpenAI는 분석에 GPT-5.5, 이미지 생성에 gpt-image-2-2026-04-21을 사용합니다.
+            <p style={{ fontSize: '11px', color: '#15803d', fontWeight: '800', lineHeight: '1.5', margin: 0, backgroundColor: '#f0fdf4', padding: '10px 12px', borderRadius: '10px', border: '1px solid #bbf7d0' }}>
+              ✅ OpenAI 키 적용 시 <b>문구 생성: GPT-5.4 mini</b> · <b>사진/배경 렌더링: GPT Image 2 / Medium</b> 전용 파이프라인이 100% 적용됩니다.
             </p>
           </div>
         </div>
