@@ -30,10 +30,10 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
 
   // Real High Quality 8K AI Model Reference Stock Assets (All 4 Agricultural 30s Male Farmer Cuts)
   const sampleGenImages = [
-    { id: 1, name: '#1 30대 청년농부 (1톤 트럭 과일/수박 상적 컷)', url: '/example_media/model_person_1.png', prompt: '한국인 30대 다부진 체형의 청년 남성 농부, 스포츠 머리, 네이비 블루 작업복, 1톤 트럭 짐칸 상적 작업' },
-    { id: 2, name: '#2 30대 청년농부 (과수원 선별 수확 컷)', url: '/example_media/model_person_2.png', prompt: '한국인 30대 다부진 체형의 청년 남성 농부, 스포츠 머리, 과수원 과일 수확 컷' },
-    { id: 3, name: '#3 30대 청년농부 (농가 패킹센터 당도 검수 컷)', url: '/example_media/model_person_3.png', prompt: '한국인 30대 다부진 체형의 청년 남성 농부, 스포츠 머리, 당도/신선도 육안 검수 컷' },
-    { id: 4, name: '#4 30대 청년농부 (산지직송 현장 트럭 앞 미소 컷)', url: '/example_media/model_person_4.png', prompt: '한국인 30대 다부진 체형의 청년 남성 농부, 스포츠 머리, 1톤 트럭 앞 자신감 미소 컷' }
+    { id: 1, name: '30대 청년농부 (1톤 트럭 과일/수박 상적 컷)', url: '/example_media/model_person_1.png', prompt: '한국인 30대 다부진 체형의 청년 남성 농부, 스포츠 머리, 네이비 블루 작업복, 1톤 트럭 짐칸 상적 작업' },
+    { id: 2, name: '30대 청년농부 (과수원 선별 수확 컷)', url: '/example_media/model_person_2.png', prompt: '한국인 30대 다부진 체형의 청년 남성 농부, 스포츠 머리, 과수원 과일 수확 컷' },
+    { id: 3, name: '30대 청년농부 (농가 패킹센터 당도 검수 컷)', url: '/example_media/model_person_3.png', prompt: '한국인 30대 다부진 체형의 청년 남성 농부, 스포츠 머리, 당도/신선도 육안 검수 컷' },
+    { id: 4, name: '30대 청년농부 (산지직송 현장 트럭 앞 미소 컷)', url: '/example_media/model_person_4.png', prompt: '한국인 30대 다부진 체형의 청년 남성 농부, 스포츠 머리, 1톤 트럭 앞 자신감 미소 컷' }
   ];
 
   if (!isOpen) return null;
