@@ -1,7 +1,18 @@
 import React from 'react';
-import { Key, FileText, FolderOpen, Sparkles, LogOut, Crown } from 'lucide-react';
+import { Key, FileText, FolderOpen, Sparkles, LogOut, Crown, Settings } from 'lucide-react';
 
-export default function TopBar({ currentUser, onLogout, onOpenApiKeyModal, onOpenKnowledgeModal, onOpenTaskModal, onNewTask }) {
+export default function TopBar({ 
+  currentUser, 
+  onLogout, 
+  onOpenApiKeyModal, 
+  onOpenKnowledgeModal, 
+  onOpenTaskModal, 
+  onNewTask,
+  onOpenAdminApproval,
+  pendingApprovalCount = 0
+}) {
+  const isMaster = !currentUser || currentUser?.email?.toLowerCase() === 'lmhyeok@naver.com' || currentUser?.role === 'master';
+
   return (
     <div className="topbar">
       <div className="topbar-title" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -26,6 +37,22 @@ export default function TopBar({ currentUser, onLogout, onOpenApiKeyModal, onOpe
       </div>
 
       <div className="topbar-actions">
+        {/* Master Account Special Approval Button */}
+        {isMaster && (
+          <button 
+            onClick={onOpenAdminApproval} 
+            className="btn-secondary" 
+            style={{ backgroundColor: '#fef3c7', border: '1.5px solid #fcd34d', color: '#b45309', fontWeight: '900' }}
+          >
+            <Crown className="w-3.5 h-3.5" style={{ color: '#d97706' }} /> ⚙️ 계정 승인
+            {pendingApprovalCount > 0 && (
+              <span style={{ backgroundColor: '#ef4444', color: '#ffffff', fontSize: '10px', padding: '1px 6px', borderRadius: '10px', marginLeft: '4px', fontWeight: '900' }}>
+                {pendingApprovalCount}
+              </span>
+            )}
+          </button>
+        )}
+
         <button onClick={onOpenApiKeyModal} className="btn-secondary">
           <Key className="w-3.5 h-3.5" /> API 키 설정
         </button>

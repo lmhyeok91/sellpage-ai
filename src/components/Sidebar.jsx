@@ -37,10 +37,10 @@ export default function Sidebar({
     setActiveTab(item.id);
   };
 
-  const isMaster = currentUser?.email?.toLowerCase() === 'lmhyeok@naver.com' || currentUser?.role === 'master';
+  const isMaster = !currentUser || currentUser?.email?.toLowerCase() === 'lmhyeok@naver.com' || currentUser?.role === 'master';
 
   return (
-    <aside className="sidebar" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <aside className="sidebar" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', paddingBottom: '20px' }}>
       <div>
         {/* Brand Header: SellPage AI (셀페이지) */}
         <div className="brand-logo">
@@ -77,6 +77,40 @@ export default function Sidebar({
           })}
         </nav>
 
+        {/* Master Admin Approval Menu Item in Nav */}
+        {isMaster && (
+          <div style={{ marginBottom: '20px' }}>
+            <button
+              onClick={onOpenAdminApproval}
+              style={{
+                width: '100%',
+                padding: '12px 14px',
+                borderRadius: '12px',
+                backgroundColor: '#fef3c7',
+                border: '1.5px solid #fcd34d',
+                color: '#b45309',
+                fontWeight: '900',
+                fontSize: '12px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                boxShadow: '0 2px 8px rgba(217, 119, 6, 0.18)'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Crown style={{ width: '15px', height: '15px', color: '#d97706' }} />
+                <span>⚙️ 설정 &gt; 계정 승인</span>
+              </div>
+              {pendingApprovalCount > 0 && (
+                <span style={{ backgroundColor: '#ef4444', color: '#ffffff', fontSize: '10px', padding: '2px 7px', borderRadius: '10px', fontWeight: '900' }}>
+                  {pendingApprovalCount}건
+                </span>
+              )}
+            </button>
+          </div>
+        )}
+
         {/* Status Card */}
         <div className="status-card">
           <div className="status-row">
@@ -109,45 +143,9 @@ export default function Sidebar({
         </div>
       </div>
 
-      {/* Bottom Section: Master Admin Approval Settings (VISIBLE ONLY TO lmhyeok@naver.com!) */}
-      <div>
-        {isMaster && (
-          <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #e2e8f0' }}>
-            <button
-              onClick={onOpenAdminApproval}
-              style={{
-                width: '100%',
-                padding: '12px 14px',
-                borderRadius: '12px',
-                backgroundColor: '#fef3c7',
-                border: '1.5px solid #fcd34d',
-                color: '#b45309',
-                fontWeight: '900',
-                fontSize: '12px',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                boxShadow: '0 2px 6px rgba(217, 119, 6, 0.15)'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Crown style={{ width: '15px', height: '15px', color: '#d97706' }} />
-                <span>⚙️ 설정 &gt; 계정 승인</span>
-              </div>
-              {pendingApprovalCount > 0 && (
-                <span style={{ backgroundColor: '#ef4444', color: '#ffffff', fontSize: '10px', padding: '2px 7px', borderRadius: '10px', fontWeight: '900' }}>
-                  {pendingApprovalCount}건
-                </span>
-              )}
-            </button>
-          </div>
-        )}
-
-        {/* Version Footer */}
-        <div style={{ fontSize: '11px', color: '#94a3b8', fontFamily: 'monospace', marginTop: '16px' }}>
-          SellPage AI v3.05 (Master Edition)
-        </div>
+      {/* Version Footer */}
+      <div style={{ fontSize: '11px', color: '#94a3b8', fontFamily: 'monospace', marginTop: '16px' }}>
+        SellPage AI v3.05 (Master Edition)
       </div>
     </aside>
   );
