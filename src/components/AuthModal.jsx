@@ -159,7 +159,7 @@ export default function AuthModal({ isOpen, onLoginSuccess }) {
     onLoginSuccess(loggedInUser);
   };
 
-  if (!isOpen && currentUser) return null;
+  if (!isOpen) return null;
 
   return (
     <div style={{
