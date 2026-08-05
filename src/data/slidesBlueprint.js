@@ -416,3 +416,14 @@ export const MASTER_26_SLIDES = [
     ]
   }
 ];
+
+export const KOREAN_COMMERCIAL_REALISM_PROMPT_ENGINE = {
+  globalStyle: "Ultra-photorealistic Korean commercial e-commerce photography, 8K UHD, 85mm macro f/2.8 lens, natural lighting, no 3D CGI render feel, razor-sharp focus",
+  cuts: {
+    brixMeasurement: "ATAGO digital Brix refractometer (e.g. 11.8 Brix LCD display) testing fresh juice sample with pipette on stainless steel lab table, next to handwritten quality log sheet and fruit slice",
+    automatedFactory: "Modern Korean agricultural sorting warehouse conveyor belt, automated optical Brix sorter machine, workers wearing navy blue uniforms sorting fresh produce",
+    slicedPlatter: "Freshly sliced fruit triangles arranged neatly on ceramic plate on natural wooden table near window with soft daylight, small fruit cubes in clear glass bowl",
+    handheldDimension: "Human hand holding fruit with clean dimension guidelines overlay text (약 10~11cm, 개당 약 100~160g 내외)",
+    fieldHarvest: "Athletic 30s Korean male farmer in navy outdoor workwear loading fresh produce onto white 1-ton truck bed under bright daylight"
+  }
+};
