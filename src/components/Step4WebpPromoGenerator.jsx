@@ -577,6 +577,7 @@ export default function Step4WebpPromoGenerator() {
               <option value={3}>3. 지정 단어 커졌다 작아지기 (줌 펄스)</option>
               <option value={4}>4. 문장/단어 색상 스르륵 물듦</option>
               <option value={5}>5. 대표 이미지 교체 + 가격 할인 고정</option>
+              <option value={6}>6. 🎬 Veo 3.1 AI 마스터 비디오 모션 라이브러리 (샤인머스켓/수박/농산)</option>
             </select>
           </div>
 
@@ -1009,6 +1010,62 @@ export default function Step4WebpPromoGenerator() {
                 ))}
               </div>
             </>
+          )}
+
+          {/* OPTION 6: VEO 3.1 AI MASTER VIDEO REFERENCE LIBRARY */}
+          {selectedTemplate === 6 && (
+            <div style={{ backgroundColor: '#ffffff', border: '1.5px solid #86efac', borderRadius: '18px', padding: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', gap: '16px', boxSizing: 'border-box' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Film style={{ width: '22px', height: '22px', color: '#16a34a' }} />
+                <div>
+                  <h3 style={{ fontSize: '15px', fontWeight: '900', color: '#15803d', margin: 0 }}>
+                    🎬 Veo 3.1 AI 마스터 비디오 모션 라이브러리 (계정 전용)
+                  </h3>
+                  <span style={{ fontSize: '11px', color: '#166534' }}>
+                    원본 스마트폰 촬영 영상 ➡️ Veo 3.1 AI 샤인머스켓/농산 과일 모션 변환 3종 세트가 100% 동기화되었습니다.
+                  </span>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                {[
+                  {
+                    id: 1,
+                    title: 'Veo 3.1 AI 모션 #1 (산지 수확 줌인 변환)',
+                    orig: '/example_media/veo_master_reference_library/녹음 2026-08-02 153009.mp4',
+                    veo: '/example_media/veo_master_reference_library/2026-08-02_153009_202608031528.mp4'
+                  },
+                  {
+                    id: 2,
+                    title: 'Veo 3.1 AI 모션 #2 (산지 세척/선별 트래킹 변환)',
+                    orig: '/example_media/veo_master_reference_library/녹음 2026-08-02 153250.mp4',
+                    veo: '/example_media/veo_master_reference_library/2026-08-02_153250_202608031528.mp4'
+                  },
+                  {
+                    id: 3,
+                    title: 'Veo 3.1 AI 모션 #3 (과즙 아삭 단면 트레이 변환)',
+                    orig: '/example_media/veo_master_reference_library/녹음 2026-08-02 153323.mp4',
+                    veo: '/example_media/veo_master_reference_library/2026-08-02_153323_202608031528.mp4'
+                  }
+                ].map(v => (
+                  <div key={v.id} style={{ backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '14px', padding: '14px', boxSizing: 'border-box' }}>
+                    <span style={{ fontSize: '13px', fontWeight: '900', color: '#15803d', display: 'block', marginBottom: '8px' }}>
+                      {v.title}
+                    </span>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                      <div>
+                        <span style={{ fontSize: '10px', fontWeight: '800', color: '#64748b', display: 'block', marginBottom: '4px' }}>📱 원본 촬영 영상</span>
+                        <video src={v.orig} controls autoPlay loop muted style={{ width: '100%', borderRadius: '10px', border: '1px solid #cbd5e1' }} />
+                      </div>
+                      <div>
+                        <span style={{ fontSize: '10px', fontWeight: '900', color: '#16a34a', display: 'block', marginBottom: '4px' }}>✨ Veo 3.1 AI 변환 모션</span>
+                        <video src={v.veo} controls autoPlay loop muted style={{ width: '100%', borderRadius: '10px', border: '2px solid #16a34a' }} />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
 
           {/* Background Image & Fine Positioning Sliders */}
