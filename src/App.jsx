@@ -16,28 +16,18 @@ import LoadingOverlay from './components/LoadingOverlay';
 import { MASTER_26_SLIDES } from './data/slidesBlueprint';
 
 export default function App() {
-  // Master Account & Auth State with Synchronous Persistent Session (1-Hour Session Timer)
+  // Master Account & Auth State with Bulletproof Session (1-Hour Countdown Engine)
   const ONE_HOUR_SECONDS = 3600;
 
+  // Active User State (Default Master lmhyeok@naver.com)
   const [currentUser, setCurrentUser] = useState(() => {
     const savedSession = localStorage.getItem('sellpage_session');
-    
     if (savedSession) {
       try {
-        const { user, loginTime } = JSON.parse(savedSession);
-        const elapsed = Math.floor((Date.now() - loginTime) / 1000);
-        
-        // If session is still valid (< 1 hour), renew timestamp and restore user!
-        if (elapsed < ONE_HOUR_SECONDS) {
-          localStorage.setItem('sellpage_session', JSON.stringify({ user, loginTime: Date.now() }));
-          return user;
-        }
-      } catch (e) {
-        // Fallback below
-      }
+        const { user } = JSON.parse(savedSession);
+        if (user && user.email) return user;
+      } catch (e) {}
     }
-    
-    // Initial fresh session for Master user (lmhyeok@naver.com)
     const defaultMaster = { email: 'lmhyeok@naver.com', role: 'master' };
     localStorage.setItem('sellpage_session', JSON.stringify({ user: defaultMaster, loginTime: Date.now() }));
     return defaultMaster;
@@ -52,44 +42,32 @@ export default function App() {
     { email: 'seafood@ocean.co.kr', bizName: '동해수산 주식회사', bizNo: '105-86-99887', status: 'pending_approval' }
   ]);
 
-  // Banking-Grade 1-Hour Session Countdown State (3600 Seconds)
-  const [sessionRemainingSeconds, setSessionRemainingSeconds] = useState(() => {
-    const savedSession = localStorage.getItem('sellpage_session');
-    if (savedSession) {
-      try {
-        const { loginTime } = JSON.parse(savedSession);
-        const elapsed = Math.floor((Date.now() - loginTime) / 1000);
-        return Math.max(1, ONE_HOUR_SECONDS - elapsed);
-      } catch (e) {
-        return ONE_HOUR_SECONDS;
-      }
-    }
-    return ONE_HOUR_SECONDS;
-  });
+  // Banking-Grade 1-Hour Session Countdown State (Starts Fresh 3600s on Load)
+  const [sessionRemainingSeconds, setSessionRemainingSeconds] = useState(ONE_HOUR_SECONDS);
 
-  // Ticker Effect: Decrement timer every second & Auto-Logout when remaining reaches 0
+  // Synchronize localStorage timestamp on initial mount & whenever currentUser changes
+  useEffect(() => {
+    if (currentUser) {
+      const now = Date.now();
+      localStorage.setItem('sellpage_session', JSON.stringify({ user: currentUser, loginTime: now }));
+      setSessionRemainingSeconds(ONE_HOUR_SECONDS);
+    }
+  }, [currentUser]);
+
+  // Ticker Effect: Decrement timer every second & Auto-Logout ONLY when countdown reaches 0
   useEffect(() => {
     if (!currentUser) return;
 
     const interval = setInterval(() => {
-      const savedSession = localStorage.getItem('sellpage_session');
-      if (savedSession) {
-        try {
-          const { loginTime } = JSON.parse(savedSession);
-          const elapsed = Math.floor((Date.now() - loginTime) / 1000);
-          const remaining = Math.max(0, ONE_HOUR_SECONDS - elapsed);
-
-          setSessionRemainingSeconds(remaining);
-
-          if (remaining <= 0) {
-            clearInterval(interval);
-            handleLogout();
-            alert('⚠️ [로그인 세션 만료] 1시간 유지 시간이 만료되어 안전하게 자동 로그아웃되었습니다. 다시 로그인해 주세요.');
-          }
-        } catch (e) {
-          setSessionRemainingSeconds(0);
+      setSessionRemainingSeconds((prevSeconds) => {
+        if (prevSeconds <= 1) {
+          clearInterval(interval);
+          handleLogout();
+          alert('⚠️ [로그인 세션 만료] 1시간(60분) 유지 시간이 만료되어 안전하게 자동 로그아웃되었습니다. 다시 로그인해 주세요.');
+          return 0;
         }
-      }
+        return prevSeconds - 1;
+      });
     }, 1000);
 
     return () => clearInterval(interval);
@@ -101,7 +79,7 @@ export default function App() {
     const activeUser = currentUser || { email: 'lmhyeok@naver.com', role: 'master' };
     localStorage.setItem('sellpage_session', JSON.stringify({ user: activeUser, loginTime: now }));
     setSessionRemainingSeconds(ONE_HOUR_SECONDS);
-    alert('⏱️ [로그인 세션 연장 완료] 로그인 유지 시간이 1시간(60분) 연장되었습니다!');
+    alert('⏱️ [로그인 세션 연장 완료] 로그인 유지 시간이 1시간(60분) 추가로 연장되었습니다!');
   };
 
   // Navigation tabs: 'dashboard' (01), 'work' (02), 'result' (03), 'webp_promo' (04), 'mp4_fast' (05)
