@@ -418,12 +418,33 @@ export const MASTER_26_SLIDES = [
 ];
 
 export const KOREAN_COMMERCIAL_REALISM_PROMPT_ENGINE = {
-  globalStyle: "Ultra-photorealistic Korean commercial e-commerce photography, 8K UHD, 85mm macro f/2.8 lens, natural lighting, no 3D CGI render feel, razor-sharp focus",
+  globalStyle: "Ultra-photorealistic Korean commercial e-commerce photography, 8K UHD, 85mm macro f/2.8 lens, natural daylight, zero 3D CGI render look, razor-sharp focus",
   cuts: {
-    brixMeasurement: "ATAGO digital Brix refractometer (e.g. 11.8 Brix LCD display) testing fresh juice sample with pipette on stainless steel lab table, next to handwritten quality log sheet and fruit slice",
-    automatedFactory: "Modern Korean agricultural sorting warehouse conveyor belt, automated optical Brix sorter machine, workers wearing navy blue uniforms sorting fresh produce",
+    reviewCard: "Real Korean SmartStore photo review UI card with star rating (5 stars), masked buyer ID (jiyu****), unboxing photos in cardboard box, washing under sink faucet, fresh fruit slices in glass bowl",
+    distributionProcess: "Side-by-side comparison diagram: 6-stage traditional distribution vs 3-stage direct farm shipping (harvest -> same-day sorting -> customer delivery), realistic logistics photos",
+    refrigeratorStorage: "Open white modern kitchen refrigerator showing fresh fruit stored in clear airtight lock containers on shelves with paper towels for humidity control",
+    defectiveCS: "Human hand holding smartphone taking close-up photo of slightly bruised fruit for 100% instant refund/replacement customer support guarantee",
     slicedPlatter: "Freshly sliced fruit triangles arranged neatly on ceramic plate on natural wooden table near window with soft daylight, small fruit cubes in clear glass bowl",
+    brixMeasurement: "ATAGO digital Brix refractometer (e.g. 11.8 Brix LCD display) testing fresh juice sample with pipette on stainless steel lab table, next to handwritten quality log sheet",
+    automatedFactory: "Modern Korean agricultural sorting warehouse conveyor belt, automated optical Brix sorter machine, workers wearing navy blue uniforms sorting fresh produce",
     handheldDimension: "Human hand holding fruit with clean dimension guidelines overlay text (약 10~11cm, 개당 약 100~160g 내외)",
     fieldHarvest: "Athletic 30s Korean male farmer in navy outdoor workwear loading fresh produce onto white 1-ton truck bed under bright daylight"
   }
+};
+
+export const MASTER_COMMERCIAL_REALISM_KNOWLEDGE = {
+  documentTitle: "농수산물 26개 슬라이드 초실사 커머셜 렌더링 총집결 가이드북 (리뷰,유통,보관,CS,인물).pdf",
+  rulesCount: 10,
+  rules: [
+    "1. 구매 후기 리뷰컷: 스마트스토어/쿠팡 리뷰 UI 카드 형태 + 박스 개봉 실사 + 흐르는 물에 세척하는 실사 사진 + 유리 그릇 소분 컷 결합",
+    "2. 유통 과정 비교컷: 일반 6단계 유통(수확-출하-경매-도매-소매-수령) vs 산지직송 3단계 유통(수확-당일선별-고객수령) 비교 렌더링",
+    "3. 냉장고 보관법 실사컷: 모던 흰색 냉장고 내부 투명 밀폐용기 보관 컷 + 키친타올 수분 조절 가이드",
+    "4. CS 보장 100% 재배송컷: 스마트폰으로 흠집/멍든 과일을 직접 촬영하여 100% 무상 재배송/환불 보장 안내",
+    "5. 과일 단면 & 소분 컷: 원형 과일 + 아삭한 삼각 단면 슬라이스 + 유리볼 깍둑썰기 조각 모음 컷",
+    "6. 브랜드 인물 모델: 스포츠머리 & 다부진 체형의 30대 청년 농부 (1톤 트럭 수박 상적 산지 현장)",
+    "7. 고유 상품 외형 유지(PRODUCT_VISUAL_GUIDE): 흑수박, 납작복숭아, 단호박 등 고유 형태 고정 렌더링",
+    "8. 당도 측정기 컷: ATAGO 디지털 당도계 11.8 Brix LCD 화면 + 스텐 실험대 + 당도 기록표",
+    "9. 자동 선별장 팩토리 컷: 산지 광학 당도 선별 콘베이어 벨트 라인 렌더링",
+    "10. 손 크기/중량 측정 컷: 손 위에 과일을 올리고 약 10~11cm / 개당 100~160g 치수 가이드라인 표시"
+  ]
 };

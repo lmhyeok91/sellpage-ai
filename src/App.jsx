@@ -79,9 +79,10 @@ export default function App() {
 
   // Knowledge Files State
   const [knowledgeFiles, setKnowledgeFiles] = useState([
-    { id: 1, name: '[나노바나나 최적화] 인물 구도 프롬프트 모음.pdf', size: '53.6 KB' },
-    { id: 2, name: 'SNS 수익화 단계별 전략_일침스튜디오.pdf', size: '193.8 KB' },
-    { id: 3, name: '실사형 AI 인물 디테일 종결! - 제작 가이드북.pdf', size: '10872.6 KB' }
+    { id: 1, name: '[마스터 지식] 농수산물 26개 슬라이드 초실사 커머셜 총집결 가이드북 (리뷰,유통,보관,CS,인물).pdf', size: '18420.5 KB' },
+    { id: 2, name: '[나노바나나 최적화] 인물 구도 프롬프트 모음.pdf', size: '53.6 KB' },
+    { id: 3, name: 'SNS 수익화 단계별 전략_일침스튜디오.pdf', size: '193.8 KB' },
+    { id: 4, name: '실사형 AI 인물 디테일 종결! - 제작 가이드북.pdf', size: '10872.6 KB' }
   ]);
 
   // Loading Modal State
