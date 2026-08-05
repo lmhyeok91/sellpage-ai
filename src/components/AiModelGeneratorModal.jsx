@@ -28,12 +28,12 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
   const hairstyles = ['단정한 스포츠 머리', '깔끔한 투블럭', '자연스러운 숏컷', '포마드 스타일', '긴 생머리/웨이브'];
   const outfits = ['농가/산지 작업복', '수산물 아웃도어', '셰프/조리복', '브랜드 대표 댄디룩', '캐주얼 반팔티'];
 
-  // Pre-generated High Quality AI Model Reference Stock Assets
+  // Real High Quality 8K AI Model Reference Stock Assets
   const sampleGenImages = [
-    { id: 1, name: '30대 청년농부 A타입 (스포츠머리/다부진 체형)', url: '/example_media/1-1.jpg', prompt: '한국인 30대 청년 남성, 다부진 체형, 단정한 스포츠 머리' },
-    { id: 2, name: '30대 청년농부 B타입 (베테랑 농부)', url: '/example_media/ChatGPT Image 2026년 8월 3일 오후 10_24_29 (1).png', prompt: '한국인 30대 중반, 스포츠 머리, 산지 직송 농부' },
-    { id: 3, name: '20대 여성 대표 C타입 (슬림 체형)', url: '/example_media/ChatGPT Image 2026년 8월 3일 오후 10_24_29 (2).png', prompt: '한국인 20대 여성 대표, 맑고 단정한 미소' },
-    { id: 4, name: '40대 수산 전문가 D타입 (다부진 체형)', url: '/example_media/ChatGPT Image 2026년 8월 3일 오후 10_24_29 (3).png', prompt: '한국인 40대 수산물 선별 전문가, 다부진 체형' }
+    { id: 1, name: '30대 청년농부 A타입 (스포츠머리/다부진 체형)', url: '/example_media/model_person_1.png', prompt: '한국인 30대 청년 남성, 다부진 체형, 단정한 스포츠 머리' },
+    { id: 2, name: '20대 여성대표 B타입 (맑은 미소/농부)', url: '/example_media/model_person_2.png', prompt: '한국인 20대 여성 대표, 맑고 단정한 미소' },
+    { id: 3, name: '40대 베테랑 셰프 C타입 (조리복)', url: '/example_media/model_person_3.png', prompt: '한국인 40대 베테랑 셰프, 백색 조리복' },
+    { id: 4, name: '30대 수산 전문가 D타입 (아웃도어/다부진 체형)', url: '/example_media/model_person_4.png', prompt: '한국인 30대 수산물 선별 전문가, 다부진 체형' }
   ];
 
   if (!isOpen) return null;
