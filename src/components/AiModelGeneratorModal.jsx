@@ -499,47 +499,109 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
           </div>
         )}
 
-        {/* Generated Results Grid */}
+        {/* Generated Results Preview Gallery (Click to Select) */}
         {generatedResults.length > 0 && (
-          <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid #e2e8f0' }}>
-            <span style={{ fontSize: '12px', fontWeight: '900', color: '#0f172a', display: 'block', marginBottom: '8px' }}>
-              생성된 브랜드 인물 모델 (마음에 드는 사진을 선택하세요):
-            </span>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '20px' }}>
-              {generatedResults.map(res => (
-                <div 
-                  key={res.id}
-                  onClick={() => setSelectedResult(res)}
-                  style={{
-                    position: 'relative', borderRadius: '12px', overflow: 'hidden',
-                    border: selectedResult?.id === res.id ? '3px solid #16a34a' : '1px solid #e2e8f0',
-                    cursor: 'pointer', aspectRatio: '1/1',
-                    boxShadow: selectedResult?.id === res.id ? '0 0 0 3px rgba(22, 163, 74, 0.25)' : 'none'
-                  }}
-                >
-                  <img src={res.url} alt={res.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  {selectedResult?.id === res.id && (
-                    <div style={{ position: 'absolute', top: '6px', right: '6px', backgroundColor: '#16a34a', color: '#fff', borderRadius: '50%', width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Check style={{ width: '14px', height: '14px' }} />
-                    </div>
-                  )}
-                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: '10px', padding: '4px 6px', textAlign: 'center', fontWeight: '800' }}>
-                    {res.name}
-                  </div>
-                </div>
-              ))}
+          <div style={{ marginTop: '24px', paddingTop: '24px', borderTop: '2px dashed #e2e8f0' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+              <span style={{ fontSize: '13px', fontWeight: '900', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Sparkles style={{ width: '16px', height: '16px', color: '#16a34a' }} />
+                AI가 렌더링한 4종 브랜드 인물 모델 (가장 마음에 드는 사진을 클릭해 선택하세요):
+              </span>
+              {selectedResult && (
+                <span style={{ fontSize: '11px', backgroundColor: '#dcfce7', color: '#15803d', padding: '3px 10px', borderRadius: '14px', fontWeight: '900' }}>
+                  ✅ '{selectedResult.name}' 선택됨
+                </span>
+              )}
             </div>
 
-            <button 
-              onClick={handleSaveAndApply}
-              style={{
-                width: '100%', padding: '14px', borderRadius: '12px',
-                backgroundColor: '#0f172a', color: '#ffffff',
-                fontWeight: '900', fontSize: '13px', border: 'none', cursor: 'pointer'
-              }}
-            >
-              💾 이 인물을 '브랜드 인물 레퍼런스'로 계정에 저장 및 사용하기
-            </button>
+            {/* 4-Grid Preview Cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '20px' }}>
+              {generatedResults.map((res, index) => {
+                const isSelected = selectedResult?.id === res.id;
+
+                return (
+                  <div 
+                    key={res.id}
+                    onClick={() => setSelectedResult(res)}
+                    style={{
+                      position: 'relative',
+                      borderRadius: '16px',
+                      overflow: 'hidden',
+                      border: isSelected ? '3.5px solid #16a34a' : '1px solid #cbd5e1',
+                      cursor: 'pointer',
+                      aspectRatio: '1/1',
+                      boxShadow: isSelected ? '0 8px 20px rgba(22, 163, 74, 0.35)' : '0 2px 6px rgba(0,0,0,0.05)',
+                      transform: isSelected ? 'scale(1.03)' : 'scale(1)',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    <img src={res.url} alt={res.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    
+                    {/* Selection Overlay Checkmark */}
+                    {isSelected && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '8px', right: '8px',
+                        backgroundColor: '#16a34a', color: '#ffffff',
+                        borderRadius: '20px', padding: '4px 8px',
+                        fontSize: '10px', fontWeight: '900',
+                        display: 'flex', alignItems: 'center', gap: '3px',
+                        boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+                      }}>
+                        <Check style={{ width: '12px', height: '12px' }} /> 선택됨
+                      </div>
+                    )}
+
+                    <div style={{
+                      position: 'absolute', bottom: 0, left: 0, right: 0,
+                      backgroundColor: isSelected ? 'rgba(22, 163, 74, 0.9)' : 'rgba(15, 23, 42, 0.85)',
+                      color: '#ffffff', fontSize: '11px', fontWeight: '800',
+                      padding: '6px 8px', textAlign: 'center'
+                    }}>
+                      #{index + 1} {res.name}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Save & Apply Banner with Selected Image Thumbnail */}
+            {selectedResult && (
+              <div style={{
+                backgroundColor: '#f0fdf4',
+                border: '1.5px solid #bbf7d0',
+                borderRadius: '16px',
+                padding: '16px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '16px'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <img src={selectedResult.url} alt="Selected" style={{ width: '48px', height: '48px', borderRadius: '10px', objectFit: 'cover', border: '2px solid #16a34a' }} />
+                  <div>
+                    <span style={{ fontSize: '13px', fontWeight: '900', color: '#15803d', display: 'block' }}>
+                      선택된 브랜드 대표 모델: {selectedResult.name}
+                    </span>
+                    <span style={{ fontSize: '11px', color: '#166534' }}>
+                      이 사진과 8K 실사 프롬프트가 내 계정에 영구 저장되어 모든 상세페이지 슬라이드에 일관되게 적용됩니다.
+                    </span>
+                  </div>
+                </div>
+
+                <button 
+                  onClick={handleSaveAndApply}
+                  style={{
+                    padding: '12px 24px', borderRadius: '12px',
+                    backgroundColor: '#0f172a', color: '#ffffff',
+                    fontWeight: '900', fontSize: '13px', border: 'none', cursor: 'pointer',
+                    whiteSpace: 'nowrap', boxShadow: '0 4px 12px rgba(15, 23, 42, 0.2)'
+                  }}
+                >
+                  💾 이 인물을 계정에 저장 및 사용하기
+                </button>
+              </div>
+            )}
           </div>
         )}
 
