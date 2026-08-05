@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { ShieldCheck, Key, Lock, CheckCircle2, AlertCircle, Building2, QrCode, UserCheck, Clock, LogOut } from 'lucide-react';
+import { ShieldCheck, Key, Lock, CheckCircle2, AlertCircle, Building2, QrCode, UserCheck, Clock, LogOut, X } from 'lucide-react';
 import QRCode from 'qrcode';
 
-export default function AuthModal({ isOpen, onLoginSuccess }) {
+export default function AuthModal({ isOpen, onClose, onLoginSuccess }) {
   const [authMode, setAuthMode] = useState('login'); // 'login' | 'signup' | 'otp' | 'pending'
-  
+
   // Login Form (Dummy default value for security: abcd@naver.com!)
   const [loginEmail, setLoginEmail] = useState('abcd@naver.com');
   const [loginPassword, setLoginPassword] = useState('');
@@ -181,8 +181,34 @@ export default function AuthModal({ isOpen, onLoginSuccess }) {
         padding: '36px',
         boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.35)',
         boxSizing: 'border-box',
-        border: '1px solid #e2e8f0'
+        border: '1px solid #e2e8f0',
+        position: 'relative'
       }}>
+        {/* Top Right X Close Button */}
+        {onClose && (
+          <button
+            onClick={onClose}
+            title="창 닫기"
+            style={{
+              position: 'absolute',
+              top: '18px',
+              right: '18px',
+              width: '32px',
+              height: '32px',
+              borderRadius: '50%',
+              backgroundColor: '#f1f5f9',
+              border: 'none',
+              color: '#475569',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <X style={{ width: '18px', height: '18px' }} />
+          </button>
+        )}
         
         {/* Brand Title */}
         <div style={{ textAlign: 'center', marginBottom: '28px' }}>

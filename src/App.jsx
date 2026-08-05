@@ -328,6 +328,7 @@ export default function App() {
       {/* Auth Modal (Business Verification + Google OTP 2FA + Pending Approval + Master lmhyeok@naver.com) */}
       <AuthModal 
         isOpen={!currentUser || isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
         onLoginSuccess={handleLoginSuccess}
       />
 
