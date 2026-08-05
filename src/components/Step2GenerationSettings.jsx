@@ -179,6 +179,23 @@ export default function Step2GenerationSettings({
               {openaiKey ? '연동 완료' : 'API 키 필요'}
             </span>
           </div>
+
+          {/* Google Veo 3.1 AI Video Generation Card */}
+          <div
+            onClick={() => setSelectedAiModel('veo')}
+            className={`option-box ${selectedAiModel === 'veo' ? 'active' : ''}`}
+            style={{ gridColumn: 'span 2', backgroundColor: '#f0fdf4', border: '1.5px solid #86efac' }}
+          >
+            <div style={{ fontSize: '13px', fontWeight: '900', color: '#166534', marginBottom: '4px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span>🎬 Google Veo 3.1 AI 비디오 렌더링 (영상 100% 자동 생성 API 연동)</span>
+              <span style={{ backgroundColor: '#15803d', color: '#fff', fontSize: '10px', padding: '2px 8px', borderRadius: '12px', fontWeight: '900' }}>
+                Veo 3.1 API 지원 100%
+              </span>
+            </div>
+            <p style={{ fontSize: '11px', color: '#166534', margin: 0, lineHeight: '1.4' }}>
+              구글 Veo 3.1 API로 산지 직송 움직이는 쇼츠/WebP 영상 모션을 100% 자동 생성합니다. 직접 제작하신 3개 MP4 영상 파일(바탕화면 브랜드/변경)도 수동/자동으로 슬라이드 원하는 구간에 즉시 삽입할 수 있습니다!
+            </p>
+          </div>
         </div>
 
         {/* Dynamic Status / Warning Banner */}
