@@ -11,6 +11,7 @@ import ApiKeyModal from './components/ApiKeyModal';
 import KnowledgeModal from './components/KnowledgeModal';
 import OpenTaskModal from './components/OpenTaskModal';
 import AuthModal from './components/AuthModal';
+import AdminUserApprovalModal from './components/AdminUserApprovalModal';
 import LoadingOverlay from './components/LoadingOverlay';
 import { MASTER_26_SLIDES } from './data/slidesBlueprint';
 
@@ -18,6 +19,13 @@ export default function App() {
   // Master Account Pre-configured & Auth State
   const [currentUser, setCurrentUser] = useState({ email: 'lmhyeok@naver.com', role: 'master' });
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isAdminApprovalOpen, setIsAdminApprovalOpen] = useState(false);
+
+  // Master Admin User Approval Database State
+  const [pendingUsers, setPendingUsers] = useState([
+    { email: 'seller1@farm.com', bizName: '성주 참외 직영농원', bizNo: '214-88-12345', status: 'pending_approval' },
+    { email: 'seafood@ocean.co.kr', bizName: '동해수산 주식회사', bizNo: '105-86-99887', status: 'pending_approval' }
+  ]);
 
   // Navigation tabs: 'dashboard' (01), 'work' (02), 'result' (03), 'webp_promo' (04), 'mp4_fast' (05)
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -133,9 +141,22 @@ export default function App() {
     setIsAuthModalOpen(false);
   };
 
+  // Admin Approval Handlers
+  const handleApproveUser = (email) => {
+    setPendingUsers(pendingUsers.map(u => u.email === email ? { ...u, status: 'approved' } : u));
+    alert(`🎉 '${email}' 회원가입 승인이 완료되었습니다. 해당 회원으로 로그인이 가능합니다.`);
+  };
+
+  const handleRejectUser = (email) => {
+    setPendingUsers(pendingUsers.filter(u => u.email !== email));
+    alert(`❌ '${email}' 신청 건이 거절/삭제되었습니다.`);
+  };
+
+  const pendingCount = pendingUsers.filter(u => u.status === 'pending_approval').length;
+
   return (
     <div className="app-container">
-      {/* Left Sidebar (01 ~ 05) WITH STRICT STEP LOCKING */}
+      {/* Left Sidebar (01 ~ 05) WITH STRICT STEP LOCKING & MASTER-ONLY ADMIN SETTINGS */}
       <Sidebar 
         activeTab={activeTab} 
         setActiveTab={setActiveTab}
@@ -144,6 +165,9 @@ export default function App() {
         knowledgeCount={knowledgeFiles.length}
         step1Done={step1Done}
         step2Done={step2Done}
+        currentUser={currentUser}
+        onOpenAdminApproval={() => setIsAdminApprovalOpen(true)}
+        pendingApprovalCount={pendingCount}
       />
 
       {/* Main Content Workspace */}
@@ -239,6 +263,15 @@ export default function App() {
       <AuthModal 
         isOpen={!currentUser || isAuthModalOpen}
         onLoginSuccess={handleLoginSuccess}
+      />
+
+      {/* Master Admin Account Approval Modal (VISIBLE ONLY TO MASTER lmhyeok@naver.com) */}
+      <AdminUserApprovalModal 
+        isOpen={isAdminApprovalOpen}
+        onClose={() => setIsAdminApprovalOpen(false)}
+        pendingUsers={pendingUsers}
+        onApproveUser={handleApproveUser}
+        onRejectUser={handleRejectUser}
       />
 
       {/* Modals & Overlays */}
