@@ -12,11 +12,16 @@ export default function Step1MaterialUpload({
 }) {
   const [isModelGenModalOpen, setIsModelGenModalOpen] = useState(false);
   const [savedBrandModel, setSavedBrandModel] = useState(null);
+  const [savedBrandModels, setSavedBrandModels] = useState([]);
 
   // User-scoped LocalStorage Key
   const userStorageKey = currentUser?.email 
     ? `saved_brand_model_${currentUser.email.toLowerCase().replace(/[^a-z0-9]/g, '_')}`
     : 'saved_brand_model_guest';
+
+  const userListStorageKey = currentUser?.email 
+    ? `saved_brand_models_list_${currentUser.email.toLowerCase().replace(/[^a-z0-9]/g, '_')}`
+    : 'saved_brand_models_list_guest';
 
   // Product Reference Image & Visual Guide State (Requirement 2)
   const [productRefImages, setProductRefImages] = useState([]);
@@ -27,33 +32,64 @@ export default function Step1MaterialUpload({
   const [isAnalyzingVisual, setIsAnalyzingVisual] = useState(false);
   const [isGuideSaved, setIsGuideSaved] = useState(false);
 
-  // Load User-Specific Saved Brand Model
+  // Load User-Specific Saved Brand Models List & Active Model
   useEffect(() => {
-    const saved = localStorage.getItem(userStorageKey);
-    if (saved) {
+    const savedActive = localStorage.getItem(userStorageKey);
+    const savedList = localStorage.getItem(userListStorageKey);
+
+    if (savedActive) {
       try {
-        setSavedBrandModel(JSON.parse(saved));
+        setSavedBrandModel(JSON.parse(savedActive));
       } catch (e) {
         setSavedBrandModel(null);
       }
     } else {
       setSavedBrandModel(null);
     }
-  }, [userStorageKey, currentUser]);
+
+    if (savedList) {
+      try {
+        setSavedBrandModels(JSON.parse(savedList));
+      } catch (e) {
+        setSavedBrandModels([]);
+      }
+    } else {
+      setSavedBrandModels([]);
+    }
+  }, [userStorageKey, userListStorageKey, currentUser]);
 
   const handleSelectAndSaveModel = (model) => {
     setSavedBrandModel(model);
     localStorage.setItem(userStorageKey, JSON.stringify(model));
+
+    // Append to list if not already present
+    const updatedList = [model, ...savedBrandModels.filter(m => m.id !== model.id && m.url !== model.url)];
+    setSavedBrandModels(updatedList);
+    localStorage.setItem(userListStorageKey, JSON.stringify(updatedList));
+
     // Also update active modelImages
     setModelImages([
       { id: model.id, name: model.name, url: model.url }
     ]);
   };
 
-  const handleDeleteSavedBrandModel = () => {
-    setSavedBrandModel(null);
-    localStorage.removeItem(userStorageKey);
-    alert('저장된 계정 전용 브랜드 인물 레퍼런스가 해제되었습니다.');
+  const handleDeleteSavedBrandModel = (modelId) => {
+    const targetId = modelId || savedBrandModel?.id;
+    const updatedList = savedBrandModels.filter(m => m.id !== targetId);
+    setSavedBrandModels(updatedList);
+    localStorage.setItem(userListStorageKey, JSON.stringify(updatedList));
+
+    if (savedBrandModel && savedBrandModel.id === targetId) {
+      const nextActive = updatedList.length > 0 ? updatedList[0] : null;
+      setSavedBrandModel(nextActive);
+      if (nextActive) {
+        localStorage.setItem(userStorageKey, JSON.stringify(nextActive));
+      } else {
+        localStorage.removeItem(userStorageKey);
+      }
+    }
+
+    alert('선택하신 브랜드 인물 레퍼런스가 보관함에서 삭제되었습니다.');
   };
 
   // Upload Handlers for Product Reference vs Detail Page Reference
@@ -517,8 +553,8 @@ export default function Step1MaterialUpload({
         isOpen={isModelGenModalOpen}
         onClose={() => setIsModelGenModalOpen(false)}
         onSelectAndSaveModel={handleSelectAndSaveModel}
-        savedModels={[]}
-        onDeleteSavedModel={() => {}}
+        savedModels={savedBrandModels}
+        onDeleteSavedModel={handleDeleteSavedBrandModel}
       />
     </div>
   );
