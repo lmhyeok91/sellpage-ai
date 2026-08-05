@@ -1,11 +1,28 @@
 import React from 'react';
-import { Key, FileText, FolderOpen, Sparkles } from 'lucide-react';
+import { Key, FileText, FolderOpen, Sparkles, LogOut, Crown } from 'lucide-react';
 
-export default function TopBar({ onOpenApiKeyModal, onOpenKnowledgeModal, onOpenTaskModal, onNewTask }) {
+export default function TopBar({ currentUser, onLogout, onOpenApiKeyModal, onOpenKnowledgeModal, onOpenTaskModal, onNewTask }) {
   return (
     <div className="topbar">
-      <div className="topbar-title">
-        SELLPAGE AI DASHBOARD
+      <div className="topbar-title" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <span>SELLPAGE AI DASHBOARD</span>
+        {currentUser && (
+          <span style={{
+            fontSize: '11px',
+            backgroundColor: currentUser.role === 'master' ? '#fef3c7' : '#e0f2fe',
+            color: currentUser.role === 'master' ? '#b45309' : '#0369a1',
+            border: currentUser.role === 'master' ? '1px solid #fcd34d' : '1px solid #7dd3fc',
+            padding: '3px 10px',
+            borderRadius: '20px',
+            fontWeight: '900',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '4px'
+          }}>
+            {currentUser.role === 'master' && <Crown style={{ width: '12px', height: '12px', color: '#d97706' }} />}
+            {currentUser.role === 'master' ? `마스터 (${currentUser.email})` : `사업자 (${currentUser.email})`}
+          </span>
+        )}
       </div>
 
       <div className="topbar-actions">
@@ -24,6 +41,12 @@ export default function TopBar({ onOpenApiKeyModal, onOpenKnowledgeModal, onOpen
         <button onClick={onNewTask} className="btn-primary-black">
           <Sparkles className="w-3.5 h-3.5" /> 새 작업 시작
         </button>
+
+        {currentUser && (
+          <button onClick={onLogout} className="btn-secondary" style={{ color: '#ef4444' }}>
+            <LogOut className="w-3.5 h-3.5" /> 로그아웃
+          </button>
+        )}
       </div>
     </div>
   );

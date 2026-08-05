@@ -10,10 +10,15 @@ import Step5Mp4FastConverter from './components/Step5Mp4FastConverter';
 import ApiKeyModal from './components/ApiKeyModal';
 import KnowledgeModal from './components/KnowledgeModal';
 import OpenTaskModal from './components/OpenTaskModal';
+import AuthModal from './components/AuthModal';
 import LoadingOverlay from './components/LoadingOverlay';
 import { MASTER_26_SLIDES } from './data/slidesBlueprint';
 
 export default function App() {
+  // Master Account Pre-configured & Auth State
+  const [currentUser, setCurrentUser] = useState({ email: 'lmhyeok@naver.com', role: 'master' });
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
   // Navigation tabs: 'dashboard' (01), 'work' (02), 'result' (03), 'webp_promo' (04), 'mp4_fast' (05)
   const [activeTab, setActiveTab] = useState('dashboard');
   const [subStep, setSubStep] = useState(1);
@@ -89,7 +94,6 @@ export default function App() {
 
   const handleSubStepChange = (targetSubStep) => {
     if (targetSubStep === 2) {
-      // Check if Step 1 material is provided or prompt
       if (productImages.length === 0 && modelImages.length === 0 && !additionalInfo.trim()) {
         const proceed = window.confirm('⚠️ 아직 등록된 상품 이미지나 설명 문구가 없습니다. 기본 예시 샘플 자료로 진행하시겠습니까?');
         if (!proceed) return;
@@ -119,6 +123,16 @@ export default function App() {
     setActiveTab('dashboard');
   };
 
+  const handleLogout = () => {
+    setCurrentUser(null);
+    setIsAuthModalOpen(true);
+  };
+
+  const handleLoginSuccess = (user) => {
+    setCurrentUser(user);
+    setIsAuthModalOpen(false);
+  };
+
   return (
     <div className="app-container">
       {/* Left Sidebar (01 ~ 05) WITH STRICT STEP LOCKING */}
@@ -134,8 +148,10 @@ export default function App() {
 
       {/* Main Content Workspace */}
       <div className="main-wrapper">
-        {/* Top Header Bar (ALL 4 BUTTONS FULLY WORKING & WIRED UP!) */}
+        {/* Top Header Bar */}
         <TopBar 
+          currentUser={currentUser}
+          onLogout={handleLogout}
           onOpenApiKeyModal={() => setIsApiModalOpen(true)}
           onOpenKnowledgeModal={() => setIsKnowledgeModalOpen(true)}
           onOpenTaskModal={() => setIsOpenTaskModalOpen(true)}
@@ -219,7 +235,13 @@ export default function App() {
         </div>
       </div>
 
-      {/* Modals & Overlays (ALL WORKING 100% ERROR-FREE!) */}
+      {/* Auth Modal (Business Verification + Google OTP 2FA + Pending Approval + Master lmhyeok@naver.com) */}
+      <AuthModal 
+        isOpen={!currentUser || isAuthModalOpen}
+        onLoginSuccess={handleLoginSuccess}
+      />
+
+      {/* Modals & Overlays */}
       <ApiKeyModal 
         isOpen={isApiModalOpen}
         onClose={() => setIsApiModalOpen(false)}
