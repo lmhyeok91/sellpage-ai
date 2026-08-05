@@ -180,6 +180,8 @@ export default function App() {
           onOpenKnowledgeModal={() => setIsKnowledgeModalOpen(true)}
           onOpenTaskModal={() => setIsOpenTaskModalOpen(true)}
           onNewTask={handleNewTask}
+          onOpenAdminApproval={() => setIsAdminApprovalOpen(true)}
+          pendingApprovalCount={pendingCount}
         />
 
         {/* Sub Stepper Tabs for Dashboard (01 대시보드 내 1 자료등록 -> 2 생성설정) */}
@@ -210,6 +212,7 @@ export default function App() {
               modelImages={modelImages} setModelImages={setModelImages}
               additionalInfo={additionalInfo} setAdditionalInfo={setAdditionalInfo}
               reviewFile={reviewFile} setReviewFile={setReviewFile}
+              currentUser={currentUser}
               onNextStep={() => handleSubStepChange(2)}
             />
           )}
