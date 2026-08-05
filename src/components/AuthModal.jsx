@@ -5,8 +5,8 @@ import QRCode from 'qrcode';
 export default function AuthModal({ isOpen, onLoginSuccess }) {
   const [authMode, setAuthMode] = useState('login'); // 'login' | 'signup' | 'otp' | 'pending'
   
-  // Login Form
-  const [loginEmail, setLoginEmail] = useState('lmhyeok@naver.com');
+  // Login Form (Dummy default value for security: abcd@naver.com!)
+  const [loginEmail, setLoginEmail] = useState('abcd@naver.com');
   const [loginPassword, setLoginPassword] = useState('');
 
   // Signup Form
@@ -39,7 +39,7 @@ export default function AuthModal({ isOpen, onLoginSuccess }) {
 
   useEffect(() => {
     // Generate QR Code for Google OTP Authenticator
-    const otpAuthUrl = `otpauth://totp/SellPageAI:${loginEmail}?secret=${otpSecret}&issuer=SellPageAI`;
+    const otpAuthUrl = `otpauth://totp/SellPageAI:${loginEmail || 'abcd@naver.com'}?secret=${otpSecret}&issuer=SellPageAI`;
     QRCode.toDataURL(otpAuthUrl)
       .then(url => setQrCodeUrl(url))
       .catch(err => console.error(err));
@@ -94,7 +94,7 @@ export default function AuthModal({ isOpen, onLoginSuccess }) {
       return;
     }
 
-    // Master Account Instant OTP Step
+    // Master Account Secret Instant OTP Step
     if (loginEmail.toLowerCase() === 'lmhyeok@naver.com') {
       setAuthMode('otp');
       return;
@@ -214,7 +214,7 @@ export default function AuthModal({ isOpen, onLoginSuccess }) {
                 type="email" 
                 value={loginEmail} 
                 onChange={e => setLoginEmail(e.target.value)} 
-                placeholder="lmhyeok@naver.com"
+                placeholder="abcd@naver.com"
                 style={{ width: '100%', padding: '12px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontSize: '13px', fontWeight: '800', boxSizing: 'border-box' }}
               />
             </div>
@@ -263,7 +263,7 @@ export default function AuthModal({ isOpen, onLoginSuccess }) {
                 type="email" 
                 value={signupEmail} 
                 onChange={e => setSignupEmail(e.target.value)} 
-                placeholder="user@company.com"
+                placeholder="abcd@naver.com"
                 style={{ width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '12px', boxSizing: 'border-box' }}
               />
             </div>
@@ -397,7 +397,7 @@ export default function AuthModal({ isOpen, onLoginSuccess }) {
               </h3>
               <p style={{ fontSize: '12px', color: '#92400e', margin: 0, lineHeight: '1.5' }}>
                 사업자 회원가입 신청이 완료되었습니다.<br />
-                관리자(<b>lmhyeok@naver.com</b>)의 승인 후 접속이 가능합니다.
+                관리자 승인 후 접속이 가능합니다.
               </p>
             </div>
 
