@@ -403,16 +403,21 @@ export const MASTER_26_SLIDES = [
     id: "p26",
     page: "Page 26",
     section: "17. 서약/마감",
-    topic: "17-1. 자부심을 담은 서약서 & 마감 인사",
-    title: "농부의 자부심을 담은 100% 당도 품질 서약",
-    subtitle: "정직하게 재배한 참외로 고객님의 식탁에 기쁨을 전하겠습니다.",
-    badge: "17. 서약마감",
-    highlights: ["농부 품질 서약서", "정직한 수확 약속", "감사 인사"],
-    bgGradient: "from-amber-600 via-orange-600 to-yellow-600",
+    topic: "17-1. 필수 문의·교환 안내 (마스터 lmhyeok@naver.com 전용 고정 템플릿)",
+    title: "문의·교환 안내 (산지청년 by 이유농수산)",
+    subtitle: "고객센터 070-8064-4482 | 평일 10:00~17:00 | 24시간 접수 안내",
+    badge: "17. 문의교환",
+    csPhone: "070-8064-4482",
+    csHours: "평일 10:00~17:00 (주말/공휴일 휴무)",
+    csRequiredPhotos: ["송장 사진", "박스 전체 사진", "상품 전체 사진", "문제 부위 사진"],
+    brandFooter: "산지청년 by 이유농수산",
+    bannerImage: "/example_media/cs_notice_master_banner.png",
+    highlights: ["고객센터 070-8064-4482", "24시간 내 접수 시 100% 처리", "4종 증빙 사진 접수"],
+    bgGradient: "from-[#faf8f2] via-[#f5f0e1] to-[#e8dfc8]",
     recommendedAssets: [
+      "/example_media/cs_notice_master_banner.png (마스터 공식 문의교환 배너)",
       "망고보드 > 옥수수 > 옥수수 10.png (품질 서약 원형 도장)",
-      "망고보드 > 베이지색 깔끔한 감자 > 7.png",
-      "브랜드/변경 > ChatGPT Image (6).png"
+      "망고보드 > 베이지색 깔끔한 감자 > 7.png"
     ]
   }
 ];
