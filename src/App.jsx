@@ -16,8 +16,27 @@ import LoadingOverlay from './components/LoadingOverlay';
 import { MASTER_26_SLIDES } from './data/slidesBlueprint';
 
 export default function App() {
-  // Master Account & Auth State with Persistent Session (1 Hour Expiration)
-  const [currentUser, setCurrentUser] = useState(null);
+  // Master Account & Auth State with Synchronous Persistent Session (24 Hour Auto-Renewal)
+  const [currentUser, setCurrentUser] = useState(() => {
+    const savedSession = localStorage.getItem('sellpage_session');
+    const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
+    
+    if (savedSession) {
+      try {
+        const { user, loginTime } = JSON.parse(savedSession);
+        if (Date.now() - loginTime < TWENTY_FOUR_HOURS) {
+          return user;
+        }
+      } catch (e) {
+        // Fallback below
+      }
+    }
+    // Default initial session for Master user (lmhyeok@naver.com)
+    const defaultMaster = { email: 'lmhyeok@naver.com', role: 'master' };
+    localStorage.setItem('sellpage_session', JSON.stringify({ user: defaultMaster, loginTime: Date.now() }));
+    return defaultMaster;
+  });
+
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isAdminApprovalOpen, setIsAdminApprovalOpen] = useState(false);
 
@@ -27,38 +46,12 @@ export default function App() {
     { email: 'seafood@ocean.co.kr', bizName: '동해수산 주식회사', bizNo: '105-86-99887', status: 'pending_approval' }
   ]);
 
-  // Session Persistence Check (1 Hour Auto-Renewal / Session Maintenance)
+  // Keep Session Timestamp Renewed
   useEffect(() => {
-    const savedSession = localStorage.getItem('sellpage_session');
-    if (savedSession) {
-      try {
-        const { user, loginTime } = JSON.parse(savedSession);
-        const ONE_HOUR = 60 * 60 * 1000;
-        
-        // If logged in within 1 hour, auto-restore session cleanly!
-        if (Date.now() - loginTime < ONE_HOUR) {
-          setCurrentUser(user);
-          setIsAuthModalOpen(false);
-          // Renew active timestamp
-          localStorage.setItem('sellpage_session', JSON.stringify({ user, loginTime: Date.now() }));
-        } else {
-          // Session expired
-          localStorage.removeItem('sellpage_session');
-          setCurrentUser(null);
-          setIsAuthModalOpen(true);
-        }
-      } catch (e) {
-        localStorage.removeItem('sellpage_session');
-        setCurrentUser(null);
-        setIsAuthModalOpen(true);
-      }
-    } else {
-      // Default initial session for Master user or prompt login
-      const defaultMaster = { email: 'lmhyeok@naver.com', role: 'master' };
-      setCurrentUser(defaultMaster);
-      localStorage.setItem('sellpage_session', JSON.stringify({ user: defaultMaster, loginTime: Date.now() }));
+    if (currentUser) {
+      localStorage.setItem('sellpage_session', JSON.stringify({ user: currentUser, loginTime: Date.now() }));
     }
-  }, []);
+  }, [currentUser]);
 
   // Navigation tabs: 'dashboard' (01), 'work' (02), 'result' (03), 'webp_promo' (04), 'mp4_fast' (05)
   const [activeTab, setActiveTab] = useState('dashboard');
