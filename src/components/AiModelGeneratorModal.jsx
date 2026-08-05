@@ -30,10 +30,10 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
 
   // Real High Quality 8K AI Model Reference Stock Assets
   const sampleGenImages = [
-    { id: 1, name: '30대 청년농부 A타입 (스포츠머리/다부진 체형)', url: '/example_media/model_person_1.png', prompt: '한국인 30대 청년 남성, 다부진 체형, 단정한 스포츠 머리' },
-    { id: 2, name: '20대 여성대표 B타입 (맑은 미소/농부)', url: '/example_media/model_person_2.png', prompt: '한국인 20대 여성 대표, 맑고 단정한 미소' },
-    { id: 3, name: '40대 베테랑 셰프 C타입 (조리복)', url: '/example_media/model_person_3.png', prompt: '한국인 40대 베테랑 셰프, 백색 조리복' },
-    { id: 4, name: '30대 수산 전문가 D타입 (아웃도어/다부진 체형)', url: '/example_media/model_person_4.png', prompt: '한국인 30대 수산물 선별 전문가, 다부진 체형' }
+    { id: 1, name: '30대 청년농부 (수박/산지 상적 작업컷)', url: '/example_media/model_person_1.png', prompt: '한국인 30대 다부진 체형의 청년 남성 농부, 스포츠 머리, 네이비 블루 작업복, 1톤 트럭 짐칸 수박 상적 작업' },
+    { id: 2, name: '20대 여성대표 (과수원/맑은 미소)', url: '/example_media/model_person_2.png', prompt: '한국인 20대 여성 대표, 맑고 단정한 미소' },
+    { id: 3, name: '40대 베테랑 셰프 (조리복)', url: '/example_media/model_person_3.png', prompt: '한국인 40대 베테랑 셰프, 백색 조리복' },
+    { id: 4, name: '30대 수산 전문가 (아웃도어/선별)', url: '/example_media/model_person_4.png', prompt: '한국인 30대 수산물 선별 전문가, 다부진 체형' }
   ];
 
   if (!isOpen) return null;
