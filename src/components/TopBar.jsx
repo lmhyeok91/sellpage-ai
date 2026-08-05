@@ -5,7 +5,7 @@ export default function TopBar({ onOpenApiKeyModal, onOpenKnowledgeModal, onOpen
   return (
     <div className="topbar">
       <div className="topbar-title">
-        DASHBOARD
+        SELLPAGE AI DASHBOARD
       </div>
 
       <div className="topbar-actions">

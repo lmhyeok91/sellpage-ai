@@ -29,11 +29,11 @@ export default function Sidebar({ activeTab, setActiveTab, openaiKey, geminiKey,
   return (
     <aside className="sidebar">
       <div>
-        {/* Brand Header */}
+        {/* Brand Header: SellPage AI (셀페이지) */}
         <div className="brand-logo">
-          <div className="brand-badge">LM</div>
+          <div className="brand-badge">SP</div>
           <div className="brand-title">
-            이민혁의 상세페이지 마법사 3.0
+            SellPage AI (셀페이지 3.0)
           </div>
         </div>
 
@@ -98,7 +98,7 @@ export default function Sidebar({ activeTab, setActiveTab, openaiKey, geminiKey,
 
       {/* Version Footer */}
       <div style={{ fontSize: '11px', color: '#94a3b8', fontFamily: 'monospace', marginTop: '24px' }}>
-        버전 3.05 (단계별 잠금 연동)
+        SellPage AI v3.05 (Master Edition)
       </div>
     </aside>
   );
