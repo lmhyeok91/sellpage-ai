@@ -182,15 +182,45 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
     }, 1500);
   };
 
-  // STEP 3 -> STEP 4: Save Master Person Record to Library
+  // Global Claimed Brand Models Registry State
+  const [claimedRegistry, setClaimedRegistry] = useState({});
+
+  useEffect(() => {
+    const raw = localStorage.getItem('global_claimed_brand_persons');
+    if (raw) {
+      try {
+        setClaimedRegistry(JSON.parse(raw));
+      } catch (e) {
+        setClaimedRegistry({});
+      }
+    }
+  }, [isOpen]);
+
+  // STEP 3 -> STEP 4: Save Master Person Record to Library and Claim Brand Model Exclusively
   const handleSaveToLibrary = () => {
     if (!selectedFrontFace) {
       alert('대표 정면 얼굴이 선택되지 않았습니다.');
       return;
     }
 
+    const currentEmail = currentUser?.email?.toLowerCase() || 'master';
+
+    // Global Brand Exclusive Claim Registration
+    const updatedRegistry = {
+      ...claimedRegistry,
+      [selectedFrontFace.id]: {
+        claimedBy: currentEmail,
+        claimedAt: new Date().toISOString(),
+        url: selectedFrontFace.url,
+        name: selectedFrontFace.name
+      }
+    };
+    setClaimedRegistry(updatedRegistry);
+    localStorage.setItem('global_claimed_brand_persons', JSON.stringify(updatedRegistry));
+
     const masterRecord = {
       id: Date.now(),
+      candidate_id: selectedFrontFace.id,
       name: `${ethnicity} ${genderAge} (${hairstyle})`,
       url: selectedFrontFace.url,
       representative_face: selectedFrontFace.url,
@@ -198,12 +228,13 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
       prompt: modelPrompt,
       negative_prompt: 'plastic skin, waxy face, beauty retouching, celebrity look, excessive smoothing, fruit, truck, orchard, packing center',
       selected_options: { ethnicity, genderAge, bodyType, hairstyle, outfit },
-      created_at: new Date().toLocaleDateString()
+      created_at: new Date().toLocaleDateString(),
+      is_claimed_exclusively: true
     };
 
     onSelectAndSaveModel(masterRecord);
     setCurrentStep(4);
-    alert('🎉 [인물 라이브러리 영구 저장 완료] 정면 얼굴 및 5개 각도 기준컷이 라이브러리에 저장되었습니다!');
+    alert('🎉 [브랜드 독점 선점 완료] 해당 인물 모델이 계정에 영구 등록되었습니다! 다른 브랜드 계정에서는 이 모델을 중복 선택할 수 없도록 선점 잠금 처리되었습니다.');
   };
 
   // STEP 5: Open Scene Creation for a Saved Person in Library
@@ -507,30 +538,44 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
               )}
             </div>
 
-            {/* 5-Grid Front Face Cards */}
+            {/* 5-Grid Front Face Cards with Brand Exclusion Guard */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px', marginBottom: '20px' }}>
               {frontCandidates.map((res, index) => {
                 const isSelected = selectedFrontFace?.id === res.id;
+                const currentEmail = currentUser?.email?.toLowerCase() || 'master';
+                const claimInfo = claimedRegistry[res.id];
+                const isClaimedByOther = claimInfo && claimInfo.claimedBy !== currentEmail;
+                const isClaimedByMe = claimInfo && claimInfo.claimedBy === currentEmail;
+
+                const handleCardClick = () => {
+                  if (isClaimedByOther) {
+                    alert(`⚠️ [타 브랜드 선점 모델 잠금]\n\n해당 인물 레퍼런스는 이미 다른 브랜드 계정(${claimInfo.claimedBy})에서 영구 독점 선점하여 사용 중입니다.\n\n브랜드 상표권 보호 및 상업 모델 분쟁 방지를 위해 타 브랜드에서 선점된 인물은 중복 선택하실 수 없습니다.`);
+                    return;
+                  }
+                  setSelectedFrontFace(res);
+                };
 
                 return (
                   <div 
                     key={res.id}
-                    onClick={() => setSelectedFrontFace(res)}
+                    onClick={handleCardClick}
                     style={{
                       position: 'relative',
                       borderRadius: '16px',
                       overflow: 'hidden',
-                      border: isSelected ? '3.5px solid #16a34a' : '1px solid #cbd5e1',
-                      cursor: 'pointer',
+                      border: isSelected ? '3.5px solid #16a34a' : isClaimedByOther ? '2px solid #ef4444' : '1px solid #cbd5e1',
+                      cursor: isClaimedByOther ? 'not-allowed' : 'pointer',
                       aspectRatio: '1/1',
                       boxShadow: isSelected ? '0 8px 20px rgba(22, 163, 74, 0.35)' : '0 2px 6px rgba(0,0,0,0.05)',
                       transform: isSelected ? 'scale(1.02)' : 'scale(1)',
+                      opacity: isClaimedByOther ? 0.65 : 1,
+                      filter: isClaimedByOther ? 'grayscale(0.5)' : 'none',
                       transition: 'all 0.2s ease'
                     }}
                   >
                     <img src={res.url} alt={res.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     
-                    {isSelected && (
+                    {isSelected && !isClaimedByOther && (
                       <div style={{
                         position: 'absolute', top: '8px', right: '8px',
                         backgroundColor: '#16a34a', color: '#ffffff',
@@ -542,13 +587,38 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
                       </div>
                     )}
 
+                    {isClaimedByOther && (
+                      <div style={{
+                        position: 'absolute', top: '8px', right: '8px',
+                        backgroundColor: '#dc2626', color: '#ffffff',
+                        borderRadius: '20px', padding: '4px 8px',
+                        fontSize: '9px', fontWeight: '900',
+                        display: 'flex', alignItems: 'center', gap: '3px',
+                        boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+                      }}>
+                        🔒 선점 잠금
+                      </div>
+                    )}
+
+                    {isClaimedByMe && !isSelected && (
+                      <div style={{
+                        position: 'absolute', top: '8px', right: '8px',
+                        backgroundColor: '#0284c7', color: '#ffffff',
+                        borderRadius: '20px', padding: '4px 8px',
+                        fontSize: '9px', fontWeight: '900',
+                        display: 'flex', alignItems: 'center', gap: '3px'
+                      }}>
+                        ★ 내 독점 모델
+                      </div>
+                    )}
+
                     <div style={{
                       position: 'absolute', bottom: 0, left: 0, right: 0,
-                      backgroundColor: isSelected ? 'rgba(22, 163, 74, 0.9)' : 'rgba(15, 23, 42, 0.85)',
+                      backgroundColor: isClaimedByOther ? 'rgba(220, 38, 38, 0.9)' : isSelected ? 'rgba(22, 163, 74, 0.9)' : 'rgba(15, 23, 42, 0.85)',
                       color: '#ffffff', fontSize: '11px', fontWeight: '800',
                       padding: '6px 8px', textAlign: 'center'
                     }}>
-                      #{index + 1} {res.name}
+                      {isClaimedByOther ? `[선점완료] #${index + 1} ${res.name}` : `#${index + 1} ${res.name}`}
                     </div>
                   </div>
                 );
