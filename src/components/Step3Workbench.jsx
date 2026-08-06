@@ -850,7 +850,7 @@ export default function Step3Workbench({ slides, setSlides, canvasWidth, onExpor
             flexShrink: 0
           }}>
             {/* Header */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', borderBottom: '1px solid #eaece5', paddingBottom: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #eaece5', paddingBottom: '16px' }}>
               <div>
                 <span style={{ fontSize: '10px', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase' }}>CANVAS WORKBENCH</span>
                 <h3 style={{ fontSize: '18px', fontWeight: '900', color: '#0f172a', margin: '2px 0 0 0' }}>
@@ -954,7 +954,7 @@ export default function Step3Workbench({ slides, setSlides, canvasWidth, onExpor
                   <span style={{ fontSize: '12px', fontWeight: '900', color: '#0f172a' }}>✏️ 헤드라인 한글 문구 수정</span>
                   <input 
                     type="text"
-                    value={currentSection.title}
+                    value={currentSection?.title || ''}
                     onChange={e => updateCurrentSlide('title', e.target.value)}
                     style={{
                       width: '100%',
@@ -974,7 +974,7 @@ export default function Step3Workbench({ slides, setSlides, canvasWidth, onExpor
                   <span style={{ fontSize: '12px', fontWeight: '900', color: '#0f172a' }}>📝 서브 설명 문구 수정</span>
                   <textarea 
                     rows="3"
-                    value={currentSection.subtitle}
+                    value={currentSection?.subtitle || ''}
                     onChange={e => updateCurrentSlide('subtitle', e.target.value)}
                     style={{
                       width: '100%',
@@ -992,7 +992,7 @@ export default function Step3Workbench({ slides, setSlides, canvasWidth, onExpor
 
                 <div style={{ backgroundColor: '#fafbf8', border: '1px solid #e2e4dc', borderRadius: '14px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   <span style={{ fontSize: '12px', fontWeight: '900', color: '#0f172a' }}>🏷️ 핵심 특징 뱃지 문구 수정</span>
-                  {currentSection.highlights.map((hl, i) => (
+                  {currentSection?.highlights && currentSection.highlights.map((hl, i) => (
                     <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <input 
                         type="text"
