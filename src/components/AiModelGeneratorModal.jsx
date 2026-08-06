@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, X, Check, RefreshCw, Upload, User, BookmarkCheck, Trash2, FileText, Search, Image as ImageIcon, Camera, ArrowRight, Layers, Lock, ChevronRight } from 'lucide-react';
+import { Sparkles, X, Check, RefreshCw, Upload, User, UserCheck, BookmarkCheck, Trash2, FileText, Search, Image as ImageIcon, Camera, ArrowRight, Layers, Lock, ChevronRight } from 'lucide-react';
 
 export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSaveModel, savedModels = [], onDeleteSavedModel, currentUser = { email: 'master' } }) {
   const [activeTab, setActiveTab] = useState('custom'); // 'custom' | 'image_vision' | 'library'
