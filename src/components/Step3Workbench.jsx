@@ -28,7 +28,10 @@ export default function Step3Workbench({ slides, setSlides, canvasWidth, onExpor
   const [modelAge, setModelAge] = useState('20s'); 
   const [modelCountry, setModelCountry] = useState('korea'); 
 
-  const totalPageCount = 26; // Fixed 26 total slides requirement
+  const [activeWidth, setActiveWidth] = useState(780); // 780px (Naver) or 860px (Coupang)
+  const [viewMode, setViewMode] = useState('mangoboard'); // 'mangoboard' (Full Detail Page Mode) or 'card' (3:2 Dual Mode)
+
+  const activeWidthValue = activeWidth;
   const currentSection = slides[selectedSectionIdx] || slides[0];
 
   // Handler to update current slide text properties live!
@@ -413,15 +416,98 @@ export default function Step3Workbench({ slides, setSlides, canvasWidth, onExpor
             </div>
           </div>
 
+          {/* Width Selector & Canvas Mode Toolbar */}
+          <div style={{
+            width: `${activeWidthValue}px`,
+            maxWidth: '100%',
+            backgroundColor: '#ffffff',
+            border: '1px solid #cbd5e1',
+            borderRadius: '14px',
+            padding: '10px 16px',
+            marginBottom: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.04)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '12px', fontWeight: '800', color: '#0f172a' }}>📐 가로 해상도:</span>
+              <button
+                onClick={() => setActiveWidth(780)}
+                style={{
+                  padding: '5px 12px',
+                  borderRadius: '8px',
+                  fontSize: '11px',
+                  fontWeight: '800',
+                  border: activeWidth === 780 ? '1.5px solid #0284c7' : '1px solid #cbd5e1',
+                  backgroundColor: activeWidth === 780 ? '#e0f2fe' : '#ffffff',
+                  color: activeWidth === 780 ? '#0369a1' : '#64748b',
+                  cursor: 'pointer'
+                }}
+              >
+                💚 780px (네이버 스마트스토어 표준)
+              </button>
+
+              <button
+                onClick={() => setActiveWidth(860)}
+                style={{
+                  padding: '5px 12px',
+                  borderRadius: '8px',
+                  fontSize: '11px',
+                  fontWeight: '800',
+                  border: activeWidth === 860 ? '1.5px solid #16a34a' : '1px solid #cbd5e1',
+                  backgroundColor: activeWidth === 860 ? '#dcfce7' : '#ffffff',
+                  color: activeWidth === 860 ? '#15803d' : '#64748b',
+                  cursor: 'pointer'
+                }}
+              >
+                🚀 860px (쿠팡 / 오픈마켓 표준)
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <button
+                onClick={() => setViewMode('mangoboard')}
+                style={{
+                  padding: '5px 12px',
+                  borderRadius: '8px',
+                  fontSize: '11px',
+                  fontWeight: '800',
+                  border: viewMode === 'mangoboard' ? '1.5px solid #0f172a' : '1px solid #cbd5e1',
+                  backgroundColor: viewMode === 'mangoboard' ? '#0f172a' : '#ffffff',
+                  color: viewMode === 'mangoboard' ? '#ffffff' : '#64748b',
+                  cursor: 'pointer'
+                }}
+              >
+                🎨 망고보드 상세페이지 템플릿 모드
+              </button>
+              <button
+                onClick={() => setViewMode('card')}
+                style={{
+                  padding: '5px 12px',
+                  borderRadius: '8px',
+                  fontSize: '11px',
+                  fontWeight: '800',
+                  border: viewMode === 'card' ? '1.5px solid #0f172a' : '1px solid #cbd5e1',
+                  backgroundColor: viewMode === 'card' ? '#0f172a' : '#ffffff',
+                  color: viewMode === 'card' ? '#ffffff' : '#64748b',
+                  cursor: 'pointer'
+                }}
+              >
+                🖼️ 3:2 카드 모드
+              </button>
+            </div>
+          </div>
+
           {/* Recommended Reference Asset Banner */}
           {currentSection.recommendedAssets && (
             <div style={{
-              width: `${canvasWidth}px`,
+              width: `${activeWidthValue}px`,
               maxWidth: '100%',
               backgroundColor: '#eff6ff',
               border: '1px solid #bfdbfe',
               borderRadius: '14px',
-              padding: '12px 16px',
+              padding: '10px 16px',
               marginBottom: '16px',
               display: 'flex',
               alignItems: 'center',
@@ -431,7 +517,7 @@ export default function Step3Workbench({ slides, setSlides, canvasWidth, onExpor
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Folder style={{ width: '16px', height: '16px', color: '#2563eb', flexShrink: 0 }} />
-                <span style={{ fontWeight: '900' }}>추천 매칭 자산 (1~3개):</span>
+                <span style={{ fontWeight: '900' }}>추천 매칭 자산:</span>
                 <span style={{ fontWeight: '700', color: '#1e3a8a' }}>
                   {currentSection.recommendedAssets.join(' | ')}
                 </span>
@@ -442,210 +528,167 @@ export default function Step3Workbench({ slides, setSlides, canvasWidth, onExpor
             </div>
           )}
 
-          {/* 860px Live Interactive Canvas Area */}
+          {/* 780px / 860px Live Interactive Canvas Area */}
           <div style={{
-            width: `${canvasWidth}px`,
+            width: `${activeWidthValue}px`,
             maxWidth: '100%',
             backgroundColor: '#ffffff',
             borderRadius: '20px',
             overflow: 'hidden',
             boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
-            border: '1px solid #e2e8f0',
+            border: '1px solid #cbd5e1',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            minHeight: '560px'
+            minHeight: '620px',
+            transition: 'width 0.2s ease'
           }}>
-            {isManusMode ? (
-              /* Manus AI 3:2 Dual Split Layout with LIVE EDITING */
-              <div style={{ display: 'flex', flex: 1, minHeight: '500px' }}>
-                {/* Left 60%: Content Area (#F9FAFB) */}
+            {viewMode === 'mangoboard' ? (
+              /* MangoBoard Style Full Vertical E-Commerce Detail Page Layout */
+              <div style={{ display: 'flex', flexDirection: 'column', minHeight: '600px', backgroundColor: '#ffffff' }}>
+                {/* Header Banner Badge */}
+                <div style={{ backgroundColor: '#0f172a', color: '#ffffff', padding: '14px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{ backgroundColor: '#059669', color: '#ffffff', fontSize: '11px', fontWeight: '900', padding: '3px 10px', borderRadius: '12px' }}>
+                      {currentSection.page}
+                    </span>
+                    <span style={{ fontSize: '14px', fontWeight: '800' }}>
+                      {selectedSectionIdx + 1}. {currentSection.section ? currentSection.section.replace(/^[0-9]+\.\s*/, '') : ''} / {currentSection.topic ? currentSection.topic.replace(/^[0-9]+-[0-9]+\.\s*/, '') : ''}
+                    </span>
+                  </div>
+                  <span style={{ fontSize: '11px', color: '#94a3b8' }}>
+                    가로 {activeWidthValue}px 표준 렌더링
+                  </span>
+                </div>
+
+                {/* Hero Visual Banner Section */}
                 <div style={{
-                  width: '60%',
-                  backgroundColor: '#F9FAFB',
-                  padding: '36px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  borderRight: '1px solid #E5E7EB',
+                  padding: '36px 32px 28px 32px',
+                  background: 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 50%, #ffffff 100%)',
+                  borderBottom: '1px solid #e2e8f0',
                   position: 'relative'
                 }}>
-                  {/* Top Mute Yellow Banner */}
-                  <div style={{
-                    backgroundColor: '#FEF3C7',
-                    color: '#B45309',
-                    border: '1px solid #FDE68A',
-                    fontSize: '11px',
-                    fontWeight: '900',
-                    padding: '4px 12px',
-                    borderRadius: '6px',
-                    alignSelf: 'flex-start',
-                    marginBottom: '16px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px'
-                  }}>
-                    <span>상세페이지 기획안</span> | <span>PAGE {String(selectedSectionIdx + 1).padStart(2, '0')}</span>
+                  <div style={{ fontSize: '12px', fontWeight: '900', color: '#059669', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '8px' }}>
+                    PREMIUM DETAIL PAGE BLUEPRINT
                   </div>
 
-                  <div>
-                    {/* Punchy Short Copy */}
-                    <div style={{ fontSize: '13px', fontWeight: '900', color: '#15803D', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>
-                      ZERO 밍밍함, MAXIMUM 과즙
-                    </div>
+                  {/* LIVE EDITABLE TITLE */}
+                  <input 
+                    type="text"
+                    value={currentSection.title}
+                    onChange={e => updateCurrentSlide('title', e.target.value)}
+                    style={{
+                      width: '100%',
+                      fontSize: '32px',
+                      fontWeight: '900',
+                      color: '#0f172a',
+                      lineHeight: '1.25',
+                      marginBottom: '12px',
+                      backgroundColor: 'transparent',
+                      border: '1px dashed transparent',
+                      borderRadius: '8px',
+                      outline: 'none',
+                      padding: '4px'
+                    }}
+                    className="hover:border-emerald-400 focus:border-emerald-600 focus:bg-white transition"
+                    title="클릭하여 헤드라인 직접 수정"
+                  />
 
-                    {/* LIVE EDITABLE TITLE */}
-                    <input 
-                      type="text"
-                      value={currentSection.title}
-                      onChange={e => updateCurrentSlide('title', e.target.value)}
-                      style={{
-                        width: '100%',
-                        fontSize: '28px',
-                        fontWeight: '900',
-                        color: '#0F172A',
-                        lineHeight: '1.25',
-                        marginBottom: '12px',
-                        backgroundColor: 'transparent',
-                        border: '1px dashed transparent',
-                        borderRadius: '8px',
-                        outline: 'none',
-                        padding: '4px'
-                      }}
-                      className="hover:border-emerald-400 focus:border-emerald-600 focus:bg-white transition"
-                      title="클릭하여 헤드라인 한글 문구 직접 수정"
-                    />
+                  {/* LIVE EDITABLE SUBTITLE */}
+                  <textarea 
+                    rows="2"
+                    value={currentSection.subtitle}
+                    onChange={e => updateCurrentSlide('subtitle', e.target.value)}
+                    style={{
+                      width: '100%',
+                      fontSize: '15px',
+                      color: '#475569',
+                      fontWeight: '700',
+                      lineHeight: '1.5',
+                      marginBottom: '20px',
+                      backgroundColor: 'transparent',
+                      border: '1px dashed transparent',
+                      borderRadius: '8px',
+                      outline: 'none',
+                      padding: '4px',
+                      resize: 'none'
+                    }}
+                    className="hover:border-emerald-400 focus:border-emerald-600 focus:bg-white transition"
+                    title="클릭하여 서브 설명 직접 수정"
+                  />
 
-                    {/* LIVE EDITABLE SUBTITLE */}
-                    <textarea 
-                      rows="2"
-                      value={currentSection.subtitle}
-                      onChange={e => updateCurrentSlide('subtitle', e.target.value)}
-                      style={{
-                        width: '100%',
-                        fontSize: '13px',
-                        color: '#475569',
-                        fontWeight: '700',
-                        lineHeight: '1.5',
-                        marginBottom: '20px',
-                        backgroundColor: 'transparent',
-                        border: '1px dashed transparent',
-                        borderRadius: '8px',
-                        outline: 'none',
-                        padding: '4px',
-                        resize: 'none'
-                      }}
-                      className="hover:border-emerald-400 focus:border-emerald-600 focus:bg-white transition"
-                      title="클릭하여 서브 설명 문구 직접 수정"
-                    />
-
-                    {/* Manus AI Doughnut Chart Component */}
-                    <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '16px', padding: '16px', display: 'flex', alignItems: 'center', gap: '16px', boxShadow: '0 2px 6px rgba(0,0,0,0.03)' }}>
-                      <div style={{ position: 'relative', width: '56px', height: '56px', borderRadius: '50%', background: 'conic-gradient(#15803D 0% 98%, #E2E8F0 98% 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <div style={{ width: '42px', height: '42px', borderRadius: '50%', backgroundColor: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: '900', color: '#15803D' }}>
-                          98%
-                        </div>
-                      </div>
-
-                      <div>
-                        <div style={{ fontSize: '13px', fontWeight: '900', color: '#0F172A' }}>당도 재구매율 98%</div>
-                        <div style={{ fontSize: '11px', color: '#64748b' }}>비파괴 센서 18Brix 이상 검증 완료</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Highlights Footer Pills with Live Edit */}
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', paddingTop: '16px', borderTop: '1px solid #E5E7EB' }}>
+                  {/* Highlights Badge Pills */}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '16px' }}>
                     {currentSection.highlights.map((hl, i) => (
-                      <div key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', backgroundColor: '#FFFFFF', border: '1px solid #BBF7D0', borderRadius: '20px', padding: '2px 8px' }}>
-                        <Check style={{ width: '12px', height: '12px', color: '#15803D' }} />
+                      <div key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', backgroundColor: '#ffffff', border: '1.5px solid #10b981', borderRadius: '20px', padding: '4px 12px', boxShadow: '0 2px 4px rgba(0,0,0,0.03)' }}>
+                        <Check style={{ width: '14px', height: '14px', color: '#059669' }} />
                         <input 
                           type="text"
                           value={hl}
                           onChange={e => updateHighlightPill(i, e.target.value)}
                           style={{
-                            fontSize: '11px',
+                            fontSize: '12px',
                             fontWeight: '800',
-                            color: '#15803D',
+                            color: '#047857',
                             border: 'none',
                             backgroundColor: 'transparent',
                             outline: 'none',
-                            width: `${Math.max(60, hl.length * 12)}px`
+                            width: `${Math.max(70, hl.length * 12)}px`
                           }}
                         />
-                        <button onClick={() => deleteHighlightPill(i)} style={{ border: 'none', background: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '10px' }}>×</button>
+                        <button onClick={() => deleteHighlightPill(i)} style={{ border: 'none', background: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}>×</button>
                       </div>
                     ))}
-                    <button onClick={addHighlightPill} style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '20px', border: '1px dashed #cbd5e1', backgroundColor: '#fff', color: '#64748b', cursor: 'pointer', fontWeight: '800' }}>
+                    <button onClick={addHighlightPill} style={{ fontSize: '11px', padding: '4px 12px', borderRadius: '20px', border: '1px dashed #64748b', backgroundColor: '#fff', color: '#475569', cursor: 'pointer', fontWeight: '800' }}>
                       + 뱃지 추가
                     </button>
                   </div>
                 </div>
 
-                {/* Right 40%: Reference Area */}
-                <div style={{
-                  width: '40%',
-                  backgroundColor: '#FFFFFF',
-                  padding: '36px 24px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  textAlign: 'center',
-                  position: 'relative'
-                }}>
-                  {/* Emblem Sticker */}
-                  <div style={{
-                    position: 'absolute',
-                    top: '20px',
-                    right: '20px',
-                    width: '64px',
-                    height: '64px',
-                    borderRadius: '50%',
-                    backgroundColor: '#15803D',
-                    color: '#FFFFFF',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '9px',
-                    fontWeight: '900',
-                    boxShadow: '0 4px 12px rgba(21, 128, 61, 0.3)',
-                    transform: 'rotate(-12deg)'
-                  }}>
-                    <Award style={{ width: '16px', height: '16px', marginBottom: '2px' }} />
-                    <span>18Brix</span>
-                    <span>검증완료</span>
+                {/* MangoBoard Graphic Cards & Image Display Area */}
+                <div style={{ padding: '24px 32px', backgroundColor: '#ffffff', flex: 1, display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  {/* Feature Card Grid */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                    {/* Trust Card 1 */}
+                    <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '16px', display: 'flex', alignItems: 'center', gap: '14px' }}>
+                      <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: '#dcfce7', color: '#15803d', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: '900', shrink: 0 }}>
+                        18B
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '13px', fontWeight: '900', color: '#0f172a' }}>18Brix 비파괴 검수 완료</div>
+                        <div style={{ fontSize: '11px', color: '#64748b' }}>산지 1:1 센서 당도 98% 검증</div>
+                      </div>
+                    </div>
+
+                    {/* Trust Card 2 */}
+                    <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '16px', display: 'flex', alignItems: 'center', gap: '14px' }}>
+                      <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: '#e0f2fe', color: '#0369a1', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: '900', shrink: 0 }}>
+                        24H
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '13px', fontWeight: '900', color: '#0f172a' }}>24시간 당일수확 출고</div>
+                        <div style={{ fontSize: '11px', color: '#64748b' }}>새벽 5시 수확 ➔ 당일 직송</div>
+                      </div>
+                    </div>
                   </div>
 
-                  <div style={{ fontSize: '64px', marginBottom: '12px' }}>🍈</div>
-                  <h4 style={{ fontSize: '15px', fontWeight: '900', color: '#0F172A', marginBottom: '4px' }}>추천 매칭 자산</h4>
-                  
-                  {/* Render Assets Pills */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '8px', width: '100%' }}>
-                    {currentSection.recommendedAssets && currentSection.recommendedAssets.map((asset, idx) => (
-                      <span key={idx} style={{
-                        fontSize: '10px',
-                        backgroundColor: '#f1f5f9',
-                        color: '#334155',
-                        padding: '4px 8px',
-                        borderRadius: '6px',
-                        fontWeight: '700',
-                        textAlign: 'left',
-                        wordBreak: 'break-all'
-                      }}>
-                        📌 {asset}
+                  {/* Asset & Motion Generator Action Bar */}
+                  <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '12px', fontWeight: '800', color: '#475569' }}>🎬 섹션 연동 미디어:</span>
+                      <span style={{ fontSize: '11px', backgroundColor: '#f1f5f9', color: '#334155', padding: '4px 10px', borderRadius: '6px', fontWeight: '700' }}>
+                        {currentSection.recommendedAssets?.[0] || '샤인머스캣_대표컷.png'}
                       </span>
-                    ))}
-                  </div>
+                    </div>
 
-                  <div style={{ display: 'flex', gap: '6px', marginTop: '16px' }}>
-                    <button onClick={() => setIsWebpModalOpen(true)} style={{ padding: '6px 12px', backgroundColor: '#0284c7', color: '#fff', borderRadius: '8px', border: 'none', fontSize: '11px', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Film style={{ width: '12px', height: '12px' }} /> WebP 움짤 생성
-                    </button>
-                    <button onClick={() => setRightTab('image')} style={{ padding: '6px 12px', backgroundColor: '#0f172a', color: '#fff', borderRadius: '8px', border: 'none', fontSize: '11px', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Upload style={{ width: '12px', height: '12px' }} /> 이미지 변경
-                    </button>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button onClick={() => setIsWebpModalOpen(true)} style={{ padding: '8px 16px', backgroundColor: '#0284c7', color: '#fff', borderRadius: '10px', border: 'none', fontSize: '12px', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 2px 6px rgba(2, 132, 199, 0.2)' }}>
+                        <Film style={{ width: '14px', height: '14px' }} /> WebP 움짤 생성
+                      </button>
+                      <button onClick={() => setRightTab('image')} style={{ padding: '8px 16px', backgroundColor: '#0f172a', color: '#fff', borderRadius: '10px', border: 'none', fontSize: '12px', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 2px 6px rgba(15, 23, 42, 0.2)' }}>
+                        <Upload style={{ width: '14px', height: '14px' }} /> 이미지 변경
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
