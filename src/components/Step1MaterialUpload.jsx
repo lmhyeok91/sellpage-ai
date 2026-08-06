@@ -307,7 +307,7 @@ export default function Step1MaterialUpload({
           </div>
         </div>
 
-        {/* 💚 [네이버 스마트스토어 URL 리뷰 & 포토 이미지 수집기 + AI 리뷰 마이닝 분석] */}
+        {/* 💚 [네이버 스마트스토어 URL 리뷰 & 포토 이미지 수집기 + 50개 높은순 & 50개 낮은순 듀얼 마이닝] */}
         <div style={{ backgroundColor: '#f0fdf4', border: '1.5px solid #6ee7b7', borderRadius: '14px', padding: '16px', marginBottom: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -315,12 +315,28 @@ export default function Step1MaterialUpload({
                 N SMARTSTORE
               </span>
               <span style={{ fontSize: '13px', fontWeight: '800', color: '#065f46' }}>
-                네이버 스마트스토어 URL로 리뷰 마이닝 & 포토 후기 카드 자동 생성
+                네이버 평점 높은 순 50개 + 평점 낮은 순 50개 (총 100개 듀얼 크로스 마이닝)
               </span>
             </div>
-            <span style={{ fontSize: '11px', fontWeight: '700', color: '#047857' }}>
-              기획 소구점(Page 07~08) & 고객후기 카드(Page 20~22) 동시 반영
+            <span style={{ backgroundColor: '#dcfce7', color: '#166534', fontSize: '11px', fontWeight: '800', padding: '2px 8px', borderRadius: '12px', border: '1px solid #86efac' }}>
+              🌟 50개 높은순 + ⚠️ 50개 낮은순 100% 자동 분리
             </span>
+          </div>
+
+          {/* Mode Selector Option Pills */}
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '10px', fontSize: '11px' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '4px', backgroundColor: '#ffffff', border: '1.5px solid #059669', borderRadius: '6px', padding: '4px 10px', fontWeight: '800', color: '#065f46', cursor: 'pointer' }}>
+              <input type="radio" name="review_mode" defaultChecked style={{ accentColor: '#059669' }} />
+              🔥 듀얼 크로스 마이닝 (평점 높은 순 50개 + 평점 낮은 순 50개 = 총 100개) [추천]
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '4px', backgroundColor: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '4px 10px', fontWeight: '600', color: '#64748b', cursor: 'pointer' }}>
+              <input type="radio" name="review_mode" style={{ accentColor: '#059669' }} />
+              🌟 평점 높은 순만 50개 (극찬 후기 중심)
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '4px', backgroundColor: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '4px 10px', fontWeight: '600', color: '#64748b', cursor: 'pointer' }}>
+              <input type="radio" name="review_mode" style={{ accentColor: '#059669' }} />
+              ⚠️ 평점 낮은 순만 50개 (경쟁사 약점 타격 중심)
+            </label>
           </div>
 
           <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
@@ -333,12 +349,12 @@ export default function Step1MaterialUpload({
             <button
               type="button"
               onClick={() => {
-                alert('🎉 [AI 리뷰 마이닝 & 포토 후기 수집 완벽 성공!]\n\n1. 🟢 칭찬 포인트 (18Brix 당도, 에어셀 안심 포장, 아삭 식감) -> Page 01~03 메인후킹 & Page 20~22 후기 카드 반영!\n2. 🔴 경쟁사 불만 포인트 (마트 재고 과일의 밍밍함, 배송 짓눌림) -> Page 07~08 문제제기 기획 반영!');
+                alert('🎉 [100개 듀얼 크로스 마이닝 수집 성공!]\n\n1. 🌟 평점 높은 순 50개 추출: 18Brix 당도, 아삭 식감, 에어셀 안심 포장 -> Page 01~03 & Page 20~22 후기 카드 반영!\n2. ⚠️ 평점 낮은 순 50개 추출: 마트 과일의 밍밍함, 눌림 무름, 유통 지연 -> Page 07~08 문제제기 기획 반영!');
               }}
               style={{ backgroundColor: '#059669', color: '#ffffff', fontSize: '12px', fontWeight: '800', padding: '8px 16px', borderRadius: '8px', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '4px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
             >
               <Sparkles style={{ width: '14px', height: '14px' }} />
-              <span>리뷰 분석 & 포토카드 생성</span>
+              <span>100개 듀얼 분석 & 카드 생성</span>
             </button>
           </div>
 
@@ -346,21 +362,23 @@ export default function Step1MaterialUpload({
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
             <div style={{ backgroundColor: '#ffffff', padding: '10px 12px', borderRadius: '10px', border: '1px solid #a7f3d0' }}>
               <div style={{ fontWeight: '800', color: '#065f46', fontSize: '12px', marginBottom: '4px' }}>
-                👍 고객 극찬 포인트 (기획 핵심 소구점 연동)
+                🌟 평점 높은 순 50개 추출 분석 (기획 메인 소구점 연동)
               </div>
               <ul style={{ fontSize: '11px', color: '#334155', margin: 0, paddingLeft: '16px', lineHeight: '1.5' }}>
                 <li>"알이 아삭아삭 터지고 18Brix 당도가 검증되어 너무 달아요" (Page 01, 03)</li>
                 <li>"에어셀 파손 방지 완충재로 상한 과일 0개 도착" (Page 21 배송신뢰)</li>
+                <li>"아이들이 과즙 팡 터진다고 매일 달라고 해요" (Page 22 추천대상)</li>
               </ul>
             </div>
 
             <div style={{ backgroundColor: '#ffffff', padding: '10px 12px', borderRadius: '10px', border: '1px solid #fecdd3' }}>
               <div style={{ fontWeight: '800', color: '#9f1239', fontSize: '12px', marginBottom: '4px' }}>
-                ⚠️ 타사/경쟁사 고객 불만 (문제제기 타격점 연동)
+                ⚠️ 평점 낮은 순 50개 추출 분석 (타사 약점 타격 연동)
               </div>
               <ul style={{ fontSize: '11px', color: '#334155', margin: 0, paddingLeft: '16px', lineHeight: '1.5' }}>
                 <li>"마트 재고 과일은 유통 과정에서 단맛이 빠지고 무름" (Page 07 문제제기)</li>
                 <li>"일반 박스는 배송 중 눌려서 짓눌려 옴" (Page 08 신선도 차이)</li>
+                <li>"상온 방치로 껍질이 질기고 과즙이 마름" (Page 09 구매이유)</li>
               </ul>
             </div>
           </div>
