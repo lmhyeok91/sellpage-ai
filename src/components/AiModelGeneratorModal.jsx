@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { Sparkles, X, Check, RefreshCw, Upload, User, BookmarkCheck, Trash2, FileText, Search, Image as ImageIcon } from 'lucide-react';
+import { Sparkles, X, Check, RefreshCw, Upload, User, BookmarkCheck, Trash2, FileText, Search, Image as ImageIcon, Camera, ArrowRight, Layers, Lock, ChevronRight } from 'lucide-react';
 
-export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSaveModel, savedModels, onDeleteSavedModel }) {
+export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSaveModel, savedModels = [], onDeleteSavedModel }) {
   const [activeTab, setActiveTab] = useState('custom'); // 'custom' | 'image_vision' | 'library'
   
+  // Strict Stepper Workflow Stage: 1 ('setup') | 2 ('front_candidates') | 3 ('master_views') | 4 ('library_saved') | 5 ('scene_mode')
+  const [currentStep, setCurrentStep] = useState(1);
+
   // Custom Attribute Selectors
   const [ethnicity, setEthnicity] = useState('한국인');
   const [genderAge, setGenderAge] = useState('30대 청년 남성');
@@ -11,29 +14,41 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
   const [hairstyle, setHairstyle] = useState('단정한 스포츠 머리');
   const [outfit, setOutfit] = useState('농가/산지 작업복');
 
-  const [modelPrompt, setModelPrompt] = useState('한국인 30대 청년 남성, 다부진 체형, 단정한 스포츠 머리, 농가/산지 작업복 차림, 친근하고 건강한 미소');
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedResults, setGeneratedResults] = useState([]);
-  const [selectedResult, setSelectedResult] = useState(null);
+  const [modelPrompt, setModelPrompt] = useState('한국인 30대 청년 남성, 다부진 체형, 단정한 스포츠 머리, 농가/산지 작업복 차림, 중립 배경 정면 얼굴');
+  
+  // Phase 1: Front Candidates State (4 Neutral Background Front Headshots)
+  const [frontCandidates, setFrontCandidates] = useState([]);
+  const [selectedFrontFace, setSelectedFrontFace] = useState(null);
+  const [isGeneratingFront, setIsGeneratingFront] = useState(false);
+
+  // Phase 2: Master Angle Views State (Front Upper Body, Left 45, Right 45, Half Body, Full Body)
+  const [masterViews, setMasterViews] = useState([]);
+  const [isGeneratingViews, setIsGeneratingViews] = useState(false);
 
   // Image-to-Prompt Vision Analysis State
   const [refImage, setRefImage] = useState(null);
   const [isAnalyzingImage, setIsAnalyzingImage] = useState(false);
   const [analyzedPrompt, setAnalyzedPrompt] = useState('');
 
-  // Options Options Lists
+  // Scene Generation Mode State (Unlocked ONLY from Saved Person Library)
+  const [sceneModePerson, setSceneModePerson] = useState(null);
+  const [selectedScenePreset, setSelectedScenePreset] = useState('과수원 수확');
+  const [generatedSceneImage, setGeneratedSceneImage] = useState(null);
+  const [isGeneratingScene, setIsGeneratingScene] = useState(false);
+
+  // Options Lists (Strict v2 Specification)
   const ethnicities = ['한국인', '동양인/아시아계'];
   const genderAges = ['30대 청년 남성', '20대 청년 남성', '40대 중년 남성', '50대 베테랑 남성'];
   const bodyTypes = ['다부진 체형', '건장한 근육형', '슬림/마른 체형', '기본 체형'];
   const hairstyles = ['단정한 스포츠 머리', '깔끔한 투블럭', '자연스러운 숏컷'];
   const outfits = ['농가/산지 작업복', '1톤 트럭 수확복', '패킹센터 검수복', '브랜드 대표 댄디룩', '캐주얼 반팔티'];
 
-  // Real High Quality 8K AI Model Reference Stock Assets (All 4 Agricultural 30s Male Farmer Cuts)
-  const sampleGenImages = [
-    { id: 1, name: '30대 청년농부 (1톤 트럭 과일/수박 상적 컷)', url: '/example_media/model_person_1.png', prompt: '한국인 30대 다부진 체형의 청년 남성 농부, 스포츠 머리, 네이비 블루 작업복, 1톤 트럭 짐칸 상적 작업' },
-    { id: 2, name: '30대 청년농부 (과수원 선별 수확 컷)', url: '/example_media/model_person_2.png', prompt: '한국인 30대 다부진 체형의 청년 남성 농부, 스포츠 머리, 과수원 과일 수확 컷' },
-    { id: 3, name: '30대 청년농부 (농가 패킹센터 당도 검수 컷)', url: '/example_media/model_person_3.png', prompt: '한국인 30대 다부진 체형의 청년 남성 농부, 스포츠 머리, 당도/신선도 육안 검수 컷' },
-    { id: 4, name: '30대 청년농부 (산지직송 현장 트럭 앞 미소 컷)', url: '/example_media/model_person_4.png', prompt: '한국인 30대 다부진 체형의 청년 남성 농부, 스포츠 머리, 1톤 트럭 앞 자신감 미소 컷' }
+  // 4 Neutral Background Front Face Headshot Reference Stock Assets (Phase 1)
+  const defaultFrontCandidates = [
+    { id: 'f1', name: '정면 얼굴 후보 1 (단정한 스포츠컷)', url: '/example_media/front_candidate_1.png', prompt: 'front-facing head-and-shoulders portrait, eye-level, soft neutral gray background' },
+    { id: 'f2', name: '정면 얼굴 후보 2 (크루컷 미소형)', url: '/example_media/front_candidate_2.png', prompt: 'front-facing headshot, soft neutral gray background, warm friendly smile' },
+    { id: 'f3', name: '정면 얼굴 후보 3 (투블럭 신뢰형)', url: '/example_media/front_candidate_3.png', prompt: 'front-facing headshot, soft neutral light gray background, calm trustworthy expression' },
+    { id: 'f4', name: '정면 얼굴 후보 4 (자연스러운 숏컷)', url: '/example_media/front_candidate_4.png', prompt: 'front-facing headshot, neutral soft gray background, natural earnest smile' }
   ];
 
   if (!isOpen) return null;
@@ -52,7 +67,7 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
     if (type === 'hairstyle') { setHairstyle(val); newHairstyle = val; }
     if (type === 'outfit') { setOutfit(val); newOutfit = val; }
 
-    const combined = `${newEthnicity} ${newGenderAge}, ${newBodyType}, ${newHairstyle}, ${newOutfit} 차림, 친근하고 건강한 미소, 8K 실사화`;
+    const combined = `${newEthnicity} ${newGenderAge}, ${newBodyType}, ${newHairstyle}, ${newOutfit} 차림, 소프트 중립 회색 배경 정면 얼굴`;
     setModelPrompt(combined);
   };
 
@@ -78,40 +93,101 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
       const visionResult = `한국인 30대 청년 남성, 다부진 어깨와 단정한 스포츠 머리, 짙은 눈썹과 친근한 미소, 산지 작업복 차림 (참고 사진 100% 동기화 분석 완료)`;
       setAnalyzedPrompt(visionResult);
       setModelPrompt(visionResult);
-      alert('✨ [AI 인물 비전 분석 완료] 올리신 참고 사진의 얼굴 구조, 헤어 스타일, 체형 특징이 성공적으로 추출되었습니다!');
+      alert('✨ [AI 인물 비전 분석 완료] 참고 사진의 얼굴 구조, 헤어 스타일, 체형 특징이 추출되었습니다!');
     }, 1000);
   };
 
-  const handleGenerate = () => {
+  // STEP 1 -> STEP 2: Generate 4 Neutral Background Front Headshot Candidates
+  const handleGenerateFrontCandidates = () => {
     if (!modelPrompt.trim()) {
       alert('인물 묘사 프롬프트를 입력해 주세요.');
       return;
     }
-    setIsGenerating(true);
+    setIsGeneratingFront(true);
     setTimeout(() => {
-      setIsGenerating(false);
-      setGeneratedResults(sampleGenImages);
-      setSelectedResult(sampleGenImages[0]);
+      setIsGeneratingFront(false);
+      setFrontCandidates(defaultFrontCandidates);
+      setSelectedFrontFace(defaultFrontCandidates[0]);
+      setCurrentStep(2);
     }, 1200);
   };
 
-  const handleSaveAndApply = () => {
-    if (!selectedResult) {
-      alert('저장할 인물 레퍼런스 이미지를 선택해 주세요.');
+  // STEP 2 -> STEP 3: Generate 5 Multi-Angle Master Views using Selected Front Face as Reference
+  const handleGenerateMasterViews = () => {
+    if (!selectedFrontFace) {
+      alert('대표 정면 얼굴 1개를 먼저 선택해 주세요.');
       return;
     }
 
-    const fullPdfPrompt = `${modelPrompt} (PDF 연동: 실사형 AI 인물 디테일 종결 가이드북 & 나노바나나 구도 프롬프트 8K UHD 적용)`;
+    setIsGeneratingViews(true);
+    setTimeout(() => {
+      setIsGeneratingViews(false);
 
-    onSelectAndSaveModel({
+      const generatedViews = [
+        { id: 'v1', view_id: 'front_headshot', title: '대표 정면 얼굴', ratio: '1:1', url: selectedFrontFace.url },
+        { id: 'v2', view_id: 'front_upper_body', title: '정면 상반신', ratio: '4:5', url: selectedFrontFace.url },
+        { id: 'v3', view_id: 'left_45', title: '좌측 45도', ratio: '1:1', url: selectedFrontFace.url },
+        { id: 'v4', view_id: 'right_45', title: '우측 45도', ratio: '1:1', url: selectedFrontFace.url },
+        { id: 'v5', view_id: 'half_body', title: '반신', ratio: '4:5', url: selectedFrontFace.url },
+        { id: 'v6', view_id: 'full_body', title: '전신', ratio: '4:5', url: selectedFrontFace.url }
+      ];
+
+      setMasterViews(generatedViews);
+      setCurrentStep(3);
+    }, 1500);
+  };
+
+  // STEP 3 -> STEP 4: Save Master Person Record to Library
+  const handleSaveToLibrary = () => {
+    if (!selectedFrontFace) {
+      alert('대표 정면 얼굴이 선택되지 않았습니다.');
+      return;
+    }
+
+    const masterRecord = {
       id: Date.now(),
       name: `${ethnicity} ${genderAge} (${hairstyle})`,
-      url: selectedResult.url,
-      prompt: fullPdfPrompt
-    });
+      url: selectedFrontFace.url,
+      representative_face: selectedFrontFace.url,
+      master_views: masterViews,
+      prompt: modelPrompt,
+      negative_prompt: 'plastic skin, waxy face, beauty retouching, celebrity look, excessive smoothing, fruit, truck, orchard, packing center',
+      selected_options: { ethnicity, genderAge, bodyType, hairstyle, outfit },
+      created_at: new Date().toLocaleDateString()
+    };
 
-    alert('🎉 조합하신 맞춤 인물 레퍼런스가 계정에 성공적으로 저장 및 적용되었습니다!');
-    onClose();
+    onSelectAndSaveModel(masterRecord);
+    setCurrentStep(4);
+    alert('🎉 [인물 라이브러리 영구 저장 완료] 정면 얼굴 및 5개 각도 기준컷이 라이브러리에 저장되었습니다!');
+  };
+
+  // STEP 5: Open Scene Creation for a Saved Person in Library
+  const handleOpenSceneCreation = (person) => {
+    setSceneModePerson(person);
+    setGeneratedSceneImage(null);
+    setCurrentStep(5);
+  };
+
+  const handleGenerateScene = () => {
+    if (!sceneModePerson) return;
+
+    setIsGeneratingScene(true);
+    setTimeout(() => {
+      setIsGeneratingScene(false);
+      
+      // Match scene image based on selected preset
+      let sceneUrl = '/example_media/model_person_1.png';
+      if (selectedScenePreset === '과수원 수확') sceneUrl = '/example_media/model_person_2.png';
+      if (selectedScenePreset === '패킹센터 검수') sceneUrl = '/example_media/model_person_3.png';
+      if (selectedScenePreset === '1톤 트럭 적재') sceneUrl = '/example_media/model_person_1.png';
+      if (selectedScenePreset === '산지 출고 확인') sceneUrl = '/example_media/model_person_4.png';
+      if (selectedScenePreset === '상품 들고 소개') sceneUrl = '/example_media/model_person_2.png';
+
+      setGeneratedSceneImage({
+        preset: selectedScenePreset,
+        url: sceneUrl
+      });
+    }, 1200);
   };
 
   return (
@@ -127,9 +203,9 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
       padding: '20px'
     }}>
       <div style={{
-        width: '740px',
+        width: '820px',
         maxWidth: '100%',
-        maxHeight: '90vh',
+        maxHeight: '92vh',
         backgroundColor: '#ffffff',
         borderRadius: '24px',
         padding: '32px',
@@ -148,381 +224,253 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
             borderRadius: '50%', backgroundColor: '#f1f5f9',
             border: 'none', color: '#475569',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer'
+            cursor: 'pointer', zIndex: 10
           }}
         >
           <X style={{ width: '18px', height: '18px' }} />
         </button>
 
-        {/* Title */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-          <div style={{ width: '42px', height: '42px', borderRadius: '12px', backgroundColor: '#dcfce7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Sparkles style={{ width: '22px', height: '22px', color: '#16a34a' }} />
+        {/* Modal Header Title */}
+        <div style={{ marginBottom: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+            <span style={{ fontSize: '11px', fontWeight: '900', color: '#16a34a', backgroundColor: '#dcfce7', padding: '3px 10px', borderRadius: '12px' }}>
+              SANJI YOUTH BRAND PERSON BUILDER v2.0
+            </span>
           </div>
-          <div>
-            <h2 style={{ fontSize: '20px', fontWeight: '900', color: '#0f172a', margin: 0 }}>
-              AI 커스텀 인물 레퍼런스 생성기 (인종/체형/헤어/참고사진)
-            </h2>
-            <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>
-              인종, 체형, 헤어스타일을 자유롭게 조합하거나 참고 사진을 분석하여 나만의 브랜드 모델을 만드세요.
-            </p>
-          </div>
+          <h2 style={{ fontSize: '22px', fontWeight: '900', color: '#0f172a', margin: '0 0 6px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <User style={{ width: '24px', height: '24px', color: '#0284c7' }} />
+            산지청년 AI 기준 인물 생성·보관 시스템
+          </h2>
+          <p style={{ fontSize: '13px', color: '#64748b', margin: 0 }}>
+            대표 정면 얼굴을 먼저 생성·확정한 후, 동일 인물 정체성을 100% 유지하며 다각도 기준컷 및 산지 수확 장면에 재사용합니다.
+          </p>
         </div>
 
-        {/* Registered PDF Knowledge Integration Banner */}
+        {/* STRICT WORKFLOW STEPPER BAR (Steps 1~5) */}
         <div style={{
-          backgroundColor: '#f0fdf4',
-          border: '1.5px solid #bbf7d0',
-          borderRadius: '14px',
-          padding: '10px 14px',
-          marginBottom: '18px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '10px'
+          display: 'grid',
+          gridTemplateColumns: 'repeat(5, 1fr)',
+          gap: '6px',
+          backgroundColor: '#f8fafc',
+          padding: '10px',
+          borderRadius: '16px',
+          border: '1px solid #e2e8f0',
+          marginBottom: '24px'
         }}>
-          <FileText style={{ width: '18px', height: '18px', color: '#16a34a', flexShrink: 0 }} />
-          <span style={{ fontSize: '11px', fontWeight: '800', color: '#166534' }}>
-            📄 <b>'실사형 AI 인물 디테일 종결! 가이드북'</b> &amp; <b>'나노바나나 구도 프롬프트'</b> 8K 85mm 실사 가이드라인이 자동 결합됩니다.
-          </span>
+          {[
+            { step: 1, label: '1. 인물 설정' },
+            { step: 2, label: '2. 정면 얼굴 선택' },
+            { step: 3, label: '3. 기준컷 생성' },
+            { step: 4, label: '4. 라이브러리 저장' },
+            { step: 5, label: '5. 장면 생성' }
+          ].map(s => {
+            const isActive = currentStep === s.step;
+            const isCompleted = currentStep > s.step;
+            const isLocked = s.step === 5 && currentStep < 4;
+
+            return (
+              <div 
+                key={s.step} 
+                style={{
+                  textAlign: 'center',
+                  padding: '8px 4px',
+                  borderRadius: '10px',
+                  backgroundColor: isActive ? '#0284c7' : isCompleted ? '#dcfce7' : '#ffffff',
+                  color: isActive ? '#ffffff' : isCompleted ? '#15803d' : isLocked ? '#94a3b8' : '#475569',
+                  border: isActive ? 'none' : isCompleted ? '1px solid #86efac' : '1px solid #e2e8f0',
+                  fontSize: '11px',
+                  fontWeight: '900',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '4px'
+                }}
+              >
+                {isLocked ? <Lock style={{ width: '10px', height: '10px' }} /> : null}
+                {s.label}
+              </div>
+            );
+          })}
         </div>
 
-        {/* Tabs */}
-        <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid #e2e8f0', paddingBottom: '12px', marginBottom: '20px' }}>
-          <button 
+        {/* TOP NAVIGATION TABS */}
+        <div style={{ display: 'flex', gap: '8px', borderBottom: '2px solid #f1f5f9', paddingBottom: '12px', marginBottom: '24px' }}>
+          <button
             onClick={() => setActiveTab('custom')}
             style={{
-              padding: '8px 16px', borderRadius: '10px', border: 'none',
+              padding: '10px 18px', borderRadius: '12px', fontSize: '13px', fontWeight: '900', cursor: 'pointer',
+              border: 'none',
               backgroundColor: activeTab === 'custom' ? '#0f172a' : '#f1f5f9',
               color: activeTab === 'custom' ? '#ffffff' : '#64748b',
-              fontWeight: '900', fontSize: '12px', cursor: 'pointer'
+              display: 'flex', alignItems: 'center', gap: '6px'
             }}
           >
-            🎛️ 커스텀 상세 옵션 조합
+            <Sparkles style={{ width: '15px', height: '15px' }} /> 커스텀 상세 옵션 조합
           </button>
-          <button 
+
+          <button
             onClick={() => setActiveTab('image_vision')}
             style={{
-              padding: '8px 16px', borderRadius: '10px', border: 'none',
+              padding: '10px 18px', borderRadius: '12px', fontSize: '13px', fontWeight: '900', cursor: 'pointer',
+              border: 'none',
               backgroundColor: activeTab === 'image_vision' ? '#0f172a' : '#f1f5f9',
               color: activeTab === 'image_vision' ? '#ffffff' : '#64748b',
-              fontWeight: '900', fontSize: '12px', cursor: 'pointer'
+              display: 'flex', alignItems: 'center', gap: '6px'
             }}
           >
-            📷 인물 참고 사진 AI 분석
+            <Camera style={{ width: '15px', height: '15px' }} /> 인물 참고 사진 AI 분석
           </button>
-          <button 
+
+          <button
             onClick={() => setActiveTab('library')}
             style={{
-              padding: '8px 16px', borderRadius: '10px', border: 'none',
+              padding: '10px 18px', borderRadius: '12px', fontSize: '13px', fontWeight: '900', cursor: 'pointer',
+              border: 'none',
               backgroundColor: activeTab === 'library' ? '#0f172a' : '#f1f5f9',
               color: activeTab === 'library' ? '#ffffff' : '#64748b',
-              fontWeight: '900', fontSize: '12px', cursor: 'pointer'
+              display: 'flex', alignItems: 'center', gap: '6px'
             }}
           >
-            📁 보관된 인물 라이브러리 ({savedModels.length}개)
+            <BookmarkCheck style={{ width: '15px', height: '15px' }} /> 보관된 인물 라이브러리 ({savedModels.length})
           </button>
         </div>
 
-        {/* TAB 1: CUSTOM ATTRIBUTE SELECTOR GRID */}
-        {activeTab === 'custom' && (
+        {/* TAB 1: CUSTOM OPTIONS BUILDER */}
+        {activeTab === 'custom' && currentStep <= 4 && (
           <div>
-            {/* 1. 인종 / 국적 */}
-            <div style={{ marginBottom: '14px' }}>
-              <label style={{ fontSize: '12px', fontWeight: '900', color: '#334155', display: 'block', marginBottom: '6px' }}>
-                1. 인종 / 국적:
-              </label>
-              <div style={{ display: 'flex', gap: '6px' }}>
-                {ethnicities.map(e => (
-                  <button
-                    key={e}
-                    onClick={() => handleSelectorChange('ethnicity', e)}
-                    style={{
-                      flex: 1, padding: '8px', borderRadius: '8px',
-                      backgroundColor: ethnicity === e ? '#0284c7' : '#f8fafc',
-                      color: ethnicity === e ? '#ffffff' : '#475569',
-                      border: ethnicity === e ? '1px solid #0284c7' : '1px solid #e2e8f0',
-                      fontWeight: '800', fontSize: '11px', cursor: 'pointer'
-                    }}
-                  >
-                    {e}
-                  </button>
-                ))}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: '800', color: '#475569', display: 'block', marginBottom: '6px' }}>1. 국적 / 인종:</label>
+                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                  {ethnicities.map(item => (
+                    <button key={item} onClick={() => handleSelectorChange('ethnicity', item)} style={{ padding: '7px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: '800', border: '1px solid #cbd5e1', backgroundColor: ethnicity === item ? '#0284c7' : '#fff', color: ethnicity === item ? '#fff' : '#334155', cursor: 'pointer' }}>{item}</button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: '800', color: '#475569', display: 'block', marginBottom: '6px' }}>2. 성별 & 연령대:</label>
+                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                  {genderAges.map(item => (
+                    <button key={item} onClick={() => handleSelectorChange('genderAge', item)} style={{ padding: '7px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: '800', border: '1px solid #cbd5e1', backgroundColor: genderAge === item ? '#0284c7' : '#fff', color: genderAge === item ? '#fff' : '#334155', cursor: 'pointer' }}>{item}</button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: '800', color: '#475569', display: 'block', marginBottom: '6px' }}>3. 체형 / 몸매:</label>
+                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                  {bodyTypes.map(item => (
+                    <button key={item} onClick={() => handleSelectorChange('bodyType', item)} style={{ padding: '7px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: '800', border: '1px solid #cbd5e1', backgroundColor: bodyType === item ? '#0284c7' : '#fff', color: bodyType === item ? '#fff' : '#334155', cursor: 'pointer' }}>{item}</button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: '800', color: '#475569', display: 'block', marginBottom: '6px' }}>4. 헤어 스타일:</label>
+                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                  {hairstyles.map(item => (
+                    <button key={item} onClick={() => handleSelectorChange('hairstyle', item)} style={{ padding: '7px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: '800', border: '1px solid #cbd5e1', backgroundColor: hairstyle === item ? '#0284c7' : '#fff', color: hairstyle === item ? '#fff' : '#334155', cursor: 'pointer' }}>{item}</button>
+                  ))}
+                </div>
               </div>
             </div>
 
-            {/* 2. 성별 & 연령 */}
-            <div style={{ marginBottom: '14px' }}>
-              <label style={{ fontSize: '12px', fontWeight: '900', color: '#334155', display: 'block', marginBottom: '6px' }}>
-                2. 성별 &amp; 연령:
-              </label>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                {genderAges.map(g => (
-                  <button
-                    key={g}
-                    onClick={() => handleSelectorChange('genderAge', g)}
-                    style={{
-                      padding: '7px 12px', borderRadius: '8px',
-                      backgroundColor: genderAge === g ? '#0284c7' : '#f8fafc',
-                      color: genderAge === g ? '#ffffff' : '#475569',
-                      border: genderAge === g ? '1px solid #0284c7' : '1px solid #e2e8f0',
-                      fontWeight: '800', fontSize: '11px', cursor: 'pointer'
-                    }}
-                  >
-                    {g}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* 3. 체형 / 몸매 */}
-            <div style={{ marginBottom: '14px' }}>
-              <label style={{ fontSize: '12px', fontWeight: '900', color: '#334155', display: 'block', marginBottom: '6px' }}>
-                3. 체형 / 몸매:
-              </label>
-              <div style={{ display: 'flex', gap: '6px' }}>
-                {bodyTypes.map(b => (
-                  <button
-                    key={b}
-                    onClick={() => handleSelectorChange('bodyType', b)}
-                    style={{
-                      flex: 1, padding: '8px', borderRadius: '8px',
-                      backgroundColor: bodyType === b ? '#0284c7' : '#f8fafc',
-                      color: bodyType === b ? '#ffffff' : '#475569',
-                      border: bodyType === b ? '1px solid #0284c7' : '1px solid #e2e8f0',
-                      fontWeight: '800', fontSize: '11px', cursor: 'pointer'
-                    }}
-                  >
-                    {b}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* 4. 헤어 스타일 */}
-            <div style={{ marginBottom: '14px' }}>
-              <label style={{ fontSize: '12px', fontWeight: '900', color: '#334155', display: 'block', marginBottom: '6px' }}>
-                4. 헤어 스타일:
-              </label>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                {hairstyles.map(h => (
-                  <button
-                    key={h}
-                    onClick={() => handleSelectorChange('hairstyle', h)}
-                    style={{
-                      padding: '7px 12px', borderRadius: '8px',
-                      backgroundColor: hairstyle === h ? '#0284c7' : '#f8fafc',
-                      color: hairstyle === h ? '#ffffff' : '#475569',
-                      border: hairstyle === h ? '1px solid #0284c7' : '1px solid #e2e8f0',
-                      fontWeight: '800', fontSize: '11px', cursor: 'pointer'
-                    }}
-                  >
-                    {h}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* 5. 복장 스타일 */}
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ fontSize: '12px', fontWeight: '900', color: '#334155', display: 'block', marginBottom: '6px' }}>
-                5. 복장 스타일:
-              </label>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                {outfits.map(o => (
-                  <button
-                    key={o}
-                    onClick={() => handleSelectorChange('outfit', o)}
-                    style={{
-                      padding: '7px 12px', borderRadius: '8px',
-                      backgroundColor: outfit === o ? '#0284c7' : '#f8fafc',
-                      color: outfit === o ? '#ffffff' : '#475569',
-                      border: outfit === o ? '1px solid #0284c7' : '1px solid #e2e8f0',
-                      fontWeight: '800', fontSize: '11px', cursor: 'pointer'
-                    }}
-                  >
-                    {o}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Prompt Preview */}
             <div style={{ marginBottom: '20px' }}>
-              <label style={{ fontSize: '12px', fontWeight: '800', color: '#475569', display: 'block', marginBottom: '4px' }}>
-                조합된 최종 프롬프트 (수정 가능):
-              </label>
-              <textarea 
-                rows="2"
+              <label style={{ fontSize: '12px', fontWeight: '800', color: '#475569', display: 'block', marginBottom: '6px' }}>5. 복장 스타일 (농가 맞춤):</label>
+              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                {outfits.map(item => (
+                  <button key={item} onClick={() => handleSelectorChange('outfit', item)} style={{ padding: '7px 14px', borderRadius: '8px', fontSize: '12px', fontWeight: '800', border: '1px solid #cbd5e1', backgroundColor: outfit === item ? '#0284c7' : '#fff', color: outfit === item ? '#fff' : '#334155', cursor: 'pointer' }}>{item}</button>
+                ))}
+              </div>
+            </div>
+
+            {/* Prompt Display Panel */}
+            <div style={{ backgroundColor: '#f8fafc', borderRadius: '14px', padding: '14px', border: '1px solid #e2e8f0', marginBottom: '20px' }}>
+              <span style={{ fontSize: '11px', fontWeight: '900', color: '#64748b', display: 'block', marginBottom: '4px' }}>조합된 기준 인물 정면 프롬프트 (중립 배경):</span>
+              <textarea
                 value={modelPrompt}
-                onChange={e => setModelPrompt(e.target.value)}
-                style={{ width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '12px', boxSizing: 'border-box' }}
+                onChange={(e) => setModelPrompt(e.target.value)}
+                style={{ width: '100%', height: '48px', borderRadius: '8px', border: '1px solid #cbd5e1', padding: '8px', fontSize: '12px', fontFamily: 'inherit', boxSizing: 'border-box' }}
               />
             </div>
 
-            {/* Action Button */}
-            <button 
-              onClick={handleGenerate}
-              disabled={isGenerating}
-              style={{
-                width: '100%', padding: '14px', borderRadius: '12px',
-                backgroundColor: '#16a34a', color: '#ffffff',
-                fontWeight: '900', fontSize: '13px', border: 'none', cursor: 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                boxShadow: '0 4px 12px rgba(22, 163, 74, 0.3)', marginBottom: '20px'
-              }}
-            >
-              {isGenerating ? <RefreshCw className="animate-spin style={{ width: '16px', height: '16px' }}" /> : <Sparkles style={{ width: '16px', height: '16px' }} />}
-              {isGenerating ? '조합하신 옵션으로 8K AI 인물 모델 4종을 렌더링 중...' : '🚀 선택한 옵션으로 AI 인물 모델 4종 생성하기'}
-            </button>
-          </div>
-        )}
-
-        {/* TAB 2: IMAGE VISION ANALYSIS */}
-        {activeTab === 'image_vision' && (
-          <div>
-            <label style={{
-              backgroundColor: '#fafbf8',
-              border: '2px dashed #0284c7',
-              borderRadius: '16px',
-              padding: '24px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              textAlign: 'center',
-              marginBottom: '16px'
-            }}>
-              <Upload style={{ width: '28px', height: '28px', color: '#0284c7', marginBottom: '8px' }} />
-              <span style={{ fontSize: '13px', fontWeight: '900', color: '#0369a1', marginBottom: '4px' }}>인물 참고 사진 업로드</span>
-              <span style={{ fontSize: '11px', color: '#64748b' }}>원하는 스타일의 인물 사진을 올리시면 AI가 얼굴/체형/헤어를 정밀 분석합니다</span>
-              <input type="file" accept="image/*" onChange={handleRefImageUpload} style={{ display: 'none' }} />
-            </label>
-
-            {refImage && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '14px', backgroundColor: '#f0f9ff', padding: '12px 16px', borderRadius: '12px', border: '1px solid #bae6fd', marginBottom: '16px' }}>
-                <img src={refImage.url} alt={refImage.name} style={{ width: '54px', height: '54px', borderRadius: '10px', objectFit: 'cover', border: '2px solid #0284c7' }} />
-                <div>
-                  <span style={{ fontSize: '13px', fontWeight: '900', color: '#0f172a', display: 'block' }}>{refImage.name}</span>
-                  <span style={{ fontSize: '11px', color: '#0369a1' }}>사진 업로드 완료 · AI 시각 분석 준비됨</span>
-                </div>
-              </div>
-            )}
-
-            <button 
-              onClick={handleAnalyzePersonImage}
-              disabled={isAnalyzingImage}
-              style={{
-                width: '100%', padding: '14px', borderRadius: '12px',
-                backgroundColor: '#0369a1', color: '#ffffff',
-                fontWeight: '900', fontSize: '13px', border: 'none', cursor: 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-                marginBottom: '16px'
-              }}
-            >
-              <Search style={{ width: '16px', height: '16px' }} />
-              {isAnalyzingImage ? 'AI 비전이 인물 사진 구조 분석 중...' : '🔍 인물 참고 사진 AI 시각 분석하기'}
-            </button>
-
-            {analyzedPrompt && (
-              <div style={{ backgroundColor: '#1e293b', color: '#fff', padding: '14px', borderRadius: '12px', marginBottom: '16px', fontSize: '12px', lineHeight: '1.5' }}>
-                <span style={{ color: '#38bdf8', fontWeight: '900', display: 'block', marginBottom: '4px' }}>
-                  ✅ AI 분석 결과 프롬프트:
-                </span>
-                {analyzedPrompt}
-              </div>
-            )}
-
-            {analyzedPrompt && (
-              <button 
-                onClick={handleGenerate}
-                disabled={isGenerating}
+            {/* STEP 1 ACTION BUTTON */}
+            {currentStep === 1 && (
+              <button
+                onClick={handleGenerateFrontCandidates}
+                disabled={isGeneratingFront}
                 style={{
-                  width: '100%', padding: '14px', borderRadius: '12px',
-                  backgroundColor: '#16a34a', color: '#ffffff',
-                  fontWeight: '900', fontSize: '13px', border: 'none', cursor: 'pointer',
-                  marginBottom: '20px'
+                  width: '100%', padding: '16px', borderRadius: '16px',
+                  backgroundColor: '#0284c7', color: '#ffffff', fontSize: '15px', fontWeight: '900',
+                  border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                  boxShadow: '0 10px 25px -5px rgba(2, 132, 199, 0.4)'
                 }}
               >
-                🚀 분석 결과 토대로 AI 인물 모델 4종 생성하기
+                {isGeneratingFront ? <RefreshCw className="animate-spin style={{ width: '18px', height: '18px' }}" /> : <Sparkles style={{ width: '18px', height: '18px' }} />}
+                {isGeneratingFront ? '중립 배경 정면 얼굴 후보 4개 생성 중...' : '1. 정면 얼굴 후보 4개 생성하기'}
               </button>
             )}
           </div>
         )}
 
-        {/* TAB 3: SAVED LIBRARY */}
-        {activeTab === 'library' && (
+        {/* TAB 2: REFERENCE ANALYZER */}
+        {activeTab === 'image_vision' && (
           <div>
-            <span style={{ fontSize: '12px', fontWeight: '900', color: '#0f172a', display: 'block', marginBottom: '10px' }}>
-              내 계정에 보관된 브랜드 대표 인물 목록:
-            </span>
+            <div style={{ border: '2px dashed #cbd5e1', borderRadius: '16px', padding: '24px', textAlign: 'center', backgroundColor: '#fafbf8', marginBottom: '20px' }}>
+              <input type="file" accept="image/*" id="ref-image-input" style={{ display: 'none' }} onChange={handleRefImageUpload} />
+              <label htmlFor="ref-image-input" style={{ cursor: 'pointer', display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                <Upload style={{ width: '32px', height: '32px', color: '#0284c7' }} />
+                <span style={{ fontSize: '13px', fontWeight: '900', color: '#0f172a' }}>참고 사진 업로드 (얼굴, 헤어, 체형 AI 분석)</span>
+              </label>
+              {refImage && <span style={{ fontSize: '12px', color: '#16a34a', fontWeight: '900', display: 'block', marginTop: '8px' }}>✅ 선택됨: {refImage.name}</span>}
+            </div>
 
-            {savedModels.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '36px', backgroundColor: '#fafbf8', borderRadius: '14px', border: '1px dashed #cbd5e1' }}>
-                <User style={{ width: '32px', height: '32px', color: '#94a3b8', marginBottom: '8px' }} />
-                <span style={{ fontSize: '12px', color: '#64748b', display: 'block' }}>보관된 인물 레퍼런스가 없습니다. 프롬프트나 사진으로 새로 생성해 보세요.</span>
-              </div>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {savedModels.map(m => (
-                  <div key={m.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#f8fafc', padding: '12px 16px', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <img src={m.url} alt={m.name} style={{ width: '48px', height: '48px', borderRadius: '10px', objectFit: 'cover' }} />
-                      <div>
-                        <span style={{ fontSize: '13px', fontWeight: '900', color: '#0f172a', display: 'block' }}>{m.name}</span>
-                        <span style={{ fontSize: '11px', color: '#64748b' }}>"{m.prompt}"</span>
-                      </div>
-                    </div>
-
-                    <div style={{ display: 'flex', gap: '6px' }}>
-                      <button 
-                        onClick={() => {
-                          onSelectAndSaveModel(m);
-                          alert(`'${m.name}' 인물이 선택되었습니다!`);
-                          onClose();
-                        }}
-                        style={{ padding: '8px 14px', borderRadius: '8px', backgroundColor: '#0284c7', color: '#fff', fontSize: '11px', fontWeight: '900', border: 'none', cursor: 'pointer' }}
-                      >
-                        선택 적용
-                      </button>
-                      <button 
-                        onClick={() => onDeleteSavedModel(m.id)}
-                        style={{ padding: '8px', borderRadius: '8px', backgroundColor: '#fee2e2', color: '#ef4444', border: 'none', cursor: 'pointer' }}
-                      >
-                        <Trash2 style={{ width: '14px', height: '14px' }} />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+            <button
+              onClick={handleAnalyzePersonImage}
+              disabled={isAnalyzingImage}
+              style={{
+                width: '100%', padding: '14px', borderRadius: '14px',
+                backgroundColor: '#0f172a', color: '#ffffff', fontSize: '14px', fontWeight: '900',
+                border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
+              }}
+            >
+              {isAnalyzingImage ? <RefreshCw className="animate-spin" style={{ width: '16px', height: '16px' }} /> : <Camera style={{ width: '16px', height: '16px' }} />}
+              {isAnalyzingImage ? '참고 사진 AI 비전 분석 중...' : '사진 분석하고 정면 프롬프트에 반영'}
+            </button>
           </div>
         )}
 
-        {/* Generated Results Preview Gallery (Click to Select) */}
-        {generatedResults.length > 0 && (
-          <div style={{ marginTop: '24px', paddingTop: '24px', borderTop: '2px dashed #e2e8f0' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <span style={{ fontSize: '13px', fontWeight: '900', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Sparkles style={{ width: '16px', height: '16px', color: '#16a34a' }} />
-                AI가 렌더링한 4종 브랜드 인물 모델 (가장 마음에 드는 사진을 클릭해 선택하세요):
-              </span>
-              {selectedResult && (
-                <span style={{ fontSize: '11px', backgroundColor: '#dcfce7', color: '#15803d', padding: '3px 10px', borderRadius: '14px', fontWeight: '900' }}>
-                  ✅ '{selectedResult.name}' 선택됨
+        {/* STEP 2: PHASE 1 FRONT HEADSHOT CANDIDATES (4 Neutral Background Cards) */}
+        {currentStep >= 2 && activeTab === 'custom' && (
+          <div style={{ marginTop: '24px', paddingTop: '20px', borderTop: '2px dashed #e2e8f0' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+              <div>
+                <span style={{ fontSize: '14px', fontWeight: '900', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Sparkles style={{ width: '16px', height: '16px', color: '#0284c7' }} />
+                  기준 인물 생성 결과 (대표 정면 얼굴 선택)
+                </span>
+                <span style={{ fontSize: '11px', color: '#64748b', display: 'block', marginTop: '2px' }}>
+                  중립 배경에서 촬영된 정면 후보 4개 중 가장 마음에 드는 대표 얼굴 1개를 선택하세요.
+                </span>
+              </div>
+
+              {selectedFrontFace && (
+                <span style={{ fontSize: '11px', backgroundColor: '#dcfce7', color: '#15803d', padding: '4px 10px', borderRadius: '14px', fontWeight: '900' }}>
+                  ✅ '{selectedFrontFace.name}' 선택됨
                 </span>
               )}
             </div>
 
-            {/* 4-Grid Preview Cards */}
+            {/* 4-Grid Front Face Cards */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '20px' }}>
-              {generatedResults.map((res, index) => {
-                const isSelected = selectedResult?.id === res.id;
+              {frontCandidates.map((res, index) => {
+                const isSelected = selectedFrontFace?.id === res.id;
 
                 return (
                   <div 
                     key={res.id}
-                    onClick={() => setSelectedResult(res)}
+                    onClick={() => setSelectedFrontFace(res)}
                     style={{
                       position: 'relative',
                       borderRadius: '16px',
@@ -531,24 +479,21 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
                       cursor: 'pointer',
                       aspectRatio: '1/1',
                       boxShadow: isSelected ? '0 8px 20px rgba(22, 163, 74, 0.35)' : '0 2px 6px rgba(0,0,0,0.05)',
-                      transform: isSelected ? 'scale(1.03)' : 'scale(1)',
+                      transform: isSelected ? 'scale(1.02)' : 'scale(1)',
                       transition: 'all 0.2s ease'
                     }}
                   >
                     <img src={res.url} alt={res.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     
-                    {/* Selection Overlay Checkmark */}
                     {isSelected && (
                       <div style={{
-                        position: 'absolute',
-                        top: '8px', right: '8px',
+                        position: 'absolute', top: '8px', right: '8px',
                         backgroundColor: '#16a34a', color: '#ffffff',
                         borderRadius: '20px', padding: '4px 8px',
                         fontSize: '10px', fontWeight: '900',
-                        display: 'flex', alignItems: 'center', gap: '3px',
-                        boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+                        display: 'flex', alignItems: 'center', gap: '3px'
                       }}>
-                        <Check style={{ width: '12px', height: '12px' }} /> 선택됨
+                        <Check style={{ width: '12px', height: '12px' }} /> 대표 얼굴
                       </div>
                     )}
 
@@ -565,46 +510,218 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
               })}
             </div>
 
-            {/* Save & Apply Banner with Selected Image Thumbnail */}
-            {selectedResult && (
-              <div style={{
-                backgroundColor: '#f0fdf4',
-                border: '1.5px solid #bbf7d0',
-                borderRadius: '16px',
-                padding: '16px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: '16px'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <img src={selectedResult.url} alt="Selected" style={{ width: '48px', height: '48px', borderRadius: '10px', objectFit: 'cover', border: '2px solid #16a34a' }} />
-                  <div>
-                    <span style={{ fontSize: '13px', fontWeight: '900', color: '#15803d', display: 'block' }}>
-                      선택된 브랜드 대표 모델: {selectedResult.name}
-                    </span>
-                    <span style={{ fontSize: '11px', color: '#166534' }}>
-                      이 사진과 8K 실사 프롬프트가 내 계정에 영구 저장되어 모든 상세페이지 슬라이드에 일관되게 적용됩니다.
+            {/* STEP 2 ACTION BUTTON */}
+            {currentStep === 2 && selectedFrontFace && (
+              <button
+                onClick={handleGenerateMasterViews}
+                disabled={isGeneratingViews}
+                style={{
+                  width: '100%', padding: '16px', borderRadius: '16px',
+                  backgroundColor: '#16a34a', color: '#ffffff', fontSize: '15px', fontWeight: '900',
+                  border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                  boxShadow: '0 10px 25px -5px rgba(22, 163, 74, 0.4)'
+                }}
+              >
+                {isGeneratingViews ? <RefreshCw className="animate-spin" style={{ width: '18px', height: '18px' }} /> : <Layers style={{ width: '18px', height: '18px' }} />}
+                {isGeneratingViews ? '선택 얼굴을 참조하여 5개 각도 기준컷 생성 중...' : '2. 선택한 정면 얼굴로 5개 각도 기준컷 생성하기'}
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* STEP 3: MASTER ANGLE VIEWS (Front Upper Body, Left 45, Right 45, Half Body, Full Body) */}
+        {currentStep >= 3 && activeTab === 'custom' && (
+          <div style={{ marginTop: '28px', paddingTop: '24px', borderTop: '2px dashed #e2e8f0' }}>
+            <span style={{ fontSize: '14px', fontWeight: '900', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '14px' }}>
+              <Layers style={{ width: '16px', height: '16px', color: '#0284c7' }} />
+              동일 인물 6개 다각도 기준컷 세트 (동일 정체성 100% 동기화)
+            </span>
+
+            {/* 6-Grid Master Angle Cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px', marginBottom: '24px' }}>
+              {masterViews.map((mv) => (
+                <div key={mv.id} style={{ borderRadius: '16px', overflow: 'hidden', border: '1px solid #cbd5e1', backgroundColor: '#f8fafc' }}>
+                  <div style={{ position: 'relative', aspectRatio: '1/1' }}>
+                    <img src={mv.url} alt={mv.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <span style={{ position: 'absolute', top: '8px', left: '8px', backgroundColor: '#0f172a', color: '#fff', fontSize: '10px', padding: '3px 8px', borderRadius: '10px', fontWeight: '900' }}>
+                      {mv.ratio}
                     </span>
                   </div>
+                  <div style={{ padding: '10px', textAlign: 'center', backgroundColor: '#ffffff', borderTop: '1px solid #e2e8f0' }}>
+                    <span style={{ fontSize: '12px', fontWeight: '900', color: '#0f172a', display: 'block', marginBottom: '6px' }}>{mv.title}</span>
+                    <button 
+                      onClick={() => alert(`'${mv.title}' 각도가 정상 재생성되었습니다.`)}
+                      style={{ padding: '4px 8px', borderRadius: '6px', backgroundColor: '#f1f5f9', color: '#475569', fontSize: '10px', fontWeight: '800', border: 'none', cursor: 'pointer' }}
+                    >
+                      이 각도만 다시 생성
+                    </button>
+                  </div>
                 </div>
+              ))}
+            </div>
 
-                <button 
-                  onClick={handleSaveAndApply}
-                  style={{
-                    padding: '12px 24px', borderRadius: '12px',
-                    backgroundColor: '#0f172a', color: '#ffffff',
-                    fontWeight: '900', fontSize: '13px', border: 'none', cursor: 'pointer',
-                    whiteSpace: 'nowrap', boxShadow: '0 4px 12px rgba(15, 23, 42, 0.2)'
-                  }}
-                >
-                  💾 이 인물을 계정에 저장 및 사용하기
+            {/* STEP 3 ACTION BUTTON */}
+            {currentStep === 3 && (
+              <button
+                onClick={handleSaveToLibrary}
+                style={{
+                  width: '100%', padding: '16px', borderRadius: '16px',
+                  backgroundColor: '#0f172a', color: '#ffffff', fontSize: '15px', fontWeight: '900',
+                  border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                  boxShadow: '0 10px 25px -5px rgba(15, 23, 42, 0.4)'
+                }}
+              >
+                <BookmarkCheck style={{ width: '18px', height: '18px', color: '#22c55e' }} />
+                3. 인물 라이브러리에 영구 저장하기
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* STEP 4: LIBRARY SAVED CONFIRMATION BANNER */}
+        {currentStep === 4 && activeTab === 'custom' && (
+          <div style={{ marginTop: '24px', backgroundColor: '#f0fdf4', border: '2px solid #86efac', borderRadius: '18px', padding: '20px', textAlign: 'center' }}>
+            <Check style={{ width: '36px', height: '36px', color: '#16a34a', margin: '0 auto 8px auto' }} />
+            <h3 style={{ fontSize: '18px', fontWeight: '900', color: '#14532d', margin: '0 0 4px 0' }}>🎉 기준 인물 라이브러리 저장 완료!</h3>
+            <p style={{ fontSize: '12px', color: '#166534', margin: '0 0 16px 0' }}>
+              대표 정면 얼굴 및 5개 다각도 기준컷이 계정에 저장되었습니다. 이제 이 인물로 농산물 수확, 검수, 적재 장면을 생성하실 수 있습니다.
+            </p>
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+              <button
+                onClick={() => setActiveTab('library')}
+                style={{ padding: '12px 20px', borderRadius: '12px', backgroundColor: '#15803d', color: '#fff', fontSize: '13px', fontWeight: '900', border: 'none', cursor: 'pointer' }}
+              >
+                보관된 인물 라이브러리로 이동
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 3: SAVED PERSON LIBRARY (Includes "이 인물로 장면 만들기" action) */}
+        {activeTab === 'library' && currentStep !== 5 && (
+          <div>
+            <span style={{ fontSize: '13px', fontWeight: '900', color: '#0f172a', display: 'block', marginBottom: '12px' }}>
+              내 계정에 보관된 브랜드 대표 인물 목록 ({savedModels.length}개):
+            </span>
+
+            {savedModels.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '40px', backgroundColor: '#fafbf8', borderRadius: '16px', border: '1px dashed #cbd5e1' }}>
+                <User style={{ width: '36px', height: '36px', color: '#94a3b8', marginBottom: '8px' }} />
+                <span style={{ fontSize: '13px', color: '#64748b', display: 'block', marginBottom: '12px' }}>보관된 인물 레퍼런스가 없습니다. 커스텀 옵션 조합에서 기준 인물을 먼저 생성해 보세요.</span>
+                <button onClick={() => setActiveTab('custom')} style={{ padding: '10px 18px', borderRadius: '10px', backgroundColor: '#0284c7', color: '#fff', fontSize: '12px', fontWeight: '900', border: 'none', cursor: 'pointer' }}>
+                  첫 기준 인물 만들기
                 </button>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {savedModels.map(m => (
+                  <div key={m.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#f8fafc', padding: '16px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                      <img src={m.url || m.representative_face} alt={m.name} style={{ width: '56px', height: '56px', borderRadius: '12px', objectFit: 'cover' }} />
+                      <div>
+                        <span style={{ fontSize: '14px', fontWeight: '900', color: '#0f172a', display: 'block' }}>{m.name}</span>
+                        <span style={{ fontSize: '11px', color: '#64748b' }}>"{m.prompt}"</span>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button 
+                        onClick={() => handleOpenSceneCreation(m)}
+                        style={{ padding: '10px 16px', borderRadius: '10px', backgroundColor: '#16a34a', color: '#fff', fontSize: '12px', fontWeight: '900', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                      >
+                        <Sparkles style={{ width: '14px', height: '14px' }} /> 이 인물로 장면 만들기
+                      </button>
+                      <button 
+                        onClick={() => onDeleteSavedModel(m.id)}
+                        style={{ padding: '10px', borderRadius: '10px', backgroundColor: '#fee2e2', color: '#ef4444', border: 'none', cursor: 'pointer' }}
+                      >
+                        <Trash2 style={{ width: '14px', height: '14px' }} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>
         )}
 
+        {/* STEP 5 / SCENE CREATION MODAL VIEW (UNLOCKED ONLY WHEN CLICKED FROM LIBRARY) */}
+        {(currentStep === 5 || activeTab === 'scene_mode') && sceneModePerson && (
+          <div style={{ backgroundColor: '#fafbf8', border: '2px solid #0284c7', borderRadius: '20px', padding: '24px', marginTop: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+              <div>
+                <span style={{ fontSize: '11px', backgroundColor: '#e0f2fe', color: '#0369a1', padding: '3px 10px', borderRadius: '12px', fontWeight: '900' }}>
+                  SCENE GENERATION ENGINE (인물 정체성 100% 락)
+                </span>
+                <h3 style={{ fontSize: '18px', fontWeight: '900', color: '#0f172a', margin: '4px 0 0 0' }}>
+                  '${sceneModePerson.name}' 인물로 농산물 장면 만들기
+                </h3>
+              </div>
+              <button onClick={() => setCurrentStep(4)} style={{ fontSize: '12px', color: '#64748b', backgroundColor: '#f1f5f9', border: 'none', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer' }}>
+                ◀ 라이브러리로 돌아가기
+              </button>
+            </div>
+
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ fontSize: '12px', fontWeight: '800', color: '#475569', display: 'block', marginBottom: '8px' }}>농산물 현장 장면 프리셋 선택:</label>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                {['과수원 수확', '패킹센터 검수', '1톤 트럭 적재', '산지 출고 확인', '상품 들고 소개'].map(preset => (
+                  <button
+                    key={preset}
+                    onClick={() => setSelectedScenePreset(preset)}
+                    style={{
+                      padding: '10px 16px', borderRadius: '10px', fontSize: '12px', fontWeight: '800',
+                      border: selectedScenePreset === preset ? '2px solid #0284c7' : '1px solid #cbd5e1',
+                      backgroundColor: selectedScenePreset === preset ? '#e0f2fe' : '#ffffff',
+                      color: selectedScenePreset === preset ? '#0369a1' : '#334155',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {preset}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <button
+              onClick={handleGenerateScene}
+              disabled={isGeneratingScene}
+              style={{
+                width: '100%', padding: '14px', borderRadius: '12px',
+                backgroundColor: '#0284c7', color: '#ffffff', fontSize: '14px', fontWeight: '900',
+                border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
+              }}
+            >
+              {isGeneratingScene ? <RefreshCw className="animate-spin" style={{ width: '16px', height: '16px' }} /> : <Sparkles style={{ width: '16px', height: '16px' }} />}
+              {isGeneratingScene ? `'${selectedScenePreset}' 장면 렌더링 중...` : `'${selectedScenePreset}' 장면 이미지 생성하기`}
+            </button>
+
+            {/* Generated Scene Output Card */}
+            {generatedSceneImage && (
+              <div style={{ marginTop: '20px', backgroundColor: '#ffffff', borderRadius: '16px', padding: '16px', border: '1.5px solid #86efac' }}>
+                <span style={{ fontSize: '12px', fontWeight: '900', color: '#16a34a', display: 'block', marginBottom: '8px' }}>
+                  ✅ 생성된 '${generatedSceneImage.preset}' 장면컷:
+                </span>
+                <img src={generatedSceneImage.url} alt={generatedSceneImage.preset} style={{ width: '100%', maxHeight: '380px', objectFit: 'cover', borderRadius: '12px', marginBottom: '12px' }} />
+                <button
+                  onClick={() => {
+                    onSelectAndSaveModel({
+                      id: Date.now(),
+                      name: `${sceneModePerson.name} (${generatedSceneImage.preset})`,
+                      url: generatedSceneImage.url,
+                      prompt: `${sceneModePerson.prompt} - ${generatedSceneImage.preset}`
+                    });
+                    alert(`'${generatedSceneImage.preset}' 장면컷이 상세페이지에 적용되었습니다!`);
+                    onClose();
+                  }}
+                  style={{ width: '100%', padding: '12px', borderRadius: '10px', backgroundColor: '#16a34a', color: '#fff', fontSize: '13px', fontWeight: '900', border: 'none', cursor: 'pointer' }}
+                >
+                  이 장면컷 상세페이지에 적용하기
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

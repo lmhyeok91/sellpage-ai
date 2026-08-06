@@ -101,7 +101,7 @@ export default function App() {
 
   // Knowledge Files State
   const [knowledgeFiles, setKnowledgeFiles] = useState([
-    { id: 0, name: '[마스터 지식] 산지청년 AI 인물 생성·보관 시스템 (기준컷,다각도,동일인물유지).json', size: '28.2 KB' },
+    { id: 0, name: '[마스터 규격 v2.0] 산지청년 AI 인물 라이브러리 (단계별 생성,동일인물유지).json', size: '9.5 KB' },
     { id: 1, name: '[마스터 지식] 농수산물 26개 슬라이드 초실사 커머셜 총집결 가이드북 (리뷰,유통,보관,CS,인물).pdf', size: '18420.5 KB' },
     { id: 2, name: '[나노바나나 최적화] 인물 구도 프롬프트 모음.pdf', size: '53.6 KB' },
     { id: 3, name: 'SNS 수익화 단계별 전략_일침스튜디오.pdf', size: '193.8 KB' },

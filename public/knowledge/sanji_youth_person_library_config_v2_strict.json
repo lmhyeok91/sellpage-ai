@@ -1,0 +1,272 @@
+{
+  "meta": {
+    "project_name": "산지청년 AI 인물 라이브러리",
+    "version": "2.0.0",
+    "replace_previous_config": true,
+    "purpose": "장면 이미지보다 동일 인물 기준컷을 먼저 생성·확정·저장한 후 장면에 재사용"
+  },
+  "hard_constraints": {
+    "initial_generation_mode": "master_identity",
+    "never_show_scene_cards_before_person_saved": true,
+    "never_generate_orchard_packing_truck_scenes_in_master_mode": true,
+    "master_mode_forbidden_elements": [
+      "과수원",
+      "패킹센터",
+      "트럭",
+      "과일 상자",
+      "상품",
+      "농장 작업 동작",
+      "브랜드 문자",
+      "간판",
+      "복잡한 배경"
+    ],
+    "identity_consistency": [
+      "같은 얼굴",
+      "같은 헤어라인",
+      "같은 헤어스타일",
+      "같은 피부톤",
+      "같은 나이",
+      "같은 체형",
+      "같은 작업복",
+      "같은 조명",
+      "같은 배경 톤"
+    ],
+    "scene_mode_unlock_condition": "대표 정면 얼굴 선택 + 기준컷 저장 + person.status=active"
+  },
+  "top_tabs": [
+    {
+      "id": "person_builder",
+      "label": "커스텀 상세 옵션 조합",
+      "default": true
+    },
+    {
+      "id": "reference_analyzer",
+      "label": "인물 참고 사진 AI 분석"
+    },
+    {
+      "id": "person_library",
+      "label": "보관된 인물 라이브러리",
+      "badge": "active_person_count"
+    }
+  ],
+  "workflow": {
+    "type": "strict_stepper",
+    "steps": [
+      {
+        "id": "setup",
+        "label": "1. 인물 설정",
+        "next_button": "정면 얼굴 후보 만들기"
+      },
+      {
+        "id": "front_candidates",
+        "label": "2. 정면 얼굴 선택",
+        "required_action": "4개 후보 중 대표 얼굴 1개 선택",
+        "next_button": "선택 얼굴로 기준컷 만들기"
+      },
+      {
+        "id": "master_views",
+        "label": "3. 기준컷 생성",
+        "required_action": "선택한 정면 얼굴을 레퍼런스로 나머지 각도 생성",
+        "next_button": "인물 라이브러리에 저장"
+      },
+      {
+        "id": "library_saved",
+        "label": "4. 인물 저장 완료",
+        "next_button": "이 인물로 장면 만들기"
+      },
+      {
+        "id": "scene_generation",
+        "label": "5. 장면 생성",
+        "locked_until": "library_saved"
+      }
+    ]
+  },
+  "initial_result_area": {
+    "title": "기준 인물 생성 결과",
+    "description": "먼저 정면 얼굴을 확정한 뒤, 같은 얼굴로 좌우 45도·상반신·반신·전신을 생성합니다.",
+    "do_not_use_titles": [
+      "과수원 선별 수확 컷",
+      "농가 패킹센터 당도 검수 컷",
+      "산지직송 현장 트럭 앞 미소 컷"
+    ],
+    "empty_state_button": "정면 얼굴 후보 4개 생성"
+  },
+  "generation_sequence": {
+    "phase_1_front_face": {
+      "candidate_count": 4,
+      "view": "front_headshot",
+      "ratio": "1:1",
+      "background": "soft neutral light gray",
+      "outfit": "same plain navy agricultural work shirt",
+      "expression": "neutral or very subtle natural smile",
+      "camera": "eye-level, 50mm natural perspective",
+      "props": "none",
+      "selection_required": true
+    },
+    "phase_2_master_views": {
+      "reference_source": "selected_front_face",
+      "generate_one_view_at_a_time": true,
+      "views": [
+        {
+          "id": "front_upper_body",
+          "label": "정면 상반신",
+          "ratio": "4:5"
+        },
+        {
+          "id": "left_45",
+          "label": "좌측 45도",
+          "ratio": "1:1"
+        },
+        {
+          "id": "right_45",
+          "label": "우측 45도",
+          "ratio": "1:1"
+        },
+        {
+          "id": "half_body",
+          "label": "반신",
+          "ratio": "4:5"
+        },
+        {
+          "id": "full_body",
+          "label": "전신",
+          "ratio": "4:5"
+        }
+      ],
+      "candidate_count_per_view": 2,
+      "same_background": true,
+      "same_outfit": true,
+      "same_lighting": true
+    }
+  },
+  "master_card_ui": {
+    "allowed_card_titles": [
+      "대표 정면 얼굴",
+      "정면 상반신",
+      "좌측 45도",
+      "우측 45도",
+      "반신",
+      "전신"
+    ],
+    "card_buttons": [
+      "대표 얼굴로 선택",
+      "이 각도만 다시 생성",
+      "확대 보기",
+      "선택 제외"
+    ],
+    "hide_scene_caption_overlay": true,
+    "show_identity_match_warning": true
+  },
+  "buttons": [
+    {
+      "id": "generate_front_candidates",
+      "label": "정면 얼굴 후보 4개 생성",
+      "visible_when": "step=setup"
+    },
+    {
+      "id": "select_master_face",
+      "label": "대표 얼굴로 선택",
+      "visible_when": "step=front_candidates"
+    },
+    {
+      "id": "generate_master_views",
+      "label": "선택 얼굴로 기준컷 만들기",
+      "visible_when": "representative_face_selected=true"
+    },
+    {
+      "id": "regenerate_view",
+      "label": "이 각도만 다시 생성",
+      "visible_when": "step=master_views"
+    },
+    {
+      "id": "save_person",
+      "label": "인물 라이브러리에 저장",
+      "visible_when": "required_master_views_selected=true"
+    },
+    {
+      "id": "create_scene",
+      "label": "이 인물로 장면 만들기",
+      "visible_when": "person.status=active"
+    }
+  ],
+  "master_prompt": {
+    "front_face": "Create one original fictional Korean male agricultural worker in his early 30s. Sturdy realistic build, neat short sports haircut, plain navy agricultural work shirt with no logo. Front-facing head-and-shoulders portrait, eye-level, soft neutral light-gray background, soft natural diffused light, calm trustworthy expression, lips naturally closed. Visible pores, subtle facial asymmetry, mildly sun-tanned uneven skin tone, realistic under-eye texture, natural hairline, no beauty retouching. Documentary realism, not a fashion model, not a celebrity, not an advertising character. No props, no fruit, no boxes, no truck, no orchard, no packing center, no text.",
+    "identity_lock": "Use the selected front-face image as the primary identity reference. Maintain exactly the same face, eye shape, nose, mouth, jawline, ears, hairstyle, hairline, apparent age, skin tone, body build and navy work shirt. Do not redesign, beautify, reinterpret or replace the person. Change only the requested camera angle or framing.",
+    "negative": "plastic skin, waxy face, flawless beauty skin, perfect facial symmetry, celebrity look, fashion model, influencer aesthetic, exaggerated smile, dramatic cinematic lighting, glossy advertising finish, orange teal grading, HDR, oversharpening, artificial bokeh, CGI, 3D render, random text, logos, fruit, boxes, truck, orchard, warehouse activity, warped hands, extra fingers, duplicated limbs"
+  },
+  "library_record": {
+    "required_images": [
+      "front_headshot",
+      "front_upper_body",
+      "left_45",
+      "right_45",
+      "half_body",
+      "full_body"
+    ],
+    "save_together": [
+      "representative_face",
+      "selected_master_views",
+      "base_prompt",
+      "identity_lock_prompt",
+      "negative_prompt",
+      "selected_options",
+      "generation_model",
+      "generation_seed",
+      "version"
+    ],
+    "card_primary_action": "이 인물로 장면 만들기"
+  },
+  "scene_generation": {
+    "visible_only_after_library_save": true,
+    "separate_screen_or_modal": true,
+    "title": "저장된 인물로 장면 만들기",
+    "reference_priority": [
+      "대표 정면 얼굴",
+      "요청 방향과 가까운 좌측 또는 우측 45도",
+      "구도에 맞는 상반신 또는 전신"
+    ],
+    "scene_presets": [
+      "과수원 수확",
+      "패킹센터 검수",
+      "1톤 트럭 적재",
+      "산지 출고 확인",
+      "상품 들고 소개"
+    ],
+    "important": "scene_presets는 기준 인물 생성 화면에 카드로 미리 노출하지 않는다."
+  },
+  "migration_from_previous_ui": [
+    {
+      "remove_or_hide": "초기 화면의 과수원·패킹센터·트럭 장면 카드"
+    },
+    {
+      "replace_with": "정면 얼굴 후보 4개 카드"
+    },
+    {
+      "rename": {
+        "추천 인물": "기준 인물 생성 결과"
+      }
+    },
+    {
+      "move": "scene_presets를 인물 라이브러리의 '이 인물로 장면 만들기' 버튼 이후 화면으로 이동"
+    },
+    {
+      "change_generation_logic": "6개 장면을 독립 생성하지 말고, 정면 대표 얼굴 선택 후 해당 얼굴을 참조해 각도별로 순차 생성"
+    }
+  ],
+  "acceptance_test": {
+    "pass_conditions": [
+      "첫 생성 결과에 과수원·트럭·패킹센터가 보이지 않는다.",
+      "첫 결과는 동일 조건의 정면 얼굴 후보 4개다.",
+      "대표 얼굴을 선택하기 전에는 좌우 45도와 장면 생성 버튼이 잠겨 있다.",
+      "각도별 기준컷의 얼굴·헤어·작업복이 대표 얼굴과 동일하다.",
+      "인물 저장 전에는 장면 프리셋이 노출되지 않는다.",
+      "라이브러리에 저장한 후에만 수확·검수·적재 장면을 만들 수 있다."
+    ],
+    "fail_conditions": [
+      "과수원·패킹센터·트럭 장면 카드가 초기 결과에 다시 등장한다.",
+      "각 카드의 얼굴 또는 작업복이 서로 다르다.",
+      "장면 제목이 기준컷 카드에 붙는다.",
+      "대표 얼굴 선택 없이 장면 생성이 가능하다."
+    ]
+  }
+}
