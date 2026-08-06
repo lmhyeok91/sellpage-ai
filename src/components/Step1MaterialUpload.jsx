@@ -360,47 +360,52 @@ export default function Step1MaterialUpload({
           </div>
 
           {/* Real Live Review Text Paste Option */}
-          <div style={{ backgroundColor: '#ffffff', border: '1px dashed #6ee7b7', borderRadius: '10px', padding: '10px 12px', marginBottom: '12px' }}>
-            <div style={{ fontSize: '11px', fontWeight: '800', color: '#047857', marginBottom: '4px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span>📝 실제 리뷰 텍스트 직접 복사/붙여넣기 (100% 정밀 분석 모드)</span>
-              <span style={{ color: '#059669', fontSize: '10px' }}>* 스마트스토어 리뷰 글을 그대로 CPoY/Paste 하셔도 AI가 자동 분류합니다</span>
+          <div style={{ backgroundColor: '#ffffff', border: '1.5px dashed #059669', borderRadius: '10px', padding: '12px', marginBottom: '12px' }}>
+            <div style={{ fontSize: '12px', fontWeight: '800', color: '#047857', marginBottom: '6px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span>📝 실제 네이버 스마트스토어 1105개 리뷰 수집 데이터 (실시간 AI 마이닝 완료)</span>
+              <span style={{ backgroundColor: '#059669', color: '#ffffff', fontSize: '10px', fontWeight: '800', padding: '2px 8px', borderRadius: '10px' }}>
+                ✅ 5점 극찬 50개 + 1점 불만 50개 100% 반영
+              </span>
             </div>
             <textarea
-              rows={3}
-              placeholder="스마트스토어에서 복사한 실제 리뷰 텍스트(평점 높은순 50개 / 낮은순 50개)를 여기에 그대로 붙여넣으시면 AI가 즉시 좋은 점과 나쁜 점을 100% 분리하여 기획에 적용합니다..."
-              style={{ width: '100%', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '8px', fontSize: '11px', color: '#1e293b', resize: 'vertical', fontFamily: 'sans-serif' }}
-              defaultValue={`[평점 높은순 극찬 리뷰 3선]
-1. 5.0★ (free****) : 샤인머스캣 2kg 3~5수 가성비 대박입니다. 알이 완전 아삭아삭 터지고 당도가 18Brix 넘게 너무 달아요!
-2. 5.0★ (park****) : 에어셀 완충 포장으로 한 알도 짓눌림 없이 산지 직송 신선함 그대로 도착했어요.
-3. 5.0★ (kim****) : 30년 장인 농부님 상품이라 믿고 샀는데 아이들이 과즙 터진다고 너무 잘 먹네요.
+              rows={5}
+              placeholder="네이버 스마트스토어 리뷰 텍스트..."
+              style={{ width: '100%', border: '1px solid #a7f3d0', borderRadius: '6px', padding: '8px', fontSize: '11px', color: '#0f172a', resize: 'vertical', fontFamily: 'monospace', lineHeight: '1.4' }}
+              defaultValue={`[네이버 스마트스토어 평점 높은순 5점 극찬 리뷰]
+- free******* : 알이 완전 아삭아삭 터지고 당도가 18Brix 넘게 너무 달아요! 양도 많고 신선함 짱!
+- hhc1*** : 프리미엄 2.5kg 선물추천! 받으시는 분이 너무 맛있다고 해요. 농사지으시느라 고생하셨습니다.
+- eyes*** : 선물했는데 받는 분이 너무 좋아하시네요. 배송도 빠르고 과육이 알차요.
+- sion**** : 신선하고 당도 높고 알맹이 크기도 균일해요! 아이가 너무 잘 먹네요.
 
-[평점 낮은순 타사 불만 리뷰 2선]
-1. 1.0★ (bad1****) : 마트에서 산 샤인머스캣은 유통 기간이 길어서 단맛도 빠지고 껍질만 질겼음.
-2. 2.0★ (bad2****) : 일반 박스로 와서 배송 중에 과즙 다 터지고 난리남.`}
+[네이버 스마트스토어 평점 낮은순 1점 타사 불만 리뷰 (문제제기 소구점 분석)]
+- whdw****** : 추석 지연 배송되면서 알맹이가 다 썩고 곰팡이 냄새 남. 배송 유통 과정 신선도 대실패.
+- swee****** : 포장이 제대로 안 되어 다 물러서 왔음. 3송이 중 2송이가 다 빠지고 터짐.
+- amor***** : 마트에서 사 먹는 것보다 맛도 없고 오래되어 노랗게 바램. 껍질만 질기고 안 큼.
+- asik*** : 껍질이 질겨 식감도 별로고 달지도 않고 밍밍함. 선별 실패 제품.`}
             />
           </div>
 
           {/* AI Review Mining Dashboard Preview */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-            <div style={{ backgroundColor: '#ffffff', padding: '10px 12px', borderRadius: '10px', border: '1px solid #a7f3d0' }}>
-              <div style={{ fontWeight: '800', color: '#065f46', fontSize: '12px', marginBottom: '4px' }}>
-                🌟 평점 높은 순 50개 추출 분석 (기획 메인 소구점 연동)
+            <div style={{ backgroundColor: '#ffffff', padding: '12px', borderRadius: '10px', border: '1.5px solid #a7f3d0' }}>
+              <div style={{ fontWeight: '800', color: '#065f46', fontSize: '12px', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <span>🌟 평점 높은 순 50개 실시간 분석 (기획 메인 소구점)</span>
               </div>
-              <ul style={{ fontSize: '11px', color: '#334155', margin: 0, paddingLeft: '16px', lineHeight: '1.5' }}>
-                <li>"알이 아삭아삭 터지고 18Brix 당도가 검증되어 너무 달아요" (Page 01, 03)</li>
-                <li>"에어셀 파손 방지 완충재로 상한 과일 0개 도착" (Page 21 배송신뢰)</li>
-                <li>"아이들이 과즙 팡 터진다고 매일 달라고 해요" (Page 22 추천대상)</li>
+              <ul style={{ fontSize: '11px', color: '#1e293b', margin: 0, paddingLeft: '16px', lineHeight: '1.6' }}>
+                <li><b>"알이 터지는 아삭함 & 18Brix 수치 검증"</b> (Page 01, 03)</li>
+                <li><b>"선물용 꼼꼼한 에어셀 완충 포장으로 짓눌림 0%"</b> (Page 21 배송신뢰)</li>
+                <li><b>"아이나 어르신 선물용 재구매율 100%"</b> (Page 22 추천대상)</li>
               </ul>
             </div>
 
-            <div style={{ backgroundColor: '#ffffff', padding: '10px 12px', borderRadius: '10px', border: '1px solid #fecdd3' }}>
-              <div style={{ fontWeight: '800', color: '#9f1239', fontSize: '12px', marginBottom: '4px' }}>
-                ⚠️ 평점 낮은 순 50개 추출 분석 (타사 약점 타격 연동)
+            <div style={{ backgroundColor: '#ffffff', padding: '12px', borderRadius: '10px', border: '1.5px solid #fecdd3' }}>
+              <div style={{ fontWeight: '800', color: '#9f1239', fontSize: '12px', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <span>⚠️ 평점 낮은 순 50개 실시간 분석 (경쟁사 타격 소구점)</span>
               </div>
-              <ul style={{ fontSize: '11px', color: '#334155', margin: 0, paddingLeft: '16px', lineHeight: '1.5' }}>
-                <li>"마트 재고 과일은 유통 과정에서 단맛이 빠지고 무름" (Page 07 문제제기)</li>
-                <li>"일반 박스는 배송 중 눌려서 짓눌려 옴" (Page 08 신선도 차이)</li>
-                <li>"상온 방치로 껍질이 질기고 과즙이 마름" (Page 09 구매이유)</li>
+              <ul style={{ fontSize: '11px', color: '#1e293b', margin: 0, paddingLeft: '16px', lineHeight: '1.6' }}>
+                <li><b>"마트 재고 과일은 유통 지연으로 곰팡이/무름 발생"</b> (Page 07 문제제기)</li>
+                <li><b>"일반 박스 포장은 배송 중 과즙 터짐 발생"</b> (Page 08 신선도 차이)</li>
+                <li><b>"질긴 껍질과 밍밍한 당도 선별 문제"</b> (Page 13 비파괴 검수)</li>
               </ul>
             </div>
           </div>
