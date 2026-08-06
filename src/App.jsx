@@ -33,16 +33,19 @@ class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       return (
         <div style={{ padding: '40px', textAlign: 'center', backgroundColor: '#ffffff', borderRadius: '16px', margin: '20px', border: '1px solid #cbd5e1', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
-          <h2 style={{ fontSize: '20px', fontWeight: '900', color: '#0f172a', marginBottom: '8px' }}>⚡️ 작업대를 불러오는 중 렌더링이 재조정되었습니다</h2>
-          <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '20px' }}>아래 복구 버튼을 눌러 3단계 작업대로 즉시 진입해 주세요.</p>
+          <h2 style={{ fontSize: '20px', fontWeight: '900', color: '#dc2626', marginBottom: '8px' }}>⚡️ 렌더링 오류 감지</h2>
+          <div style={{ backgroundColor: '#fef2f2', border: '1px solid #fecaca', color: '#991b1b', padding: '12px', borderRadius: '10px', fontSize: '12px', fontFamily: 'monospace', textAlign: 'left', marginBottom: '16px', overflowX: 'auto', whiteSpace: 'pre-wrap' }}>
+            {this.state.error ? this.state.error.toString() : '알 수 없는 오류'}
+            {this.state.error?.stack ? `\n\n${this.state.error.stack}` : ''}
+          </div>
           <button
             onClick={() => {
-              this.setState({ hasError: false });
+              this.setState({ hasError: false, error: null });
               window.location.reload();
             }}
             style={{ padding: '12px 28px', backgroundColor: '#0284c7', color: '#ffffff', borderRadius: '12px', fontWeight: '800', border: 'none', cursor: 'pointer', boxShadow: '0 2px 8px rgba(2, 132, 199, 0.3)' }}
           >
-            🔄 3단계 작업대 복구 및 새로고침
+            🔄 3단계 작업대 다시 불러오기
           </button>
         </div>
       );
