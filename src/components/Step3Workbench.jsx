@@ -344,7 +344,9 @@ export default function Step3Workbench({ slides, setSlides, canvasWidth, onExpor
                     }}>
                       {idx + 1}
                     </span>
-                    <span style={{ textOverflow: 'ellipsis', overflow: 'hidden', whitespace: 'nowrap' }}>{s.section}</span>
+                    <span style={{ textOverflow: 'ellipsis', overflow: 'hidden', whitespace: 'nowrap', fontSize: '11px', fontWeight: '800' }}>
+                      {idx + 1}. {s.section.replace(/^[0-9]+\.\s*/, '')} / {s.topic ? s.topic.replace(/^[0-9]+-[0-9]+\.\s*/, '') : s.title}
+                    </span>
                   </div>
                   {selectedSectionIdx === idx && <Check style={{ width: '14px', height: '14px', color: '#34d399' }} />}
                 </div>
