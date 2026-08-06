@@ -182,10 +182,123 @@ export default function Step1MaterialUpload({
         <div className="card-header">
           <div className="badge-num">1</div>
           <div className="card-title-group">
-            <h2 className="card-title">이미지/PDF 또는 상세페이지 등록</h2>
+            <h2 className="card-title">🇨🇳 1688 · 타오바오 APDP MAKER 스타일 AI 5-슬롯 자동 업로드</h2>
             <p className="card-desc">
-              상품 참고 이미지와 상세페이지 레퍼런스를 분류해 등록하면 AI가 고유 모양(흑수박, 납작복숭아 등)을 정확히 유지합니다.
+              외관 원물(1장) + 자른 단면(1장) + B2B 도매 상세페이지(1~3장)를 넣으시면 GPT-5.4 mini & Gemini Vision이 26개 섹션 기획 ➔ 합성 ➔ 디자인을 전자동 완료합니다!
             </p>
+          </div>
+        </div>
+
+        {/* 5-Slot Multi Image Upload Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
+          {/* Slot 1: Outer Appearance */}
+          <div className="border-2 border-dashed border-amber-400 rounded-xl p-3 bg-amber-50/40 hover:border-amber-500 transition text-center flex flex-col items-center justify-center">
+            <ImageIcon className="w-6 h-6 text-amber-500 mb-1" />
+            <div className="text-xs font-bold text-slate-800">📸 1. 원상품 외관 이미지</div>
+            <div className="text-[10px] text-slate-500 mb-2">대표 겉모습 (1장 필수)</div>
+            <input 
+              type="file" 
+              accept="image/*" 
+              className="hidden" 
+              id="slot_outer_app"
+              onChange={(e) => {
+                if (e.target.files[0]) {
+                  setProductImages(prev => [...prev, { id: Date.now(), name: '외관_' + e.target.files[0].name, url: URL.createObjectURL(e.target.files[0]) }]);
+                  alert('✨ [원상품 외관 이미지] 등록 완료!');
+                }
+              }}
+            />
+            <label htmlFor="slot_outer_app" className="bg-amber-500 hover:bg-amber-600 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg border border-amber-400 cursor-pointer transition shadow-sm">
+              이미지 선택
+            </label>
+          </div>
+
+          {/* Slot 2: Cut Cross Section */}
+          <div className="border-2 border-dashed border-emerald-400 rounded-xl p-3 bg-emerald-50/40 hover:border-emerald-500 transition text-center flex flex-col items-center justify-center">
+            <Sparkles className="w-6 h-6 text-emerald-500 mb-1" />
+            <div className="text-xs font-bold text-slate-800">🔪 2. 자른 단면/원물 이미지</div>
+            <div className="text-[10px] text-slate-500 mb-2">과즙/속 살결 (1장 필수)</div>
+            <input 
+              type="file" 
+              accept="image/*" 
+              className="hidden" 
+              id="slot_cross_section"
+              onChange={(e) => {
+                if (e.target.files[0]) {
+                  setProductImages(prev => [...prev, { id: Date.now(), name: '단면_' + e.target.files[0].name, url: URL.createObjectURL(e.target.files[0]) }]);
+                  alert('✨ [자른 단면 이미지] 등록 완료!');
+                }
+              }}
+            />
+            <label htmlFor="slot_cross_section" className="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg border border-emerald-500 cursor-pointer transition shadow-sm">
+              이미지 선택
+            </label>
+          </div>
+
+          {/* Slot 3: B2B Detail Page 1 */}
+          <div className="border-2 border-dashed border-blue-400 rounded-xl p-3 bg-blue-50/40 hover:border-blue-500 transition text-center flex flex-col items-center justify-center">
+            <FileText className="w-6 h-6 text-blue-500 mb-1" />
+            <div className="text-xs font-bold text-slate-800">📦 3. B2B 1688 상세페이지 #1</div>
+            <div className="text-[10px] text-slate-500 mb-2">도매 캡처 1 (선택)</div>
+            <input 
+              type="file" 
+              accept="image/*" 
+              className="hidden" 
+              id="slot_b2b_1"
+              onChange={(e) => {
+                if (e.target.files[0]) {
+                  setProductImages(prev => [...prev, { id: Date.now(), name: 'B2B_1_' + e.target.files[0].name, url: URL.createObjectURL(e.target.files[0]) }]);
+                  alert('✨ [B2B 상세페이지 캡처 #1] 등록 완료!');
+                }
+              }}
+            />
+            <label htmlFor="slot_b2b_1" className="bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg border border-blue-500 cursor-pointer transition shadow-sm">
+              이미지 선택
+            </label>
+          </div>
+
+          {/* Slot 4: B2B Detail Page 2 */}
+          <div className="border-2 border-dashed border-blue-400 rounded-xl p-3 bg-blue-50/40 hover:border-blue-500 transition text-center flex flex-col items-center justify-center">
+            <FileText className="w-6 h-6 text-blue-500 mb-1" />
+            <div className="text-xs font-bold text-slate-800">📦 4. B2B 1688 상세페이지 #2</div>
+            <div className="text-[10px] text-slate-500 mb-2">도매 캡처 2 (선택)</div>
+            <input 
+              type="file" 
+              accept="image/*" 
+              className="hidden" 
+              id="slot_b2b_2"
+              onChange={(e) => {
+                if (e.target.files[0]) {
+                  setProductImages(prev => [...prev, { id: Date.now(), name: 'B2B_2_' + e.target.files[0].name, url: URL.createObjectURL(e.target.files[0]) }]);
+                  alert('✨ [B2B 상세페이지 캡처 #2] 등록 완료!');
+                }
+              }}
+            />
+            <label htmlFor="slot_b2b_2" className="bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg border border-blue-500 cursor-pointer transition shadow-sm">
+              이미지 선택
+            </label>
+          </div>
+
+          {/* Slot 5: B2B Detail Page 3 */}
+          <div className="border-2 border-dashed border-purple-400 rounded-xl p-3 bg-purple-50/40 hover:border-purple-500 transition text-center flex flex-col items-center justify-center">
+            <FileText className="w-6 h-6 text-purple-500 mb-1" />
+            <div className="text-xs font-bold text-slate-800">📦 5. B2B 1688 상세페이지 #3</div>
+            <div className="text-[10px] text-slate-500 mb-2">도매 캡처 3 (선택)</div>
+            <input 
+              type="file" 
+              accept="image/*" 
+              className="hidden" 
+              id="slot_b2b_3"
+              onChange={(e) => {
+                if (e.target.files[0]) {
+                  setProductImages(prev => [...prev, { id: Date.now(), name: 'B2B_3_' + e.target.files[0].name, url: URL.createObjectURL(e.target.files[0]) }]);
+                  alert('✨ [B2B 상세페이지 캡처 #3] 등록 완료!');
+                }
+              }}
+            />
+            <label htmlFor="slot_b2b_3" className="bg-purple-600 hover:bg-purple-700 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg border border-purple-500 cursor-pointer transition shadow-sm">
+              이미지 선택
+            </label>
           </div>
         </div>
 
