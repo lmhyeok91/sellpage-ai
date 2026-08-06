@@ -302,7 +302,7 @@ export default function Step1MaterialUpload({
           </div>
         </div>
 
-        {/* 💚 [네이버 스마트스토어 URL 리뷰 & 포토 이미지 수집기] */}
+        {/* 💚 [네이버 스마트스토어 URL 리뷰 & 포토 이미지 수집기 + AI 리뷰 마이닝 분석] */}
         <div className="mt-4 pt-4 border-t border-slate-200/80">
           <div className="bg-emerald-50 border border-emerald-300 rounded-xl p-4">
             <div className="flex items-center justify-between mb-2">
@@ -311,14 +311,14 @@ export default function Step1MaterialUpload({
                   N SMARTSTORE
                 </span>
                 <span className="text-xs font-bold text-slate-900">
-                  네이버 스마트스토어 URL로 리뷰 & 포토 이미지 수집하기
+                  네이버 스마트스토어 URL로 리뷰 마이닝 & 포토 후기 카드 자동 생성
                 </span>
               </div>
               <span className="text-[11px] text-emerald-700 font-semibold">
-                Page 20 (고객후기) & Page 21 (배송신뢰) 자동 연동
+                기획 소구점(Page 07~08) & 고객후기 카드(Page 20~22) 동시 반영
               </span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 mb-3">
               <input
                 type="text"
                 placeholder="https://smartstore.naver.com/globalstore/products/5085027420..."
@@ -328,13 +328,36 @@ export default function Step1MaterialUpload({
               <button
                 type="button"
                 onClick={() => {
-                  alert('🎉 [네이버 스마트스토어 수집 성공!] 상품명, 평점 5.0/5.0 리뷰 텍스트 및 실물 포토 후기 3장이 수집되어 26섹션 상세페이지(Page 20 고객후기 & Page 21 배송신뢰)에 자동 동기화되었습니다!');
+                  alert('🎉 [AI 리뷰 마이닝 & 포토 후기 수집 완벽 성공!]\n\n1. 🟢 칭찬 포인트 (18Brix 당도, 에어셀 안심 포장, 아삭 식감) -> Page 01~03 메인후킹 & Page 20~22 후기 카드 반영!\n2. 🔴 경쟁사 불만 포인트 (마트 재고 과일의 밍밍함, 배송 짓눌림) -> Page 07~08 문제제기 기획 반영!');
                 }}
                 className="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs px-4 py-2 rounded-lg transition shadow flex items-center space-x-1 whitespace-nowrap"
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>리뷰 & 포토 자동 수집</span>
+                <span>리뷰 분석 & 포토카드 생성</span>
               </button>
+            </div>
+
+            {/* AI Review Mining Dashboard Preview */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+              <div className="bg-white p-2.5 rounded-lg border border-emerald-200 shadow-2xs">
+                <div className="font-bold text-emerald-800 mb-1 flex items-center gap-1">
+                  <span>👍 고객 극찬 포인트 (기획 핵심 소구점 연동)</span>
+                </div>
+                <ul className="text-[11px] text-slate-700 space-y-0.5 list-disc pl-3.5">
+                  <li>"알이 아삭아삭 터지고 18Brix 당도가 검증되어 너무 달아요" (Page 01, 03)</li>
+                  <li>"에어셀 파손 방지 완충재로 상한 과일 0개 도착" (Page 21 배송신뢰)</li>
+                </ul>
+              </div>
+
+              <div className="bg-white p-2.5 rounded-lg border border-rose-200 shadow-2xs">
+                <div className="font-bold text-rose-800 mb-1 flex items-center gap-1">
+                  <span>⚠️ 타사/경쟁사 고객 불만 (문제제기 타격점 연동)</span>
+                </div>
+                <ul className="text-[11px] text-slate-700 space-y-0.5 list-disc pl-3.5">
+                  <li>"마트 재고 과일은 유통 과정에서 단맛이 빠지고 무름" (Page 07 문제제기)</li>
+                  <li>"일반 박스는 배송 중 눌려서 짓눌려 옴" (Page 08 신선도 차이)</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
