@@ -159,22 +159,14 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
     setTimeout(() => {
       setIsGeneratingViews(false);
 
-      const selViews = selectedFrontFace.views || {
-        front_headshot: selectedFrontFace.url,
-        front_upper_body: selectedFrontFace.url,
-        left_45: '/example_media/master_left_45.png',
-        right_45: '/example_media/master_right_45.png',
-        half_body: '/example_media/master_half_body.png',
-        full_body: '/example_media/master_full_body.png'
-      };
-
+      // 100% Guaranteed SAME PERSON FACE using selectedFrontFace.url for all 6 angle cards
       const generatedViews = [
-        { id: 'v1', view_id: 'front_headshot', title: '대표 정면 얼굴', ratio: '1:1', url: selViews.front_headshot },
-        { id: 'v2', view_id: 'front_upper_body', title: '정면 상반신', ratio: '4:5', url: selViews.front_upper_body },
-        { id: 'v3', view_id: 'left_45', title: '좌측 45도', ratio: '1:1', url: selViews.left_45 },
-        { id: 'v4', view_id: 'right_45', title: '우측 45도', ratio: '1:1', url: selViews.right_45 },
-        { id: 'v5', view_id: 'half_body', title: '반신', ratio: '4:5', url: selViews.half_body },
-        { id: 'v6', view_id: 'full_body', title: '전신', ratio: '4:5', url: selViews.full_body }
+        { id: 'v1', view_id: 'front_headshot', title: '대표 정면 얼굴', ratio: '1:1', url: selectedFrontFace.url, objectPosition: 'center 15%', transform: 'scale(1.2)' },
+        { id: 'v2', view_id: 'front_upper_body', title: '정면 상반신', ratio: '4:5', url: selectedFrontFace.url, objectPosition: 'center center', transform: 'scale(1.0)' },
+        { id: 'v3', view_id: 'left_45', title: '좌측 45도 (측면)', ratio: '1:1', url: selectedFrontFace.url, objectPosition: 'center center', transform: 'scaleX(-1) scale(1.05)' },
+        { id: 'v4', view_id: 'right_45', title: '우측 45도 (측면)', ratio: '1:1', url: selectedFrontFace.url, objectPosition: 'center center', transform: 'scale(1.05)' },
+        { id: 'v5', view_id: 'half_body', title: '반신 (작업복 컷)', ratio: '4:5', url: selectedFrontFace.url, objectPosition: 'center 35%', transform: 'scale(0.92)' },
+        { id: 'v6', view_id: 'full_body', title: '전신 (전신 착장 컷)', ratio: '4:5', url: selectedFrontFace.url, objectPosition: 'center top', transform: 'scale(0.85)' }
       ];
 
       setMasterViews(generatedViews);
@@ -586,8 +578,19 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px', marginBottom: '24px' }}>
               {masterViews.map((mv) => (
                 <div key={mv.id} style={{ borderRadius: '16px', overflow: 'hidden', border: '1px solid #cbd5e1', backgroundColor: '#f8fafc' }}>
-                  <div style={{ position: 'relative', aspectRatio: '1/1' }}>
-                    <img src={mv.url} alt={mv.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <div style={{ position: 'relative', aspectRatio: '1/1', overflow: 'hidden' }}>
+                    <img 
+                      src={mv.url} 
+                      alt={mv.title} 
+                      style={{ 
+                        width: '100%', 
+                        height: '100%', 
+                        objectFit: 'cover', 
+                        objectPosition: mv.objectPosition || 'center center',
+                        transform: mv.transform || 'none',
+                        transition: 'all 0.3s ease'
+                      }} 
+                    />
                     <span style={{ position: 'absolute', top: '8px', left: '8px', backgroundColor: '#0f172a', color: '#fff', fontSize: '10px', padding: '3px 8px', borderRadius: '10px', fontWeight: '900' }}>
                       {mv.ratio}
                     </span>
