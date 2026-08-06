@@ -240,8 +240,8 @@ export default function Step3Workbench({ slides, setSlides, canvasWidth, onExpor
             gap: '10px'
           }}>
             <span style={{ fontSize: '10px', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase' }}>편집 섹션</span>
-            <h3 style={{ fontSize: '18px', fontWeight: '900', color: '#0f172a', margin: 0 }}>{currentSection.section}</h3>
-            <p style={{ fontSize: '12px', color: '#64748b', margin: 0, lineHeight: '1.4' }}>{currentSection.topic}</p>
+            <h3 style={{ fontSize: '18px', fontWeight: '900', color: '#0f172a', margin: 0 }}>{currentSection?.section || ''}</h3>
+            <p style={{ fontSize: '12px', color: '#64748b', margin: 0, lineHeight: '1.4' }}>{currentSection?.topic || ''}</p>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', paddingTop: '10px', borderTop: '1px solid #e2e4dc', fontSize: '12px' }}>
               <div>
@@ -394,8 +394,8 @@ export default function Step3Workbench({ slides, setSlides, canvasWidth, onExpor
           }}>
             <div>
               <span style={{ fontSize: '11px', color: '#94a3b8', fontWeight: '800' }}>편집 섹션</span>
-              <h2 style={{ fontSize: '22px', fontWeight: '900', color: '#0f172a', margin: '2px 0' }}>{currentSection.section}</h2>
-              <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>{currentSection.topic}</p>
+              <h2 style={{ fontSize: '22px', fontWeight: '900', color: '#0f172a', margin: '2px 0' }}>{currentSection?.section || ''}</h2>
+              <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>{currentSection?.topic || ''}</p>
             </div>
 
             {/* Fixed Navigation Buttons with 1/26 Display */}
@@ -732,12 +732,12 @@ export default function Step3Workbench({ slides, setSlides, canvasWidth, onExpor
                     borderRadius: '20px',
                     marginBottom: '16px'
                   }}>
-                    {currentSection.badge}
+                    {currentSection?.badge || ''}
                   </span>
 
                   <input 
                     type="text"
-                    value={currentSection.title}
+                    value={currentSection?.title || ''}
                     onChange={e => updateCurrentSlide('title', e.target.value)}
                     style={{
                       width: '100%',
@@ -754,7 +754,7 @@ export default function Step3Workbench({ slides, setSlides, canvasWidth, onExpor
 
                   <textarea 
                     rows="2"
-                    value={currentSection.subtitle}
+                    value={currentSection?.subtitle || ''}
                     onChange={e => updateCurrentSlide('subtitle', e.target.value)}
                     style={{
                       width: '100%',
