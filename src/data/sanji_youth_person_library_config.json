@@ -1,0 +1,812 @@
+{
+  "meta": {
+    "project_name": "산지청년 AI 인물 생성·보관 시스템",
+    "config_version": "1.0.0",
+    "language": "ko-KR",
+    "purpose": "기준 인물을 먼저 생성하고, 정면·반측면·전신 기준컷을 저장한 뒤 동일 인물을 여러 농산물 장면에 반복 사용하는 사이트 구성안"
+  },
+  "core_policy": {
+    "main_rule": "장면 이미지를 먼저 만들지 않고 기준 인물 마스터 세트를 먼저 만든다.",
+    "identity_rule": "장면 생성 시 저장된 대표 얼굴, 좌우 45도 얼굴, 반신 또는 전신 이미지를 함께 참조한다.",
+    "realism_rule": "광고 모델처럼 완벽한 얼굴보다 자연스러운 비대칭, 피부결, 주름, 작업복 질감을 우선한다.",
+    "storage_rule": "생성 서비스의 임시 URL만 저장하지 않고 원본 이미지를 자체 스토리지에 영구 저장한다."
+  },
+  "top_navigation": {
+    "tabs": [
+      {
+        "id": "custom_options",
+        "label": "커스텀 상세 옵션 조합",
+        "icon": "sliders",
+        "route": "/person-builder",
+        "purpose": "기준 인물의 국적, 연령, 체형, 헤어, 복장, 인상, 현실감 옵션을 조합"
+      },
+      {
+        "id": "reference_analyzer",
+        "label": "인물 참고 사진 AI 분석",
+        "icon": "camera",
+        "route": "/reference-analyzer",
+        "purpose": "업로드한 참고 사진을 분석해 얼굴형, 헤어, 체형, 의상, 표정, 카메라 정보를 선택값으로 변환"
+      },
+      {
+        "id": "person_library",
+        "label": "보관된 인물 라이브러리",
+        "icon": "folder",
+        "route": "/person-library",
+        "badge_source": "person_library_count",
+        "purpose": "확정한 기준 인물과 각도별 기준컷을 저장하고 장면 생성에 재사용"
+      }
+    ]
+  },
+  "site_modifications": {
+    "recommended_layout": [
+      {
+        "location": "커스텀 상세 옵션 조합 탭 상단",
+        "change": "현재 선택값 요약 영역 위에 작업 단계를 표시",
+        "component": "stepper",
+        "steps": [
+          "1. 인물 설정",
+          "2. 기준컷 생성",
+          "3. 대표컷 선택",
+          "4. 라이브러리 저장",
+          "5. 장면 생성"
+        ]
+      },
+      {
+        "location": "커스텀 상세 옵션 조합 탭 하단",
+        "change": "현재의 한 줄 프롬프트 외에 생성용 확장 프롬프트와 네거티브 프롬프트를 별도 표시",
+        "component": "prompt_output_panel",
+        "outputs": [
+          "선택값 요약",
+          "실전 생성 프롬프트",
+          "네거티브 프롬프트",
+          "동일 인물 유지 프롬프트"
+        ]
+      },
+      {
+        "location": "생성 결과 영역",
+        "change": "장면 예시 카드 대신 기준 인물 6종 결과를 우선 노출",
+        "component": "master_view_grid"
+      },
+      {
+        "location": "인물 라이브러리 탭",
+        "change": "인물 1명당 대표 얼굴, 좌우 45도, 반신, 전신, 프롬프트, 버전을 묶어서 카드로 표시",
+        "component": "person_identity_card"
+      }
+    ],
+    "buttons_to_add": [
+      {
+        "id": "generate_master_set",
+        "label": "기준 인물 6컷 생성",
+        "style": "primary",
+        "location": "커스텀 옵션 하단",
+        "action": "선택값을 사용해 정면 얼굴, 정면 상반신, 좌측 45도, 우측 45도, 반신, 전신을 생성"
+      },
+      {
+        "id": "upload_reference",
+        "label": "참고 사진 업로드",
+        "style": "secondary",
+        "location": "인물 참고 사진 AI 분석 탭",
+        "action": "사용자가 올린 사진을 분석하고 선택 옵션을 자동 채움"
+      },
+      {
+        "id": "analyze_reference",
+        "label": "사진 분석하고 옵션 채우기",
+        "style": "primary",
+        "location": "인물 참고 사진 AI 분석 탭",
+        "action": "얼굴형, 연령대, 헤어, 체형, 복장, 표정, 촬영 구도를 분석해 폼에 반영"
+      },
+      {
+        "id": "select_representative",
+        "label": "대표 얼굴로 선택",
+        "style": "primary",
+        "location": "생성 결과 각 이미지 카드",
+        "action": "인물 식별의 기준이 되는 정면 이미지를 지정"
+      },
+      {
+        "id": "regenerate_single_view",
+        "label": "이 각도만 다시 생성",
+        "style": "secondary",
+        "location": "생성 결과 각 이미지 카드",
+        "action": "전체를 다시 만들지 않고 선택된 각도만 재생성"
+      },
+      {
+        "id": "save_to_library",
+        "label": "인물 라이브러리에 저장",
+        "style": "success",
+        "location": "기준컷 확정 영역",
+        "action": "대표 얼굴과 보조 기준컷, 프롬프트, 생성 설정을 한 인물 레코드로 저장"
+      },
+      {
+        "id": "create_scene",
+        "label": "이 인물로 장면 만들기",
+        "style": "primary",
+        "location": "인물 라이브러리 카드",
+        "action": "저장된 인물 기준컷을 첨부해 수확, 검수, 포장, 적재, 배송 장면을 생성"
+      },
+      {
+        "id": "duplicate_person",
+        "label": "복제 후 수정",
+        "style": "secondary",
+        "location": "인물 라이브러리 카드 메뉴",
+        "action": "기존 인물 설정을 복제해 연령, 체형, 헤어, 복장 일부만 수정"
+      },
+      {
+        "id": "compare_versions",
+        "label": "버전 비교",
+        "style": "secondary",
+        "location": "인물 상세 페이지",
+        "action": "같은 인물의 이전 버전과 얼굴, 체형, 실사감을 비교"
+      },
+      {
+        "id": "archive_person",
+        "label": "보관 처리",
+        "style": "danger_secondary",
+        "location": "인물 라이브러리 카드 메뉴",
+        "action": "즉시 삭제하지 않고 보관 상태로 변경"
+      }
+    ]
+  },
+  "person_builder": {
+    "sections": [
+      {
+        "id": "nationality",
+        "label": "인종 / 국적",
+        "type": "single_select",
+        "options": [
+          {
+            "value": "korean",
+            "label": "한국인",
+            "prompt": "Korean"
+          },
+          {
+            "value": "east_asian",
+            "label": "동양인/아시아계",
+            "prompt": "East Asian"
+          }
+        ],
+        "default": "korean"
+      },
+      {
+        "id": "gender_age",
+        "label": "성별 & 연령",
+        "type": "single_select",
+        "options": [
+          {
+            "value": "male_20s",
+            "label": "20대 청년 남성",
+            "prompt": "male in his late 20s"
+          },
+          {
+            "value": "male_30s",
+            "label": "30대 청년 남성",
+            "prompt": "male in his early 30s"
+          },
+          {
+            "value": "male_40s",
+            "label": "40대 중년 남성",
+            "prompt": "male in his 40s"
+          },
+          {
+            "value": "male_50s",
+            "label": "50대 베테랑 남성",
+            "prompt": "male in his 50s"
+          }
+        ],
+        "default": "male_30s"
+      },
+      {
+        "id": "body_type",
+        "label": "체형 / 몸매",
+        "type": "single_select",
+        "options": [
+          {
+            "value": "sturdy",
+            "label": "다부진 체형",
+            "prompt": "sturdy build with broad shoulders and naturally strong forearms"
+          },
+          {
+            "value": "muscular",
+            "label": "건장한 근육형",
+            "prompt": "healthy muscular build developed from physical work, not a bodybuilder"
+          },
+          {
+            "value": "slim_dry",
+            "label": "슬림/마른 체형",
+            "prompt": "lean and wiry build"
+          },
+          {
+            "value": "average",
+            "label": "기본 체형",
+            "prompt": "average realistic body proportions"
+          }
+        ],
+        "default": "sturdy"
+      },
+      {
+        "id": "hair",
+        "label": "헤어 스타일",
+        "type": "single_select",
+        "options": [
+          {
+            "value": "sports",
+            "label": "단정한 스포츠 머리",
+            "prompt": "neat short sports haircut with a natural irregular hairline"
+          },
+          {
+            "value": "two_block",
+            "label": "깔끔한 투블럭",
+            "prompt": "clean short two-block haircut with restrained styling"
+          },
+          {
+            "value": "short_crop",
+            "label": "자연스러운 숏컷",
+            "prompt": "natural short crop haircut with slightly uneven texture"
+          }
+        ],
+        "default": "sports"
+      },
+      {
+        "id": "outfit",
+        "label": "복장 스타일",
+        "type": "single_select",
+        "options": [
+          {
+            "value": "farm_workwear",
+            "label": "농가/산지 작업복",
+            "prompt": "plain practical agricultural workwear with realistic wrinkles and no visible logo"
+          },
+          {
+            "value": "truck_harvest",
+            "label": "1톤 트럭 수확복",
+            "prompt": "practical harvest workwear suitable for loading produce onto a small farm truck"
+          },
+          {
+            "value": "packing_center",
+            "label": "패킹센터 검수복",
+            "prompt": "clean but practical packing-center inspection workwear"
+          },
+          {
+            "value": "brand_documentary",
+            "label": "브랜드 대표 댄디룩",
+            "prompt": "restrained smart-casual brand representative outfit, realistic and not fashion editorial"
+          },
+          {
+            "value": "casual_tshirt",
+            "label": "캐주얼 반팔티",
+            "prompt": "plain casual short-sleeve T-shirt without branding"
+          }
+        ],
+        "default": "farm_workwear"
+      },
+      {
+        "id": "face_impression",
+        "label": "얼굴 인상",
+        "type": "multi_select",
+        "max": 3,
+        "options": [
+          {
+            "value": "friendly",
+            "label": "친근한 인상",
+            "prompt": "approachable appearance"
+          },
+          {
+            "value": "trustworthy",
+            "label": "신뢰감 있는 인상",
+            "prompt": "trustworthy and responsible demeanor"
+          },
+          {
+            "value": "healthy",
+            "label": "건강한 분위기",
+            "prompt": "healthy outdoor-worker appearance"
+          },
+          {
+            "value": "focused",
+            "label": "집중하는 표정",
+            "prompt": "calm focused expression"
+          },
+          {
+            "value": "soft_smile",
+            "label": "은은한 미소",
+            "prompt": "subtle natural smile without posing"
+          }
+        ],
+        "default": [
+          "friendly",
+          "trustworthy",
+          "healthy"
+        ]
+      },
+      {
+        "id": "realism",
+        "label": "실사감",
+        "type": "multi_select",
+        "max": 6,
+        "options": [
+          {
+            "value": "skin_texture",
+            "label": "자연스러운 피부결",
+            "prompt": "visible pores and natural skin texture"
+          },
+          {
+            "value": "asymmetry",
+            "label": "얼굴 미세 비대칭",
+            "prompt": "small natural facial asymmetry"
+          },
+          {
+            "value": "sun_tan",
+            "label": "야외활동 피부톤",
+            "prompt": "mildly sun-tanned uneven skin tone"
+          },
+          {
+            "value": "no_beauty",
+            "label": "미용 보정 없음",
+            "prompt": "no beauty retouching or skin smoothing"
+          },
+          {
+            "value": "fabric_texture",
+            "label": "작업복 주름 표현",
+            "prompt": "realistic fabric wrinkles and wear"
+          },
+          {
+            "value": "camera_grain",
+            "label": "미세한 카메라 질감",
+            "prompt": "subtle sensor grain and restrained sharpening"
+          }
+        ],
+        "default": [
+          "skin_texture",
+          "asymmetry",
+          "sun_tan",
+          "no_beauty",
+          "fabric_texture",
+          "camera_grain"
+        ]
+      }
+    ],
+    "output_views": [
+      {
+        "id": "front_headshot",
+        "label": "정면 얼굴",
+        "required": true,
+        "ratio": "1:1",
+        "prompt_addon": "front-facing head-and-shoulders portrait, eye-level camera, neutral simple background, lips naturally closed, both ears and jawline reasonably visible"
+      },
+      {
+        "id": "front_upper_body",
+        "label": "정면 상반신",
+        "required": true,
+        "ratio": "4:5",
+        "prompt_addon": "front-facing upper-body portrait, arms relaxed, body shape and workwear clearly visible, eye-level documentary framing"
+      },
+      {
+        "id": "left_45",
+        "label": "좌측 45도",
+        "required": true,
+        "ratio": "1:1",
+        "prompt_addon": "left three-quarter view at approximately 45 degrees, same expression and lighting, facial structure clearly visible"
+      },
+      {
+        "id": "right_45",
+        "label": "우측 45도",
+        "required": true,
+        "ratio": "1:1",
+        "prompt_addon": "right three-quarter view at approximately 45 degrees, same expression and lighting, facial structure clearly visible"
+      },
+      {
+        "id": "half_body",
+        "label": "반신",
+        "required": true,
+        "ratio": "4:5",
+        "prompt_addon": "waist-up portrait, natural standing posture, both hands visible and relaxed, realistic body proportions"
+      },
+      {
+        "id": "full_body",
+        "label": "전신",
+        "required": true,
+        "ratio": "4:5",
+        "prompt_addon": "full-body standing portrait, natural stance, work shoes visible, simple background, no dramatic pose"
+      }
+    ]
+  },
+  "prompt_engine": {
+    "summary_template": "{nationality_label} {gender_age_label}, {body_type_label}, {hair_label}, {outfit_label}, {face_impression_labels}",
+    "base_prompt_template": "Create an original fictional {nationality_prompt} {gender_age_prompt}. He has {body_type_prompt}. Hair: {hair_prompt}. Outfit: {outfit_prompt}. Face and mood: {face_impression_prompts}. Realism: {realism_prompts}. He must look like a real agricultural produce worker, not a celebrity, actor, fashion model, influencer or synthetic advertising character. Use natural documentary photography, true-to-life color, moderate optical depth of field, ordinary photographic imperfections and realistic proportions.",
+    "view_prompt_template": "{base_prompt} View requirement: {view_prompt_addon}. Keep the same facial structure, hairstyle, age, skin tone, body build, outfit and overall identity across all generated views.",
+    "identity_lock_template": "Use the uploaded master reference images of the same fictional person. Maintain exactly the same face, facial proportions, eye shape, nose, mouth, jawline, hairstyle, hairline, apparent age, skin tone and body build. Do not redesign, beautify, reinterpret or replace the identity. Only change the requested action, pose, camera framing and environment.",
+    "negative_prompt": "plastic skin, waxy face, porcelain skin, excessive skin smoothing, beauty retouching, perfect facial symmetry, celebrity look, fashion model posing, influencer aesthetic, artificial smile, oversized eyes, exaggerated jawline, bodybuilder proportions, spotless clothing, glossy advertising finish, cinematic fantasy lighting, orange and teal grading, excessive HDR, excessive saturation, artificial bokeh, oversharpening, CGI, 3D render, game graphics, warped hands, extra fingers, fused fingers, duplicated limbs, floating objects, duplicated produce, repeated fruit patterns, random text, unreadable logos"
+  },
+  "generation_pipeline": {
+    "master_person_generation": {
+      "input": [
+        "person_builder selections",
+        "optional reference photo analysis result"
+      ],
+      "process": [
+        "선택값을 base_prompt_template에 매핑",
+        "6개 output_views별로 개별 프롬프트 생성",
+        "각 각도당 2~4개 후보 생성",
+        "사용자가 대표 정면 얼굴과 보조 기준컷을 선택",
+        "선택되지 않은 후보는 임시 보관 후 정리"
+      ],
+      "recommended_candidate_count_per_view": 4,
+      "required_final_images": [
+        "front_headshot",
+        "left_45",
+        "right_45",
+        "front_upper_body",
+        "full_body"
+      ]
+    },
+    "reference_analysis": {
+      "accepted_formats": [
+        "jpg",
+        "jpeg",
+        "png",
+        "webp"
+      ],
+      "max_files": 3,
+      "analysis_fields": [
+        "apparent_age_range",
+        "face_shape",
+        "hair_style",
+        "hairline",
+        "skin_tone",
+        "body_type",
+        "outfit",
+        "expression",
+        "camera_angle",
+        "lighting",
+        "background_complexity"
+      ],
+      "privacy_notice": "참고 사진은 사용 권한이 있는 이미지 또는 직접 생성한 가상 인물 이미지만 사용하도록 안내한다.",
+      "output_behavior": "분석 결과를 확정값으로 강제하지 않고 커스텀 옵션 폼의 추천 선택값으로 채운다."
+    },
+    "scene_generation": {
+      "required_inputs": [
+        "person_id",
+        "scene_preset_id",
+        "product_name",
+        "location",
+        "action",
+        "camera_preset"
+      ],
+      "reference_image_priority": [
+        "front_headshot",
+        "left_45 or right_45 matching requested pose",
+        "front_upper_body or full_body matching requested framing"
+      ],
+      "prompt_order": [
+        "identity_lock_template",
+        "scene description",
+        "physical action and weight",
+        "outfit",
+        "product realism",
+        "environment",
+        "camera",
+        "lighting",
+        "realism constraints",
+        "negative_prompt"
+      ],
+      "scene_presets": [
+        {
+          "id": "orchard_harvest",
+          "label": "과수원 수확",
+          "prompt": "working naturally in a Korean orchard while harvesting and carrying produce, candid documentary moment, not posing"
+        },
+        {
+          "id": "packing_inspection",
+          "label": "패킹센터 검수",
+          "prompt": "carefully inspecting produce at a practical Korean packing center, focused downward gaze, realistic hand contact"
+        },
+        {
+          "id": "truck_loading",
+          "label": "1톤 트럭 적재",
+          "prompt": "loading heavy produce into a used compact Korean farm truck, believable body tension and accurate hand-to-object contact"
+        },
+        {
+          "id": "warehouse_shipping",
+          "label": "산지 출고 확인",
+          "prompt": "checking produce boxes and shipping preparation at a rural warehouse, authentic work environment"
+        },
+        {
+          "id": "product_portrait",
+          "label": "상품 들고 소개",
+          "prompt": "holding the product naturally at chest level with a subtle trustworthy expression, restrained commercial documentary style"
+        }
+      ]
+    }
+  },
+  "image_handling": {
+    "how_to_receive_images": {
+      "preferred_response": "생성 API 응답에서 image_url 또는 binary/base64 결과를 받는다.",
+      "important": "외부 생성 서비스의 만료 가능 URL을 DB에 그대로 저장하지 않는다.",
+      "server_flow": [
+        "생성 결과 수신",
+        "서버에서 원본 파일 다운로드 또는 binary 디코딩",
+        "원본을 object storage에 업로드",
+        "썸네일과 미리보기 WebP 생성",
+        "DB에 저장 경로, 프롬프트, 생성 모델, 시드, 크기, 버전 기록"
+      ]
+    },
+    "storage": {
+      "recommended_type": "S3 compatible object storage or equivalent",
+      "folder_pattern": "persons/{user_id}/{person_id}/{version}/{view_id}/",
+      "file_name_pattern": "{person_id}_{view_id}_{version}_{image_id}.webp",
+      "variants": [
+        {
+          "name": "original",
+          "purpose": "재생성 및 고화질 사용"
+        },
+        {
+          "name": "preview",
+          "max_width": 1200,
+          "purpose": "인물 상세 보기"
+        },
+        {
+          "name": "thumbnail",
+          "max_width": 400,
+          "purpose": "라이브러리 카드"
+        }
+      ],
+      "do_not_store": [
+        "API secret key",
+        "만료되는 임시 이미지 URL만 단독 저장",
+        "사용자 동의 없는 실존 인물 식별 정보"
+      ]
+    },
+    "selection_rules": {
+      "representative_image": "정면 얼굴 중 눈, 코, 입, 턱선이 자연스럽고 피부가 과도하게 보정되지 않은 이미지",
+      "support_images": "좌우 45도 각 1장, 상반신 또는 반신 1장, 전신 1장",
+      "reject_conditions": [
+        "좌우 눈 크기 차이가 비현실적임",
+        "귀, 턱선, 헤어라인이 각도마다 달라짐",
+        "작업복 디자인과 색이 기준컷마다 바뀜",
+        "손가락 또는 팔이 비정상임",
+        "피부가 플라스틱처럼 지나치게 매끄러움",
+        "모델 포즈와 과장된 미소가 강함"
+      ]
+    }
+  },
+  "database_models": {
+    "person": {
+      "id": "uuid",
+      "user_id": "uuid",
+      "name": "string",
+      "status": "draft | active | archived",
+      "summary_prompt": "string",
+      "base_prompt": "text",
+      "negative_prompt": "text",
+      "selected_options": "json",
+      "representative_image_id": "uuid",
+      "version": "integer",
+      "tags": "string[]",
+      "created_at": "datetime",
+      "updated_at": "datetime"
+    },
+    "person_image": {
+      "id": "uuid",
+      "person_id": "uuid",
+      "view_id": "front_headshot | front_upper_body | left_45 | right_45 | half_body | full_body | scene",
+      "original_url": "string",
+      "preview_url": "string",
+      "thumbnail_url": "string",
+      "prompt": "text",
+      "negative_prompt": "text",
+      "generation_provider": "string",
+      "generation_model": "string",
+      "seed": "string|null",
+      "width": "integer",
+      "height": "integer",
+      "is_selected": "boolean",
+      "is_representative": "boolean",
+      "created_at": "datetime"
+    },
+    "scene_image": {
+      "id": "uuid",
+      "person_id": "uuid",
+      "scene_preset_id": "string",
+      "product_name": "string",
+      "reference_image_ids": "uuid[]",
+      "prompt": "text",
+      "image_url": "string",
+      "status": "generated | selected | rejected",
+      "created_at": "datetime"
+    }
+  },
+  "api_contracts": [
+    {
+      "method": "POST",
+      "path": "/api/persons/generate-master-set",
+      "body": {
+        "selected_options": "object",
+        "reference_image_ids": "string[]|optional",
+        "views": "string[]",
+        "candidate_count": "integer"
+      },
+      "returns": {
+        "job_id": "string",
+        "status": "queued"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/generation-jobs/{job_id}",
+      "returns": {
+        "status": "queued | processing | completed | failed",
+        "images": "person_image[]"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/persons",
+      "body": {
+        "name": "string",
+        "selected_options": "object",
+        "selected_image_ids": "string[]",
+        "representative_image_id": "string"
+      },
+      "returns": {
+        "person_id": "string",
+        "status": "active"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/persons/{person_id}/scenes",
+      "body": {
+        "scene_preset_id": "string",
+        "product_name": "string",
+        "custom_scene_text": "string|optional",
+        "camera_preset": "string",
+        "candidate_count": "integer"
+      },
+      "returns": {
+        "job_id": "string",
+        "status": "queued"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/persons",
+      "query": {
+        "status": "active|archived",
+        "search": "string|optional",
+        "tag": "string|optional"
+      },
+      "returns": {
+        "items": "person[]",
+        "total": "integer"
+      }
+    }
+  ],
+  "library_ui": {
+    "card_fields": [
+      "대표 얼굴 썸네일",
+      "인물 이름",
+      "연령대",
+      "체형",
+      "복장",
+      "태그",
+      "저장된 기준컷 수",
+      "생성된 장면 수",
+      "마지막 사용일"
+    ],
+    "filters": [
+      "활성 인물",
+      "보관 인물",
+      "20대",
+      "30대",
+      "40대",
+      "50대",
+      "농가 작업복",
+      "패킹센터",
+      "남성",
+      "여성"
+    ],
+    "card_actions": [
+      "이 인물로 장면 만들기",
+      "기준컷 보기",
+      "설정 수정",
+      "복제 후 수정",
+      "버전 비교",
+      "보관 처리"
+    ],
+    "empty_state": {
+      "title": "저장된 기준 인물이 없습니다.",
+      "description": "장면 이미지를 만들기 전에 정면과 좌우 45도 기준컷을 먼저 생성해 저장하세요.",
+      "button_label": "첫 기준 인물 만들기"
+    }
+  },
+  "recommended_user_flow": [
+    {
+      "step": 1,
+      "screen": "커스텀 상세 옵션 조합",
+      "action": "국적, 연령, 체형, 헤어, 복장, 인상, 실사감 옵션 선택"
+    },
+    {
+      "step": 2,
+      "screen": "기준 인물 6컷 생성",
+      "action": "정면 얼굴, 정면 상반신, 좌우 45도, 반신, 전신 후보 생성"
+    },
+    {
+      "step": 3,
+      "screen": "기준컷 검토",
+      "action": "대표 정면 얼굴과 보조 기준컷을 선택하고 이상한 각도만 재생성"
+    },
+    {
+      "step": 4,
+      "screen": "인물 라이브러리 저장",
+      "action": "인물 이름과 태그를 입력하고 모든 프롬프트와 이미지를 묶어서 저장"
+    },
+    {
+      "step": 5,
+      "screen": "장면 생성",
+      "action": "라이브러리에서 인물을 선택하고 수확, 검수, 적재, 배송 등의 장면 선택"
+    },
+    {
+      "step": 6,
+      "screen": "최종 사용",
+      "action": "선택된 장면 이미지를 상세페이지 섹션, 썸네일, 리뷰 연출컷, 영상 시작 이미지에 사용"
+    }
+  ],
+  "later_usage": {
+    "detail_page": {
+      "method": "person_id를 상세페이지 프로젝트에 연결하고 필요한 장면을 scene_image에서 선택",
+      "recommended_use": [
+        "브랜드 진정성 섹션",
+        "산지 수확 섹션",
+        "검수 과정 섹션",
+        "출고 과정 섹션",
+        "브랜드 대표 인사 섹션"
+      ]
+    },
+    "new_product": {
+      "method": "새 상품마다 새 인물을 만들지 않고 기존 person_id를 유지한 채 product_name과 scene_preset만 변경",
+      "example": "동일 인물로 수박 적재, 복숭아 선별, 샤인머스켓 검수 장면을 각각 생성"
+    },
+    "video": {
+      "method": "정지 장면 중 얼굴과 손이 가장 안정적인 이미지를 영상 생성 도구의 시작 이미지로 사용",
+      "rule": "영상화를 위한 장면도 먼저 동일 인물 기준컷을 참조해 만든 이미지여야 한다."
+    }
+  },
+  "sample_person_record": {
+    "id": "person_demo_001",
+    "name": "산지청년 대표 모델 A",
+    "status": "active",
+    "selected_options": {
+      "nationality": "korean",
+      "gender_age": "male_30s",
+      "body_type": "sturdy",
+      "hair": "sports",
+      "outfit": "farm_workwear",
+      "face_impression": [
+        "friendly",
+        "trustworthy",
+        "healthy"
+      ],
+      "realism": [
+        "skin_texture",
+        "asymmetry",
+        "sun_tan",
+        "no_beauty",
+        "fabric_texture",
+        "camera_grain"
+      ]
+    },
+    "required_views": [
+      "front_headshot",
+      "front_upper_body",
+      "left_45",
+      "right_45",
+      "half_body",
+      "full_body"
+    ],
+    "tags": [
+      "산지청년",
+      "농산물",
+      "30대",
+      "남성",
+      "작업복"
+    ]
+  }
+}
