@@ -411,61 +411,6 @@ export default function Step1MaterialUpload({
           </div>
         </div>
 
-        {/* 2 Separate Upload Buttons (Requirement 2) */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '20px' }}>
-          {/* Button 1: 상품 참고 이미지 */}
-          <label style={{
-            backgroundColor: '#f0f9ff',
-            border: '2px dashed #0284c7',
-            borderRadius: '16px',
-            padding: '20px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            textAlign: 'center',
-            transition: 'all 0.15s ease'
-          }}>
-            <div style={{ width: '38px', height: '38px', borderRadius: '10px', backgroundColor: '#e0f2fe', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '8px' }}>
-              <ImageIcon style={{ width: '20px', height: '20px', color: '#0284c7' }} />
-            </div>
-            <span style={{ fontSize: '13px', fontWeight: '900', color: '#0369a1', marginBottom: '4px' }}>
-              📷 상품 참고 이미지 업로드
-            </span>
-            <span style={{ fontSize: '11px', color: '#64748b' }}>
-              실제 판매 상품 원본 컷 (흑수박, 납작복숭아 등 고유 형태 인식용)
-            </span>
-            <input type="file" multiple accept="image/*" onChange={handleProductRefUpload} style={{ display: 'none' }} />
-          </label>
-
-          {/* Button 2: 상세페이지 레퍼런스 이미지 */}
-          <label style={{
-            backgroundColor: '#fafbf8',
-            border: '2px dashed #94a3b8',
-            borderRadius: '16px',
-            padding: '20px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            textAlign: 'center',
-            transition: 'all 0.15s ease'
-          }}>
-            <div style={{ width: '38px', height: '38px', borderRadius: '10px', backgroundColor: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '8px' }}>
-              <FileText style={{ width: '20px', height: '20px', color: '#475569' }} />
-            </div>
-            <span style={{ fontSize: '13px', fontWeight: '900', color: '#0f172a', marginBottom: '4px' }}>
-              📄 상세페이지 레퍼런스 이미지/PDF
-            </span>
-            <span style={{ fontSize: '11px', color: '#64748b' }}>
-              기존 벤치마킹 상세페이지 통 캡처 및 기획 PDF 문서
-            </span>
-            <input type="file" multiple accept="image/*,.pdf" onChange={handleDetailRefUpload} style={{ display: 'none' }} />
-          </label>
-        </div>
-
         {/* Uploaded Files Thumbnails Grid */}
         {productImages.length > 0 && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '8px', marginBottom: '20px' }}>
