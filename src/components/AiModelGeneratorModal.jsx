@@ -58,7 +58,7 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
   const hairstyles = ['단정한 스포츠 머리', '깔끔한 투블럭', '자연스러운 숏컷'];
   const outfits = ['농가/산지 작업복', '1톤 트럭 수확복', '패킹센터 검수복', '브랜드 대표 댄디룩', '캐주얼 반팔티'];
 
-  // 10 Smiling Real User Reference Candidates with 6 Distinct Multi-Angle Poses (1:1 Headshot, 4:5 Upper Body, 1:1 Left 45, 1:1 Right 45, 4:5 Half Body, 4:5 Full Body)
+  // 10 Smiling Real User Reference Candidates (Candidate 1 uses c1 photoshoot set, Candidate 3 uses c3 photoshoot set, Candidates 2/4/5/6/7/8/9/10 use 100% their own face across all 6 cards)
   const defaultFrontCandidates = [
     { 
       id: 'f1', name: '후보 1 (하우스 산지 6대 다각도 기준 인물)', url: '/example_media/c1_view_1.png', prompt: 'front-facing portrait of 30s muscular Korean male farmer with bright teeth smile, navy quarter-zip shirt, greenhouse background',
@@ -66,7 +66,7 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
     },
     { 
       id: 'f2', name: '후보 2 (박스창고 앞 자상한 미소)', url: '/example_media/user_smile_2.png', prompt: 'front-facing portrait of 30s Korean male farmer, gentle authentic smile, short crop haircut, packing boxes background',
-      views: { v1: '/example_media/user_smile_2.png', v2: '/example_media/c1_view_2.png', v3: '/example_media/c1_view_3.png', v4: '/example_media/c1_view_4.png', v5: '/example_media/c1_view_5.png', v6: '/example_media/c1_view_6.png' }
+      views: { v1: '/example_media/user_smile_2.png', v2: '/example_media/user_smile_2.png', v3: '/example_media/user_smile_2.png', v4: '/example_media/user_smile_2.png', v5: '/example_media/user_smile_2.png', v6: '/example_media/user_smile_2.png' }
     },
     { 
       id: 'f3', name: '후보 3 (트럭 창고 앞 6대 다각도 기준 인물)', url: '/example_media/c3_view_1.png', prompt: 'front-facing portrait of 30s Korean male farmer with natural two-block haircut, bright genuine smile with work gloves',
@@ -74,31 +74,31 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
     },
     { 
       id: 'f4', name: '후보 4 (하우스 산지 앞 미소 포커스)', url: '/example_media/user_smile_4.png', prompt: 'front-facing portrait of 30s Korean male farmer, warm gentle smile, short fade haircut, greenhouse field background',
-      views: { v1: '/example_media/user_smile_4.png', v2: '/example_media/c1_view_2.png', v3: '/example_media/c1_view_3.png', v4: '/example_media/c1_view_4.png', v5: '/example_media/c1_view_5.png', v6: '/example_media/c1_view_6.png' }
+      views: { v1: '/example_media/user_smile_4.png', v2: '/example_media/user_smile_4.png', v3: '/example_media/user_smile_4.png', v4: '/example_media/user_smile_4.png', v5: '/example_media/user_smile_4.png', v6: '/example_media/user_smile_4.png' }
     },
     { 
       id: 'f5', name: '후보 5 (창고 스냅 보조개 미소)', url: '/example_media/user_smile_5.png', prompt: 'front-facing headshot of 30s Korean male farmer, warm trustworthy smile with dimples, truck & green crates background',
-      views: { v1: '/example_media/user_smile_5.png', v2: '/example_media/c3_view_2.png', v3: '/example_media/c3_view_3.png', v4: '/example_media/c3_view_4.png', v5: '/example_media/c3_view_5.png', v6: '/example_media/c3_view_6.png' }
+      views: { v1: '/example_media/user_smile_5.png', v2: '/example_media/user_smile_5.png', v3: '/example_media/user_smile_5.png', v4: '/example_media/user_smile_5.png', v5: '/example_media/user_smile_5.png', v6: '/example_media/user_smile_5.png' }
     },
     { 
       id: 'f6', name: '후보 6 (하우스 배경 환한 미소)', url: '/example_media/user_smile_6.png', prompt: 'front-facing headshot of 30s Korean male farmer with natural two-block haircut, bright teeth smile, navy quarter-zip shirt',
-      views: { v1: '/example_media/user_smile_6.png', v2: '/example_media/c1_view_2.png', v3: '/example_media/c1_view_3.png', v4: '/example_media/c1_view_4.png', v5: '/example_media/c1_view_5.png', v6: '/example_media/c1_view_6.png' }
+      views: { v1: '/example_media/user_smile_6.png', v2: '/example_media/user_smile_6.png', v3: '/example_media/user_smile_6.png', v4: '/example_media/user_smile_6.png', v5: '/example_media/user_smile_6.png', v6: '/example_media/user_smile_6.png' }
     },
     { 
       id: 'f7', name: '후보 7 (수박 상자 앞 팔짱 미소)', url: '/example_media/user_smile_7.png', prompt: 'front-facing portrait of 30s Korean male farmer with arms crossed, natural smile, watermelon crate background',
-      views: { v1: '/example_media/user_smile_7.png', v2: '/example_media/c3_view_2.png', v3: '/example_media/c3_view_3.png', v4: '/example_media/c3_view_4.png', v5: '/example_media/c3_view_5.png', v6: '/example_media/c3_view_6.png' }
+      views: { v1: '/example_media/user_smile_7.png', v2: '/example_media/user_smile_7.png', v3: '/example_media/user_smile_7.png', v4: '/example_media/user_smile_7.png', v5: '/example_media/user_smile_7.png', v6: '/example_media/user_smile_7.png' }
     },
     { 
       id: 'f8', name: '후보 8 (패킹센터 산지 자신감 컷)', url: '/example_media/user_smile_8.png', prompt: 'three-quarter portrait of 30s Korean male farmer, subtle confident smile, packing warehouse background',
-      views: { v1: '/example_media/user_smile_8.png', v2: '/example_media/c3_view_2.png', v3: '/example_media/c3_view_3.png', v4: '/example_media/c3_view_4.png', v5: '/example_media/c3_view_5.png', v6: '/example_media/c3_view_6.png' }
+      views: { v1: '/example_media/user_smile_8.png', v2: '/example_media/user_smile_8.png', v3: '/example_media/user_smile_8.png', v4: '/example_media/user_smile_8.png', v5: '/example_media/user_smile_8.png', v6: '/example_media/user_smile_8.png' }
     },
     { 
       id: 'f9', name: '후보 9 (수박 수확 안고 미소 스냅)', url: '/example_media/user_smile_9.png', prompt: 'portrait of 30s Korean male farmer holding a large fresh watermelon naturally with work gloves, truck background',
-      views: { v1: '/example_media/user_smile_9.png', v2: '/example_media/scene_product_present.png', v3: '/example_media/c3_view_3.png', v4: '/example_media/c3_view_4.png', v5: '/example_media/c3_view_5.png', v6: '/example_media/c3_view_6.png' }
+      views: { v1: '/example_media/user_smile_9.png', v2: '/example_media/scene_product_present.png', v3: '/example_media/user_smile_9.png', v4: '/example_media/user_smile_9.png', v5: '/example_media/user_smile_9.png', v6: '/example_media/user_smile_9.png' }
     },
     { 
       id: 'f10', name: '후보 10 (창고 앞 팔짱 환한 미소)', url: '/example_media/user_smile_10.png', prompt: 'front-facing portrait of 30s Korean male farmer with arms crossed, bright teeth smile, warehouse background',
-      views: { v1: '/example_media/user_smile_10.png', v2: '/example_media/c3_view_2.png', v3: '/example_media/c3_view_3.png', v4: '/example_media/c3_view_4.png', v5: '/example_media/c3_view_5.png', v6: '/example_media/c3_view_6.png' }
+      views: { v1: '/example_media/user_smile_10.png', v2: '/example_media/user_smile_10.png', v3: '/example_media/user_smile_10.png', v4: '/example_media/user_smile_10.png', v5: '/example_media/user_smile_10.png', v6: '/example_media/user_smile_10.png' }
     }
   ];
 
