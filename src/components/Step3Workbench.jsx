@@ -32,13 +32,17 @@ export default function Step3Workbench({ slides, setSlides, canvasWidth, onExpor
   const [viewMode, setViewMode] = useState('mangoboard'); // 'mangoboard' (Full Detail Page Mode) or 'card' (3:2 Dual Mode)
 
   const activeWidthValue = activeWidth;
-  const currentSection = slides[selectedSectionIdx] || slides[0];
+  const safeSlides = (Array.isArray(slides) && slides.length > 0) ? slides : MASTER_26_SLIDES;
+  const currentSection = safeSlides[selectedSectionIdx] || safeSlides[0] || MASTER_26_SLIDES[0];
 
   // Handler to update current slide text properties live!
   const updateCurrentSlide = (field, value) => {
-    const updatedSlides = [...slides];
-    updatedSlides[selectedSectionIdx] = {
-      ...updatedSlides[selectedSectionIdx],
+    if (!setSlides) return;
+    const updatedSlides = [...safeSlides];
+    const targetIdx = Math.min(selectedSectionIdx, updatedSlides.length - 1);
+    if (!updatedSlides[targetIdx]) return;
+    updatedSlides[targetIdx] = {
+      ...updatedSlides[targetIdx],
       [field]: value
     };
     setSlides(updatedSlides);
@@ -46,26 +50,38 @@ export default function Step3Workbench({ slides, setSlides, canvasWidth, onExpor
 
   // Handler to update specific highlight pill
   const updateHighlightPill = (pillIdx, newValue) => {
-    const updatedSlides = [...slides];
-    const newHighlights = [...updatedSlides[selectedSectionIdx].highlights];
+    if (!setSlides) return;
+    const updatedSlides = [...safeSlides];
+    const targetIdx = Math.min(selectedSectionIdx, updatedSlides.length - 1);
+    if (!updatedSlides[targetIdx]) return;
+    const highlights = updatedSlides[targetIdx].highlights || [];
+    const newHighlights = [...highlights];
     newHighlights[pillIdx] = newValue;
-    updatedSlides[selectedSectionIdx].highlights = newHighlights;
+    updatedSlides[targetIdx] = { ...updatedSlides[targetIdx], highlights: newHighlights };
     setSlides(updatedSlides);
   };
 
   // Handler to add a new highlight pill
   const addHighlightPill = () => {
-    const updatedSlides = [...slides];
-    const newHighlights = [...updatedSlides[selectedSectionIdx].highlights, "새 특징 뱃지"];
-    updatedSlides[selectedSectionIdx].highlights = newHighlights;
+    if (!setSlides) return;
+    const updatedSlides = [...safeSlides];
+    const targetIdx = Math.min(selectedSectionIdx, updatedSlides.length - 1);
+    if (!updatedSlides[targetIdx]) return;
+    const highlights = updatedSlides[targetIdx].highlights || [];
+    const newHighlights = [...highlights, "새 특징 뱃지"];
+    updatedSlides[targetIdx] = { ...updatedSlides[targetIdx], highlights: newHighlights };
     setSlides(updatedSlides);
   };
 
   // Handler to delete a highlight pill
   const deleteHighlightPill = (pillIdx) => {
-    const updatedSlides = [...slides];
-    const newHighlights = updatedSlides[selectedSectionIdx].highlights.filter((_, idx) => idx !== pillIdx);
-    updatedSlides[selectedSectionIdx].highlights = newHighlights;
+    if (!setSlides) return;
+    const updatedSlides = [...safeSlides];
+    const targetIdx = Math.min(selectedSectionIdx, updatedSlides.length - 1);
+    if (!updatedSlides[targetIdx]) return;
+    const highlights = updatedSlides[targetIdx].highlights || [];
+    const newHighlights = highlights.filter((_, idx) => idx !== pillIdx);
+    updatedSlides[targetIdx] = { ...updatedSlides[targetIdx], highlights: newHighlights };
     setSlides(updatedSlides);
   };
 
@@ -313,7 +329,7 @@ export default function Step3Workbench({ slides, setSlides, canvasWidth, onExpor
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              {slides.map((s, idx) => (
+              {safeSlides.map((s, idx) => (
                 <div
                   key={s.id}
                   onClick={() => setSelectedSectionIdx(idx)}
@@ -619,7 +635,7 @@ export default function Step3Workbench({ slides, setSlides, canvasWidth, onExpor
 
                   {/* Highlights Badge Pills */}
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '16px' }}>
-                    {currentSection.highlights.map((hl, i) => (
+                    {currentSection?.highlights && currentSection.highlights.map((hl, i) => (
                       <div key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', backgroundColor: '#ffffff', border: '1.5px solid #10b981', borderRadius: '20px', padding: '4px 12px', boxShadow: '0 2px 4px rgba(0,0,0,0.03)' }}>
                         <Check style={{ width: '14px', height: '14px', color: '#059669' }} />
                         <input 
