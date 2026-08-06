@@ -36,6 +36,21 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
   const [generatedSceneImage, setGeneratedSceneImage] = useState(null);
   const [isGeneratingScene, setIsGeneratingScene] = useState(false);
 
+  // Global Claimed Brand Models Registry State
+  const [claimedRegistry, setClaimedRegistry] = useState({});
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const raw = localStorage.getItem('global_claimed_brand_persons');
+    if (raw) {
+      try {
+        setClaimedRegistry(JSON.parse(raw));
+      } catch (e) {
+        setClaimedRegistry({});
+      }
+    }
+  }, [isOpen]);
+
   // Options Lists (Strict v2 Specification)
   const ethnicities = ['한국인', '동양인/아시아계'];
   const genderAges = ['30대 청년 남성', '20대 청년 남성', '40대 중년 남성', '50대 베테랑 남성'];
@@ -181,20 +196,6 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
       setCurrentStep(3);
     }, 1500);
   };
-
-  // Global Claimed Brand Models Registry State
-  const [claimedRegistry, setClaimedRegistry] = useState({});
-
-  useEffect(() => {
-    const raw = localStorage.getItem('global_claimed_brand_persons');
-    if (raw) {
-      try {
-        setClaimedRegistry(JSON.parse(raw));
-      } catch (e) {
-        setClaimedRegistry({});
-      }
-    }
-  }, [isOpen]);
 
   // STEP 3 -> STEP 4: Save Master Person Record to Library and Claim Brand Model Exclusively
   const handleSaveToLibrary = () => {
