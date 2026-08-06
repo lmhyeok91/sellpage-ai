@@ -43,12 +43,13 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
   const hairstyles = ['단정한 스포츠 머리', '깔끔한 투블럭', '자연스러운 숏컷'];
   const outfits = ['농가/산지 작업복', '1톤 트럭 수확복', '패킹센터 검수복', '브랜드 대표 댄디룩', '캐주얼 반팔티'];
 
-  // 4 Neutral Background Front Face Headshot Reference Stock Assets (Phase 1)
+  // 5 Real User Reference Candidates (Phase 1)
   const defaultFrontCandidates = [
-    { id: 'f1', name: '정면 얼굴 후보 1 (단정한 스포츠컷)', url: '/example_media/front_candidate_1.png', prompt: 'front-facing head-and-shoulders portrait, eye-level, soft neutral gray background' },
-    { id: 'f2', name: '정면 얼굴 후보 2 (크루컷 미소형)', url: '/example_media/front_candidate_2.png', prompt: 'front-facing headshot, soft neutral gray background, warm friendly smile' },
-    { id: 'f3', name: '정면 얼굴 후보 3 (투블럭 신뢰형)', url: '/example_media/front_candidate_3.png', prompt: 'front-facing headshot, soft neutral light gray background, calm trustworthy expression' },
-    { id: 'f4', name: '정면 얼굴 후보 4 (자연스러운 숏컷)', url: '/example_media/front_candidate_4.png', prompt: 'front-facing headshot, neutral soft gray background, natural earnest smile' }
+    { id: 'f1', name: '정면 얼굴 후보 1 (스포츠컷 & 네이비 집업)', url: '/example_media/front_candidate_1.png', prompt: 'front-facing portrait of 30s muscular Korean male farmer, navy quarter-zip athletic compression shirt, sports haircut' },
+    { id: 'f2', name: '정면 얼굴 후보 2 (크루컷 & 라운드티)', url: '/example_media/front_candidate_2.png', prompt: 'front-facing portrait of 30s Korean male farmer, navy crewneck athletic shirt, authentic face' },
+    { id: 'f3', name: '정면 얼굴 후보 3 (스포츠컷 신뢰형 미소)', url: '/example_media/front_candidate_3.png', prompt: 'front-facing portrait of 30s Korean male farmer, navy quarter-zip shirt, subtle gentle smile' },
+    { id: 'f4', name: '정면 얼굴 후보 4 (투블럭 단정형)', url: '/example_media/front_candidate_4.png', prompt: 'front-facing portrait of 30s Korean male farmer, navy quarter-zip shirt, earnest rustic smile' },
+    { id: 'f5', name: '정면 얼굴 후보 5 (좌측 45도 페이드컷)', url: '/example_media/front_candidate_5.png', prompt: 'three-quarter portrait of 30s Korean male farmer, navy quarter-zip shirt, fade haircut' }
   ];
 
   if (!isOpen) return null;
@@ -462,8 +463,8 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
               )}
             </div>
 
-            {/* 4-Grid Front Face Cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '20px' }}>
+            {/* 5-Grid Front Face Cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px', marginBottom: '20px' }}>
               {frontCandidates.map((res, index) => {
                 const isSelected = selectedFrontFace?.id === res.id;
 
