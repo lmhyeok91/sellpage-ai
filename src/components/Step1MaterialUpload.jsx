@@ -536,6 +536,7 @@ export default function Step1MaterialUpload({
       {/* Bottom CTA Button */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '8px' }}>
         <button
+          type="button"
           onClick={onNextStep}
           style={{
             backgroundColor: '#6b7280',
@@ -560,6 +561,7 @@ export default function Step1MaterialUpload({
         onSelectAndSaveModel={handleSelectAndSaveModel}
         savedModels={savedBrandModels}
         onDeleteSavedModel={handleDeleteSavedBrandModel}
+        currentUser={currentUser}
       />
     </div>
   );

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Sparkles, X, Check, RefreshCw, Upload, User, BookmarkCheck, Trash2, FileText, Search, Image as ImageIcon, Camera, ArrowRight, Layers, Lock, ChevronRight } from 'lucide-react';
 
-export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSaveModel, savedModels = [], onDeleteSavedModel }) {
+export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSaveModel, savedModels = [], onDeleteSavedModel, currentUser = { email: 'master' } }) {
   const [activeTab, setActiveTab] = useState('custom'); // 'custom' | 'image_vision' | 'library'
   
   // Strict Stepper Workflow Stage: 1 ('setup') | 2 ('front_candidates') | 3 ('master_views') | 4 ('library_saved') | 5 ('scene_mode')
@@ -291,7 +291,7 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
         overflowY: 'auto'
       }}>
         {/* Close Button */}
-        <button 
+        <button type="button" 
           onClick={onClose}
           style={{
             position: 'absolute',
@@ -357,7 +357,7 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
 
         {/* Navigation Tabs */}
         <div style={{ display: 'flex', gap: '10px', marginBottom: '24px', borderBottom: '1px solid #e2e8f0', paddingBottom: '12px' }}>
-          <button
+          <button type="button"
             onClick={() => setActiveTab('custom')}
             style={{
               padding: '10px 18px', borderRadius: '12px', border: 'none',
@@ -369,7 +369,7 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
           >
             <Sparkles style={{ width: '16px', height: '16px' }} /> 커스텀 상세 옵션 조합
           </button>
-          <button
+          <button type="button"
             onClick={() => setActiveTab('upload')}
             style={{
               padding: '10px 18px', borderRadius: '12px', border: 'none',
@@ -381,7 +381,7 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
           >
             <ImageIcon style={{ width: '16px', height: '16px' }} /> 인물 참고 사진 AI 분석
           </button>
-          <button
+          <button type="button"
             onClick={() => { setActiveTab('library'); setCurrentStep(4); }}
             style={{
               padding: '10px 18px', borderRadius: '12px', border: 'none',
@@ -402,7 +402,7 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
               <label style={{ fontSize: '13px', fontWeight: '800', color: '#334155', display: 'block', marginBottom: '8px' }}>1. 인종 (Ethnicity)</label>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 {ethnicities.map(item => (
-                  <button
+                  <button type="button"
                     key={item}
                     onClick={() => handleSelectorChange('ethnicity', item)}
                     style={{
@@ -422,7 +422,7 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
               <label style={{ fontSize: '13px', fontWeight: '800', color: '#334155', display: 'block', marginBottom: '8px' }}>2. 성별 및 연령대 (Gender & Age)</label>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 {genderAges.map(item => (
-                  <button
+                  <button type="button"
                     key={item}
                     onClick={() => handleSelectorChange('genderAge', item)}
                     style={{
@@ -442,7 +442,7 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
               <label style={{ fontSize: '13px', fontWeight: '800', color: '#334155', display: 'block', marginBottom: '8px' }}>3. 체형 (Body Type)</label>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 {bodyTypes.map(item => (
-                  <button
+                  <button type="button"
                     key={item}
                     onClick={() => handleSelectorChange('bodyType', item)}
                     style={{
@@ -462,7 +462,7 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
               <label style={{ fontSize: '13px', fontWeight: '800', color: '#334155', display: 'block', marginBottom: '8px' }}>4. 헤어 스타일 (Hairstyle)</label>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 {hairstyles.map(item => (
-                  <button
+                  <button type="button"
                     key={item}
                     onClick={() => handleSelectorChange('hairstyle', item)}
                     style={{
@@ -482,7 +482,7 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
               <label style={{ fontSize: '13px', fontWeight: '800', color: '#334155', display: 'block', marginBottom: '8px' }}>5. 의상 및 착장 (Outfit)</label>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 {outfits.map(item => (
-                  <button
+                  <button type="button"
                     key={item}
                     onClick={() => handleSelectorChange('outfit', item)}
                     style={{
@@ -511,7 +511,7 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
               />
             </div>
 
-            <button
+            <button type="button"
               onClick={handleGenerateFrontCandidates}
               disabled={isGeneratingFront}
               style={{
@@ -546,7 +546,7 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
               )}
             </div>
 
-            <button
+            <button type="button"
               onClick={handleAnalyzePersonImage}
               disabled={isAnalyzingImage || !refImage}
               style={{
@@ -671,7 +671,7 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
 
             {/* STEP 2 ACTION BUTTON */}
             {currentStep === 2 && selectedFrontFace && (
-              <button
+              <button type="button"
                 onClick={handleGenerateMasterViews}
                 disabled={isGeneratingViews}
                 style={{
@@ -708,7 +708,7 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
                   </div>
                   <div style={{ padding: '10px', textAlign: 'center', backgroundColor: '#ffffff', borderTop: '1px solid #e2e8f0' }}>
                     <span style={{ fontSize: '12px', fontWeight: '900', color: '#0f172a', display: 'block', marginBottom: '6px' }}>{mv.title}</span>
-                    <button 
+                    <button type="button" 
                       onClick={() => alert(`'${mv.title}' 각도가 정상 재생성되었습니다.`)}
                       style={{ padding: '4px 8px', borderRadius: '6px', backgroundColor: '#f1f5f9', color: '#475569', fontSize: '10px', fontWeight: '800', border: 'none', cursor: 'pointer' }}
                     >
@@ -721,7 +721,7 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
 
             {/* STEP 3 ACTION BUTTON */}
             {currentStep === 3 && (
-              <button
+              <button type="button"
                 onClick={handleSaveToLibrary}
                 style={{
                   width: '100%', padding: '16px', borderRadius: '16px',
@@ -761,7 +761,7 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
                     </div>
 
                     <div style={{ display: 'flex', gap: '8px' }}>
-                      <button
+                      <button type="button"
                         onClick={() => handleOpenSceneCreation(m)}
                         style={{
                           padding: '10px 16px', borderRadius: '10px',
@@ -771,7 +771,7 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
                       >
                         <Sparkles style={{ width: '14px', height: '14px' }} /> 이 인물로 장면 만들기
                       </button>
-                      <button
+                      <button type="button"
                         onClick={() => onDeleteSavedModel(m.id)}
                         style={{ padding: '10px', borderRadius: '10px', backgroundColor: '#fee2e2', color: '#ef4444', border: 'none', cursor: 'pointer' }}
                       >
@@ -797,7 +797,7 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
                   "{sceneModePerson.name}" 인물로 농산물 장면 만들기
                 </h3>
               </div>
-              <button onClick={() => setCurrentStep(4)} style={{ fontSize: '12px', color: '#64748b', backgroundColor: '#f1f5f9', border: 'none', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer' }}>
+              <button type="button" onClick={() => setCurrentStep(4)} style={{ fontSize: '12px', color: '#64748b', backgroundColor: '#f1f5f9', border: 'none', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer' }}>
                 ◀ 라이브러리로 돌아가기
               </button>
             </div>
@@ -806,7 +806,7 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
               <label style={{ fontSize: '12px', fontWeight: '800', color: '#475569', display: 'block', marginBottom: '8px' }}>농산물 현장 장면 프리셋 선택:</label>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 {['과수원 수확', '패킹센터 검수', '1톤 트럭 적재', '산지 출고 확인', '상품 들고 소개'].map(preset => (
-                  <button
+                  <button type="button"
                     key={preset}
                     onClick={() => setSelectedScenePreset(preset)}
                     style={{
@@ -823,7 +823,7 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
               </div>
             </div>
 
-            <button
+            <button type="button"
               onClick={handleGenerateScene}
               disabled={isGeneratingScene}
               style={{
@@ -845,7 +845,7 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
                 <div style={{ width: '100%', backgroundColor: '#0f172a', borderRadius: '12px', overflow: 'hidden', marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <img src={generatedSceneImage.url} alt={generatedSceneImage.preset} style={{ maxWidth: '100%', maxHeight: '480px', objectFit: 'contain' }} />
                 </div>
-                <button
+                <button type="button"
                   onClick={() => {
                     onSelectAndSaveModel({
                       id: Date.now(),
