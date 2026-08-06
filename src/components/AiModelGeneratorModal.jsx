@@ -309,14 +309,19 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
 
         {/* Modal Header */}
         <div style={{ marginBottom: '24px' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 12px', backgroundColor: '#dcfce7', borderRadius: '20px', color: '#15803d', fontSize: '11px', fontWeight: '800', marginBottom: '8px' }}>
-            <Sparkles style={{ width: '14px', height: '14px' }} /> SANJI YOUTH BRAND PERSON BUILDER v2.0
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '8px' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 12px', backgroundColor: '#dcfce7', borderRadius: '20px', color: '#15803d', fontSize: '11px', fontWeight: '800' }}>
+              <Sparkles style={{ width: '14px', height: '14px' }} /> SANJI YOUTH BRAND PERSON BUILDER v2.0
+            </div>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 12px', backgroundColor: '#f0f9ff', border: '1px solid #38bdf8', borderRadius: '20px', color: '#0284c7', fontSize: '11px', fontWeight: '900' }}>
+              🚀 [내 기존 설정 100% 동기화] 문구: GPT-5.4 mini · 사진 배경: GPT Image 2 / Medium
+            </div>
           </div>
           <h2 style={{ fontSize: '24px', fontWeight: '900', color: '#0f172a', margin: '0 0 6px 0', display: 'flex', alignItems: 'center', gap: '10px' }}>
             <UserCheck style={{ width: '28px', height: '28px', color: '#16a34a' }} /> 산지청년 AI 기준 인물 생성·보관 시스템
           </h2>
           <p style={{ fontSize: '13px', color: '#64748b', margin: 0 }}>
-            대표 정면 얼굴을 먼저 생성·확정한 후, 동일 인물 정체성을 100% 유지하며 다각도 기준컷 및 산지 수확 장면에 재사용합니다.
+            대표 정면 얼굴을 먼저 생성·확정한 후, 동일 인물 정체성을 100% 유지하며 다각도 기준컷 및 산지 수확 장면에 재사용합니다. (GPT Image 2 / Medium 엔진 적용)
           </p>
         </div>
 
