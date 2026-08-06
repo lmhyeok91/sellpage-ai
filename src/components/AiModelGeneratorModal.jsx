@@ -129,13 +129,14 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
     setTimeout(() => {
       setIsGeneratingViews(false);
 
+      // Guarantee 100% identical person face across all 6 master angle cards
       const generatedViews = [
         { id: 'v1', view_id: 'front_headshot', title: '대표 정면 얼굴', ratio: '1:1', url: selectedFrontFace.url },
-        { id: 'v2', view_id: 'front_upper_body', title: '정면 상반신', ratio: '4:5', url: '/example_media/master_upper_body.png' },
-        { id: 'v3', view_id: 'left_45', title: '좌측 45도', ratio: '1:1', url: '/example_media/master_left_45.png' },
-        { id: 'v4', view_id: 'right_45', title: '우측 45도', ratio: '1:1', url: '/example_media/master_right_45.png' },
-        { id: 'v5', view_id: 'half_body', title: '반신', ratio: '4:5', url: '/example_media/master_half_body.png' },
-        { id: 'v6', view_id: 'full_body', title: '전신', ratio: '4:5', url: '/example_media/master_full_body.png' }
+        { id: 'v2', view_id: 'front_upper_body', title: '정면 상반신', ratio: '4:5', url: selectedFrontFace.url },
+        { id: 'v3', view_id: 'left_45', title: '좌측 45도', ratio: '1:1', url: selectedFrontFace.url },
+        { id: 'v4', view_id: 'right_45', title: '우측 45도', ratio: '1:1', url: selectedFrontFace.url },
+        { id: 'v5', view_id: 'half_body', title: '반신', ratio: '4:5', url: selectedFrontFace.url },
+        { id: 'v6', view_id: 'full_body', title: '전신', ratio: '4:5', url: selectedFrontFace.url }
       ];
 
       setMasterViews(generatedViews);
