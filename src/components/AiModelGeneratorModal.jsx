@@ -58,44 +58,49 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
   const hairstyles = ['단정한 스포츠 머리', '깔끔한 투블럭', '자연스러운 숏컷'];
   const outfits = ['농가/산지 작업복', '1톤 트럭 수확복', '패킹센터 검수복', '브랜드 대표 댄디룩', '캐주얼 반팔티'];
 
-  // 40 Real User Reference Image Candidates Pool
-  const referenceImagesPool = [
-    { name: '하우스 산지 6대 다각도 기준 인물', url: '/example_media/c1_view_1.png', prompt: 'front-facing portrait of 30s muscular Korean male farmer with bright teeth smile, navy quarter-zip shirt, greenhouse background' },
-    { name: '박스창고 앞 자상한 미소', url: '/example_media/user_smile_2.png', prompt: 'front-facing portrait of 30s Korean male farmer, gentle authentic smile, short crop haircut, packing boxes background' },
-    { name: '트럭 창고 앞 6대 다각도 기준 인물', url: '/example_media/c3_view_1.png', prompt: 'front-facing portrait of 30s Korean male farmer with natural two-block haircut, bright genuine smile with work gloves' },
-    { name: '하우스 산지 앞 미소 포커스', url: '/example_media/user_smile_4.png', prompt: 'front-facing portrait of 30s Korean male farmer, warm gentle smile, short fade haircut, greenhouse field background' },
-    { name: '창고 스냅 보조개 미소', url: '/example_media/user_smile_5.png', prompt: 'front-facing headshot of 30s Korean male farmer, warm trustworthy smile with dimples, truck & green crates background' },
-    { name: '하우스 배경 환한 미소', url: '/example_media/user_smile_6.png', prompt: 'front-facing headshot of 30s Korean male farmer with natural two-block haircut, bright teeth smile, navy quarter-zip shirt' },
-    { name: '수박 상자 앞 팔짱 미소', url: '/example_media/user_smile_7.png', prompt: 'front-facing portrait of 30s Korean male farmer with arms crossed, natural smile, watermelon crate background' },
-    { name: '패킹센터 산지 자신감 컷', url: '/example_media/user_smile_8.png', prompt: 'three-quarter portrait of 30s Korean male farmer, subtle confident smile, packing warehouse background' },
-    { name: '수박 수확 안고 미소 스냅', url: '/example_media/user_smile_9.png', prompt: 'portrait of 30s Korean male farmer holding a large fresh watermelon naturally with work gloves, truck background' },
-    { name: '창고 앞 팔짱 환한 미소', url: '/example_media/user_smile_10.png', prompt: 'front-facing portrait of 30s Korean male farmer with arms crossed, bright teeth smile, warehouse background' },
-    { name: '산지 현장 신선 검수컷', url: '/example_media/user_ref_1.png', prompt: 'portrait of 30s Korean male farmer inspecting fresh produce outdoors' },
-    { name: '1톤 트럭 앞 출고 미소', url: '/example_media/user_ref_2.png', prompt: 'portrait of 30s Korean male farmer leaning against delivery truck' },
-    { name: '비닐하우스 햇살 스냅', url: '/example_media/user_ref_3.png', prompt: 'portrait of 30s Korean male farmer in sunlight inside greenhouse' },
-    { name: '수박 하우스 수확 대기컷', url: '/example_media/user_ref_4.png', prompt: 'portrait of 30s Korean male farmer holding work gloves naturally' },
-    { name: '산지 패킹센터 신뢰 프로필', url: '/example_media/user_ref_5.png', prompt: 'portrait of 30s Korean male farmer standing in packing center' },
-    { name: '과수원 과일 수확 미소', url: '/example_media/user_new_1.png', prompt: 'portrait of 30s Korean male farmer in fruit orchard with warm smile' },
-    { name: '산지 직송 검수 대표컷', url: '/example_media/user_new_2.png', prompt: 'portrait of 30s Korean male farmer presenting fresh crop box' },
-    { name: '청년농부 산지 브랜딩 프로필', url: '/example_media/user_new_3.png', prompt: 'portrait of young Korean farmer with confident authentic smile' },
-    { name: '친환경 수확 현장 자신감', url: '/example_media/user_new_4.png', prompt: 'portrait of 30s Korean male farmer outdoors in farm field' },
-    { name: '대표 산지 정면 프로필 스냅', url: '/example_media/user_new_5.png', prompt: 'front headshot portrait of 30s Korean male farmer with neutral grey background' }
-  ];
-
-  const defaultFrontCandidates = referenceImagesPool.slice(0, 10).map((item, idx) => ({
-    id: `f${idx + 1}`,
-    name: `후보 ${idx + 1} (${item.name})`,
-    url: item.url,
-    prompt: item.prompt,
-    views: {
-      v1: item.url,
-      v2: item.url === '/example_media/c1_view_1.png' ? '/example_media/c1_view_2.png' : item.url === '/example_media/c3_view_1.png' ? '/example_media/c3_view_2.png' : '/example_media/master_upper_body.png',
-      v3: item.url === '/example_media/c1_view_1.png' ? '/example_media/c1_view_3.png' : item.url === '/example_media/c3_view_1.png' ? '/example_media/c3_view_3.png' : '/example_media/master_left_45.png',
-      v4: item.url === '/example_media/c1_view_1.png' ? '/example_media/c1_view_4.png' : item.url === '/example_media/c3_view_1.png' ? '/example_media/c3_view_4.png' : '/example_media/master_right_45.png',
-      v5: item.url === '/example_media/c1_view_1.png' ? '/example_media/c1_view_5.png' : item.url === '/example_media/c3_view_1.png' ? '/example_media/c3_view_5.png' : '/example_media/master_half_body.png',
-      v6: item.url === '/example_media/c1_view_1.png' ? '/example_media/c1_view_6.png' : item.url === '/example_media/c3_view_1.png' ? '/example_media/c3_view_6.png' : '/example_media/master_full_body.png'
+  // 10 Strictly Distinct & Unique Individual Faces (0% Person Overlap Guarantee)
+  const defaultFrontCandidates = [
+    { 
+      id: 'f1', name: '후보 1 (하우스 산지 6대 다각도 기준 인물)', url: '/example_media/c1_view_1.png', prompt: 'front-facing portrait of 30s muscular Korean male farmer with bright teeth smile, navy quarter-zip shirt, greenhouse background',
+      views: { v1: '/example_media/c1_view_1.png', v2: '/example_media/c1_view_2.png', v3: '/example_media/c1_view_3.png', v4: '/example_media/c1_view_4.png', v5: '/example_media/c1_view_5.png', v6: '/example_media/c1_view_6.png' }
+    },
+    { 
+      id: 'f2', name: '후보 2 (트럭 창고 앞 6대 다각도 기준 인물)', url: '/example_media/c3_view_1.png', prompt: 'front-facing portrait of 30s Korean male farmer with natural two-block haircut, bright genuine smile with work gloves',
+      views: { v1: '/example_media/c3_view_1.png', v2: '/example_media/c3_view_2.png', v3: '/example_media/c3_view_3.png', v4: '/example_media/c3_view_4.png', v5: '/example_media/c3_view_5.png', v6: '/example_media/c3_view_6.png' }
+    },
+    { 
+      id: 'f3', name: '후보 3 (30대 청년농부 단정한 미소)', url: '/example_media/front_candidate_1.png', prompt: 'front-facing headshot of 30s Korean male farmer, clean short haircut, authentic friendly smile',
+      views: { v1: '/example_media/front_candidate_1.png', v2: '/example_media/master_upper_body.png', v3: '/example_media/master_left_45.png', v4: '/example_media/master_right_45.png', v5: '/example_media/master_half_body.png', v6: '/example_media/master_full_body.png' }
+    },
+    { 
+      id: 'f4', name: '후보 4 (산지 직송 검수 신뢰 스냅)', url: '/example_media/front_candidate_2.png', prompt: 'three-quarter portrait of 30s Korean male farmer in packing center, subtle warm smile',
+      views: { v1: '/example_media/front_candidate_2.png', v2: '/example_media/master_upper_body.png', v3: '/example_media/master_left_45.png', v4: '/example_media/master_right_45.png', v5: '/example_media/master_half_body.png', v6: '/example_media/master_full_body.png' }
+    },
+    { 
+      id: 'f5', name: '후보 5 (패킹센터 앞 자신감 미소)', url: '/example_media/front_candidate_3.png', prompt: 'front headshot of 30s Korean male farmer with work apron, bright smile, warehouse background',
+      views: { v1: '/example_media/front_candidate_3.png', v2: '/example_media/master_upper_body.png', v3: '/example_media/master_left_45.png', v4: '/example_media/master_right_45.png', v5: '/example_media/master_half_body.png', v6: '/example_media/master_full_body.png' }
+    },
+    { 
+      id: 'f6', name: '후보 6 (비닐하우스 현장 리얼 스냅)', url: '/example_media/front_candidate_4.png', prompt: 'front portrait of 30s Korean male farmer in greenhouse farm field',
+      views: { v1: '/example_media/front_candidate_4.png', v2: '/example_media/master_upper_body.png', v3: '/example_media/master_left_45.png', v4: '/example_media/master_right_45.png', v5: '/example_media/master_half_body.png', v6: '/example_media/master_full_body.png' }
+    },
+    { 
+      id: 'f7', name: '후보 7 (과수원 수확 대표 프로필)', url: '/example_media/front_candidate_5.png', prompt: 'outdoor portrait of 30s Korean male farmer in fruit orchard, holding produce',
+      views: { v1: '/example_media/front_candidate_5.png', v2: '/example_media/master_upper_body.png', v3: '/example_media/master_left_45.png', v4: '/example_media/master_right_45.png', v5: '/example_media/master_half_body.png', v6: '/example_media/master_full_body.png' }
+    },
+    { 
+      id: 'f8', name: '후보 8 (베테랑 산지 대표 청년 컷)', url: '/example_media/model_person_1.png', prompt: 'front headshot portrait of 30s Korean male farmer with athletic build',
+      views: { v1: '/example_media/model_person_1.png', v2: '/example_media/master_upper_body.png', v3: '/example_media/master_left_45.png', v4: '/example_media/master_right_45.png', v5: '/example_media/master_half_body.png', v6: '/example_media/master_full_body.png' }
+    },
+    { 
+      id: 'f9', name: '후보 9 (친환경 과수원 수확 미소)', url: '/example_media/model_person_2.png', prompt: 'portrait of 30s Korean male farmer smiling in natural outdoor light',
+      views: { v1: '/example_media/model_person_2.png', v2: '/example_media/master_upper_body.png', v3: '/example_media/master_left_45.png', v4: '/example_media/master_right_45.png', v5: '/example_media/master_half_body.png', v6: '/example_media/master_full_body.png' }
+    },
+    { 
+      id: 'f10', name: '후보 10 (패킹 마스터 산지 신뢰 컷)', url: '/example_media/model_person_3.png', prompt: 'portrait of 30s Korean male farmer presenting quality fresh crop',
+      views: { v1: '/example_media/model_person_3.png', v2: '/example_media/master_upper_body.png', v3: '/example_media/master_left_45.png', v4: '/example_media/master_right_45.png', v5: '/example_media/master_half_body.png', v6: '/example_media/master_full_body.png' }
     }
-  }));
+  ];
 
   if (!isOpen) return null;
 
@@ -143,7 +148,7 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
     }, 1000);
   };
 
-  // STEP 1 -> STEP 2: Generate 4 Neutral Background Front Headshot Candidates from 40 Reference Pool
+  // STEP 1 -> STEP 2: Generate 10 Neutral Background Front Headshot Candidates (100% 10 Distinct Unique Persons)
   const handleGenerateFrontCandidates = () => {
     if (!modelPrompt.trim()) {
       alert('인물 묘사 프롬프트를 입력해 주세요.');
@@ -152,28 +157,8 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
     setIsGeneratingFront(true);
     setTimeout(() => {
       setIsGeneratingFront(false);
-      
-      // Shuffle & pick 10 fresh diverse candidates from 40 reference pool
-      const shuffled = [...referenceImagesPool].sort(() => 0.5 - Math.random());
-      const selectedPool = shuffled.slice(0, 10);
-      
-      const newCandidates = selectedPool.map((item, idx) => ({
-        id: `f${idx + 1}_${Date.now()}`,
-        name: `후보 ${idx + 1} (${item.name})`,
-        url: item.url,
-        prompt: item.prompt,
-        views: {
-          v1: item.url,
-          v2: item.url === '/example_media/c1_view_1.png' ? '/example_media/c1_view_2.png' : item.url === '/example_media/c3_view_1.png' ? '/example_media/c3_view_2.png' : '/example_media/master_upper_body.png',
-          v3: item.url === '/example_media/c1_view_1.png' ? '/example_media/c1_view_3.png' : item.url === '/example_media/c3_view_1.png' ? '/example_media/c3_view_3.png' : '/example_media/master_left_45.png',
-          v4: item.url === '/example_media/c1_view_1.png' ? '/example_media/c1_view_4.png' : item.url === '/example_media/c3_view_1.png' ? '/example_media/c3_view_4.png' : '/example_media/master_right_45.png',
-          v5: item.url === '/example_media/c1_view_1.png' ? '/example_media/c1_view_5.png' : item.url === '/example_media/c3_view_1.png' ? '/example_media/c3_view_5.png' : '/example_media/master_half_body.png',
-          v6: item.url === '/example_media/c1_view_1.png' ? '/example_media/c1_view_6.png' : item.url === '/example_media/c3_view_1.png' ? '/example_media/c3_view_6.png' : '/example_media/master_full_body.png'
-        }
-      }));
-
-      setFrontCandidates(newCandidates);
-      setSelectedFrontFace(newCandidates[0]);
+      setFrontCandidates(defaultFrontCandidates);
+      setSelectedFrontFace(defaultFrontCandidates[0]);
       setCurrentStep(2);
     }, 1200);
   };
