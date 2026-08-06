@@ -391,7 +391,12 @@ export default function Step1MaterialUpload({
 
             <div style={{ display: 'flex', gap: '8px' }}>
               <button
-                onClick={() => setIsModelGenModalOpen(true)}
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsModelGenModalOpen(true);
+                }}
                 style={{
                   backgroundColor: '#15803d',
                   border: '1.5px solid #22c55e',
