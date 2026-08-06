@@ -28,6 +28,7 @@ export default function Step3Workbench({ slides, setSlides, canvasWidth, onExpor
   const [modelAge, setModelAge] = useState('20s'); 
   const [modelCountry, setModelCountry] = useState('korea'); 
 
+  const totalPageCount = 26; // Fixed 26 total slides requirement
   const [activeWidth, setActiveWidth] = useState(780); // 780px (Naver) or 860px (Coupang)
   const [viewMode, setViewMode] = useState('mangoboard'); // 'mangoboard' (Full Detail Page Mode) or 'card' (3:2 Dual Mode)
 
