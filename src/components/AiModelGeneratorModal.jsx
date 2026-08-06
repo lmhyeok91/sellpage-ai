@@ -43,18 +43,18 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
   const hairstyles = ['단정한 스포츠 머리', '깔끔한 투블럭', '자연스러운 숏컷'];
   const outfits = ['농가/산지 작업복', '1톤 트럭 수확복', '패킹센터 검수복', '브랜드 대표 댄디룩', '캐주얼 반팔티'];
 
-  // 10 Real User Reference Candidates (Phase 1)
+  // 10 Real User Reference Candidates (Phase 1 Master Headshots)
   const defaultFrontCandidates = [
-    { id: 'f1', name: '후보 1 (스포츠컷 & 팔짱 다부진 정면)', url: '/example_media/user_ref_1.png', prompt: 'front-facing portrait of 30s muscular Korean male farmer, navy quarter-zip athletic compression shirt' },
-    { id: 'f2', name: '후보 2 (크루컷 & 네이비 라운드티)', url: '/example_media/user_ref_2.png', prompt: 'front-facing portrait of 30s Korean male farmer, navy crewneck athletic shirt, authentic face' },
-    { id: 'f3', name: '후보 3 (스포츠컷 신뢰형 은은한 미소)', url: '/example_media/user_ref_3.png', prompt: 'front-facing portrait of 30s Korean male farmer, navy quarter-zip shirt, subtle gentle smile' },
-    { id: 'f4', name: '후보 4 (투블럭 단정형 현장 컷)', url: '/example_media/user_ref_4.png', prompt: 'front-facing portrait of 30s Korean male farmer, navy quarter-zip shirt, earnest rustic smile' },
-    { id: 'f5', name: '후보 5 (좌측 45도 산지 창고 스냅)', url: '/example_media/user_ref_5.png', prompt: 'three-quarter portrait of 30s Korean male farmer, navy quarter-zip shirt, fade haircut' },
-    { id: 'f6', name: '후보 6 (농가 창고 앞 미소 스냅)', url: '/example_media/user_ref_6.png', prompt: 'front-facing portrait of 30s Korean male farmer leaning forward slightly, warm authentic smile' },
-    { id: 'f7', name: '후보 7 (산지 적재소 팔짱 컷)', url: '/example_media/user_ref_7.png', prompt: 'front-facing portrait of 30s Korean male farmer with arms crossed, navy quarter-zip shirt' },
-    { id: 'f8', name: '후보 8 (상품 상적 창고 앞 직립)', url: '/example_media/user_ref_8.png', prompt: 'front-facing portrait of 30s Korean male farmer standing with arms crossed, produce box background' },
-    { id: 'f9', name: '후보 9 (단정한 정면 포커스 컷)', url: '/example_media/user_ref_9.png', prompt: 'front-facing close-up portrait of 30s Korean male farmer, navy quarter-zip shirt' },
-    { id: 'f10', name: '후보 10 (1톤 트럭 앞 자신감 미소)', url: '/example_media/user_ref_10.png', prompt: 'portrait of 30s Korean male farmer standing next to white 1-ton truck with arms crossed, natural friendly smile' }
+    { id: 'f1', name: '후보 1 (상반신 다부진 직립 포즈)', url: '/example_media/user_new_1.png', prompt: 'front-facing upper-body portrait of 30s muscular Korean male farmer, navy quarter-zip shirt' },
+    { id: 'f2', name: '후보 2 (산지 창고 앞 상반신 스냅)', url: '/example_media/user_new_2.png', prompt: 'front-facing upper-body portrait of 30s Korean male farmer, navy quarter-zip shirt, warehouse background' },
+    { id: 'f3', name: '후보 3 (농가 산지 들판 배경 직립)', url: '/example_media/user_new_3.png', prompt: 'front-facing upper-body portrait of 30s Korean male farmer, navy crewneck shirt, farm field background' },
+    { id: 'f4', name: '후보 4 (가슴 포켓 집업 은은한 미소)', url: '/example_media/user_new_4.png', prompt: 'front-facing portrait of 30s Korean male farmer, navy quarter-zip shirt with chest pocket, warm smile' },
+    { id: 'f5', name: '후보 5 (하우스 농가 앞 팔짱 스냅)', url: '/example_media/user_new_5.png', prompt: 'front-facing portrait of 30s Korean male farmer with arms crossed, greenhouse background' },
+    { id: 'f6', name: '후보 6 (농가 적재소 상체 포커스)', url: '/example_media/user_new_6.png', prompt: 'front-facing portrait of 30s Korean male farmer, navy quarter-zip athletic shirt' },
+    { id: 'f7', name: '후보 7 (산지 하우스 배경 정면)', url: '/example_media/user_new_7.png', prompt: 'front-facing portrait of 30s Korean male farmer, navy quarter-zip shirt, greenhouse background' },
+    { id: 'f8', name: '후보 8 (패킹창고 앞 친근한 미소)', url: '/example_media/user_new_8.png', prompt: 'front-facing portrait of 30s Korean male farmer, navy quarter-zip shirt, warm gentle smile' },
+    { id: 'f9', name: '후보 9 (좌측 45도 농산물 박스 스냅)', url: '/example_media/user_new_9.png', prompt: 'three-quarter portrait of 30s Korean male farmer, navy quarter-zip shirt, plastic crate background' },
+    { id: 'f10', name: '후보 10 (농지 들판 상체 스냅)', url: '/example_media/user_new_10.png', prompt: 'front-facing upper-body portrait of 30s Korean male farmer, sunny farm field background' }
   ];
 
   if (!isOpen) return null;
