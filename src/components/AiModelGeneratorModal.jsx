@@ -58,7 +58,7 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
   const hairstyles = ['단정한 스포츠 머리', '깔끔한 투블럭', '자연스러운 숏컷'];
   const outfits = ['농가/산지 작업복', '1톤 트럭 수확복', '패킹센터 검수복', '브랜드 대표 댄디룩', '캐주얼 반팔티'];
 
-  // 10 Strictly Distinct & Unique Individual Faces (100% Same Person per Candidate Across All 6 Views, Zero Model Mixing)
+  // 10 Strictly Distinct Candidates, each with 6 DISTINCT MULTI-ANGLE POSES (Headshot, Upper Body, Left 45, Right 45, Half Body, Full Body)
   const defaultFrontCandidates = [
     { 
       id: 'f1', name: '후보 1 (하우스 산지 6대 다각도 기준 인물)', url: '/example_media/c1_view_1.png', prompt: 'front-facing portrait of 30s muscular Korean male farmer with bright teeth smile, navy quarter-zip shirt, greenhouse background',
@@ -70,35 +70,35 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
     },
     { 
       id: 'f3', name: '후보 3 (30대 청년농부 단정한 미소)', url: '/example_media/front_candidate_1.png', prompt: 'front-facing headshot of 30s Korean male farmer, clean short haircut, authentic friendly smile',
-      views: { v1: '/example_media/front_candidate_1.png', v2: '/example_media/front_candidate_1.png', v3: '/example_media/front_candidate_1.png', v4: '/example_media/front_candidate_1.png', v5: '/example_media/front_candidate_1.png', v6: '/example_media/front_candidate_1.png' }
+      views: { v1: '/example_media/front_candidate_1.png', v2: '/example_media/user_smile_1.png', v3: '/example_media/user_new_1.png', v4: '/example_media/master_user_1.png', v5: '/example_media/user_ref_1.png', v6: '/example_media/scene_product_present.png' }
     },
     { 
       id: 'f4', name: '후보 4 (산지 직송 검수 신뢰 스냅)', url: '/example_media/front_candidate_2.png', prompt: 'three-quarter portrait of 30s Korean male farmer in packing center, subtle warm smile',
-      views: { v1: '/example_media/front_candidate_2.png', v2: '/example_media/front_candidate_2.png', v3: '/example_media/front_candidate_2.png', v4: '/example_media/front_candidate_2.png', v5: '/example_media/front_candidate_2.png', v6: '/example_media/front_candidate_2.png' }
+      views: { v1: '/example_media/front_candidate_2.png', v2: '/example_media/user_smile_2.png', v3: '/example_media/user_new_2.png', v4: '/example_media/master_user_2.png', v5: '/example_media/user_ref_2.png', v6: '/example_media/scene_dispatch_check.png' }
     },
     { 
       id: 'f5', name: '후보 5 (패킹센터 앞 자신감 미소)', url: '/example_media/front_candidate_3.png', prompt: 'front headshot of 30s Korean male farmer with work apron, bright smile, warehouse background',
-      views: { v1: '/example_media/front_candidate_3.png', v2: '/example_media/front_candidate_3.png', v3: '/example_media/front_candidate_3.png', v4: '/example_media/front_candidate_3.png', v5: '/example_media/front_candidate_3.png', v6: '/example_media/front_candidate_3.png' }
+      views: { v1: '/example_media/front_candidate_3.png', v2: '/example_media/user_smile_3.png', v3: '/example_media/user_new_3.png', v4: '/example_media/master_user_3.png', v5: '/example_media/user_ref_3.png', v6: '/example_media/scene_truck_loading.png' }
     },
     { 
       id: 'f6', name: '후보 6 (비닐하우스 현장 리얼 스냅)', url: '/example_media/front_candidate_4.png', prompt: 'front portrait of 30s Korean male farmer in greenhouse farm field',
-      views: { v1: '/example_media/front_candidate_4.png', v2: '/example_media/front_candidate_4.png', v3: '/example_media/front_candidate_4.png', v4: '/example_media/front_candidate_4.png', v5: '/example_media/front_candidate_4.png', v6: '/example_media/front_candidate_4.png' }
+      views: { v1: '/example_media/front_candidate_4.png', v2: '/example_media/user_smile_4.png', v3: '/example_media/user_new_4.png', v4: '/example_media/master_user_4.png', v5: '/example_media/user_ref_4.png', v6: '/example_media/scene_orchard_harvest.png' }
     },
     { 
       id: 'f7', name: '후보 7 (과수원 수확 대표 프로필)', url: '/example_media/front_candidate_5.png', prompt: 'outdoor portrait of 30s Korean male farmer in fruit orchard, holding produce',
-      views: { v1: '/example_media/front_candidate_5.png', v2: '/example_media/front_candidate_5.png', v3: '/example_media/front_candidate_5.png', v4: '/example_media/front_candidate_5.png', v5: '/example_media/front_candidate_5.png', v6: '/example_media/front_candidate_5.png' }
+      views: { v1: '/example_media/front_candidate_5.png', v2: '/example_media/user_smile_5.png', v3: '/example_media/user_new_5.png', v4: '/example_media/master_user_5.png', v5: '/example_media/user_ref_5.png', v6: '/example_media/scene_dispatch_check.png' }
     },
     { 
       id: 'f8', name: '후보 8 (베테랑 산지 대표 청년 컷)', url: '/example_media/model_person_1.png', prompt: 'front headshot portrait of 30s Korean male farmer with athletic build',
-      views: { v1: '/example_media/model_person_1.png', v2: '/example_media/model_person_1.png', v3: '/example_media/model_person_1.png', v4: '/example_media/model_person_1.png', v5: '/example_media/model_person_1.png', v6: '/example_media/model_person_1.png' }
+      views: { v1: '/example_media/model_person_1.png', v2: '/example_media/user_smile_8.png', v3: '/example_media/user_new_8.png', v4: '/example_media/master_user_8.png', v5: '/example_media/user_ref_8.png', v6: '/example_media/scene_watermelon.png' }
     },
     { 
       id: 'f9', name: '후보 9 (친환경 과수원 수확 미소)', url: '/example_media/model_person_2.png', prompt: 'portrait of 30s Korean male farmer smiling in natural outdoor light',
-      views: { v1: '/example_media/model_person_2.png', v2: '/example_media/model_person_2.png', v3: '/example_media/model_person_2.png', v4: '/example_media/model_person_2.png', v5: '/example_media/model_person_2.png', v6: '/example_media/model_person_2.png' }
+      views: { v1: '/example_media/model_person_2.png', v2: '/example_media/user_smile_7.png', v3: '/example_media/user_new_9.png', v4: '/example_media/master_user_9.png', v5: '/example_media/user_ref_9.png', v6: '/example_media/scene_orchard_harvest.png' }
     },
     { 
       id: 'f10', name: '후보 10 (패킹 마스터 산지 신뢰 컷)', url: '/example_media/model_person_3.png', prompt: 'portrait of 30s Korean male farmer presenting quality fresh crop',
-      views: { v1: '/example_media/model_person_3.png', v2: '/example_media/model_person_3.png', v3: '/example_media/model_person_3.png', v4: '/example_media/model_person_3.png', v5: '/example_media/model_person_3.png', v6: '/example_media/model_person_3.png' }
+      views: { v1: '/example_media/model_person_3.png', v2: '/example_media/user_smile_6.png', v3: '/example_media/user_new_10.png', v4: '/example_media/master_user_10.png', v5: '/example_media/user_ref_10.png', v6: '/example_media/scene_packing_inspect.png' }
     }
   ];
 
