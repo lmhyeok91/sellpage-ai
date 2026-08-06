@@ -240,11 +240,11 @@ export default function Step1MaterialUpload({
             </label>
           </div>
 
-          {/* Slot 3: B2B Detail Page 1 */}
+          {/* Slot 3: Reference Detail Page 1 */}
           <div style={{ backgroundColor: '#eff6ff', border: '2px dashed #3b82f6', borderRadius: '14px', padding: '14px 10px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
             <FileText style={{ width: '24px', height: '24px', color: '#2563eb', marginBottom: '6px' }} />
-            <div style={{ fontSize: '12px', fontWeight: '800', color: '#1e40af', marginBottom: '2px' }}>📦 3. B2B 1688 #1</div>
-            <div style={{ fontSize: '11px', color: '#1d4ed8', marginBottom: '10px' }}>도매 캡처 1 (선택)</div>
+            <div style={{ fontSize: '12px', fontWeight: '800', color: '#1e40af', marginBottom: '2px' }}>📦 3. 참고상세페이지 1</div>
+            <div style={{ fontSize: '11px', color: '#1d4ed8', marginBottom: '10px' }}>B2B/1688/경쟁사 캡처 1</div>
             <input 
               type="file" 
               accept="image/*" 
@@ -252,8 +252,8 @@ export default function Step1MaterialUpload({
               id="slot_b2b_1"
               onChange={(e) => {
                 if (e.target.files[0]) {
-                  setProductImages(prev => [...prev, { id: Date.now(), name: 'B2B_1_' + e.target.files[0].name, url: URL.createObjectURL(e.target.files[0]) }]);
-                  alert('✨ [B2B 상세페이지 캡처 #1] 등록 완료!');
+                  setProductImages(prev => [...prev, { id: Date.now(), name: '참고상세_1_' + e.target.files[0].name, url: URL.createObjectURL(e.target.files[0]) }]);
+                  alert('✨ [참고상세페이지 1] 등록 완료!');
                 }
               }}
             />
@@ -262,11 +262,11 @@ export default function Step1MaterialUpload({
             </label>
           </div>
 
-          {/* Slot 4: B2B Detail Page 2 */}
+          {/* Slot 4: Reference Detail Page 2 */}
           <div style={{ backgroundColor: '#eff6ff', border: '2px dashed #3b82f6', borderRadius: '14px', padding: '14px 10px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
             <FileText style={{ width: '24px', height: '24px', color: '#2563eb', marginBottom: '6px' }} />
-            <div style={{ fontSize: '12px', fontWeight: '800', color: '#1e40af', marginBottom: '2px' }}>📦 4. B2B 1688 #2</div>
-            <div style={{ fontSize: '11px', color: '#1d4ed8', marginBottom: '10px' }}>도매 캡처 2 (선택)</div>
+            <div style={{ fontSize: '12px', fontWeight: '800', color: '#1e40af', marginBottom: '2px' }}>📦 4. 참고상세페이지 2</div>
+            <div style={{ fontSize: '11px', color: '#1d4ed8', marginBottom: '10px' }}>B2B/1688/경쟁사 캡처 2</div>
             <input 
               type="file" 
               accept="image/*" 
@@ -274,8 +274,8 @@ export default function Step1MaterialUpload({
               id="slot_b2b_2"
               onChange={(e) => {
                 if (e.target.files[0]) {
-                  setProductImages(prev => [...prev, { id: Date.now(), name: 'B2B_2_' + e.target.files[0].name, url: URL.createObjectURL(e.target.files[0]) }]);
-                  alert('✨ [B2B 상세페이지 캡처 #2] 등록 완료!');
+                  setProductImages(prev => [...prev, { id: Date.now(), name: '참고상세_2_' + e.target.files[0].name, url: URL.createObjectURL(e.target.files[0]) }]);
+                  alert('✨ [참고상세페이지 2] 등록 완료!');
                 }
               }}
             />
@@ -284,11 +284,11 @@ export default function Step1MaterialUpload({
             </label>
           </div>
 
-          {/* Slot 5: B2B Detail Page 3 */}
+          {/* Slot 5: Reference Detail Page 3 */}
           <div style={{ backgroundColor: '#faf5ff', border: '2px dashed #a855f7', borderRadius: '14px', padding: '14px 10px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
             <FileText style={{ width: '24px', height: '24px', color: '#9333ea', marginBottom: '6px' }} />
-            <div style={{ fontSize: '12px', fontWeight: '800', color: '#6b21a8', marginBottom: '2px' }}>📦 5. B2B 1688 #3</div>
-            <div style={{ fontSize: '11px', color: '#7e22ce', marginBottom: '10px' }}>도매 캡처 3 (선택)</div>
+            <div style={{ fontSize: '12px', fontWeight: '800', color: '#6b21a8', marginBottom: '2px' }}>📦 5. 참고상세페이지 3</div>
+            <div style={{ fontSize: '11px', color: '#7e22ce', marginBottom: '10px' }}>B2B/1688/경쟁사 캡처 3</div>
             <input 
               type="file" 
               accept="image/*" 
@@ -296,8 +296,8 @@ export default function Step1MaterialUpload({
               id="slot_b2b_3"
               onChange={(e) => {
                 if (e.target.files[0]) {
-                  setProductImages(prev => [...prev, { id: Date.now(), name: 'B2B_3_' + e.target.files[0].name, url: URL.createObjectURL(e.target.files[0]) }]);
-                  alert('✨ [B2B 상세페이지 캡처 #3] 등록 완료!');
+                  setProductImages(prev => [...prev, { id: Date.now(), name: '참고상세_3_' + e.target.files[0].name, url: URL.createObjectURL(e.target.files[0]) }]);
+                  alert('✨ [참고상세페이지 3] 등록 완료!');
                 }
               }}
             />
