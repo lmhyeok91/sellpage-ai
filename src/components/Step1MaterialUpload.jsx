@@ -678,52 +678,29 @@ export default function Step1MaterialUpload({
         />
       </div>
 
-      {/* Numbered Card 4: 고객 후기 입력 */}
-      <div className="card-section">
-        <div className="card-header">
-          <div className="badge-num">4</div>
-          <div className="card-title-group">
-            <span className="card-sub-tag">선택 입력</span>
-            <h2 className="card-title">고객 후기 입력</h2>
-            <p className="card-desc">
-              엑셀/CSV 후기 데이터를 올리면 ChatGPT가 먼저 분석하고, 확인한 결과를 다음 제작 과정과 섹션 전체에 반영합니다.
-            </p>
-          </div>
-        </div>
-
-        <div className="excel-row">
-          <div style={{ fontSize: '12px' }}>
-            <span style={{ fontWeight: '800', color: '#0f172a', display: 'block', marginBottom: '2px' }}>후기 엑셀 파일을 첨부해 주세요</span>
-            <span style={{ color: '#64748b', fontSize: '11px' }}>.xlsx, .csv, .tsv 지원 · 후기/리뷰/내용 컬럼을 자동으로 찾습니다.</span>
-            {reviewFile && <span style={{ display: 'block', marginTop: '4px', fontWeight: '800', color: '#15803d' }}>첨부됨: {reviewFile}</span>}
-          </div>
-
-          <label className="btn-secondary">
-            <FileSpreadsheet style={{ width: '14px', height: '14px', color: '#15803d' }} />
-            <span>후기 파일 첨부</span>
-            <input type="file" accept=".xlsx,.csv,.tsv" onChange={handleReviewUpload} style={{ display: 'none' }} />
-          </label>
-        </div>
-      </div>
-
       {/* Bottom CTA Button */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '8px' }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '12px', marginBottom: '24px' }}>
         <button
           type="button"
           onClick={onNextStep}
           style={{
-            backgroundColor: '#6b7280',
+            backgroundColor: '#0284c7',
             color: '#ffffff',
-            fontWeight: '800',
-            fontSize: '13px',
-            padding: '12px 32px',
-            borderRadius: '12px',
+            fontWeight: '900',
+            fontSize: '15px',
+            padding: '14px 40px',
+            borderRadius: '14px',
             border: 'none',
             cursor: 'pointer',
-            boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
+            boxShadow: '0 4px 14px rgba(2, 132, 199, 0.35)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            transition: 'all 0.2s ease'
           }}
         >
-          다음: 생성 설정
+          <Sparkles style={{ width: '18px', height: '18px' }} />
+          <span>다음: 생성 설정으로 이동</span>
         </button>
       </div>
 
