@@ -15,6 +15,42 @@ import AdminUserApprovalModal from './components/AdminUserApprovalModal';
 import LoadingOverlay from './components/LoadingOverlay';
 import { MASTER_26_SLIDES } from './data/slidesBlueprint';
 
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("ErrorBoundary caught an error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '40px', textAlign: 'center', backgroundColor: '#ffffff', borderRadius: '16px', margin: '20px', border: '1px solid #cbd5e1', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: '900', color: '#0f172a', marginBottom: '8px' }}>⚡️ 작업대를 불러오는 중 렌더링이 재조정되었습니다</h2>
+          <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '20px' }}>아래 복구 버튼을 눌러 3단계 작업대로 즉시 진입해 주세요.</p>
+          <button
+            onClick={() => {
+              this.setState({ hasError: false });
+              window.location.reload();
+            }}
+            style={{ padding: '12px 28px', backgroundColor: '#0284c7', color: '#ffffff', borderRadius: '12px', fontWeight: '800', border: 'none', cursor: 'pointer', boxShadow: '0 2px 8px rgba(2, 132, 199, 0.3)' }}
+          >
+            🔄 3단계 작업대 복구 및 새로고침
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default function App() {
   // Master Account & Auth State with Bulletproof Session (1-Hour Countdown Engine)
   const ONE_HOUR_SECONDS = 3600;
@@ -295,14 +331,16 @@ export default function App() {
           )}
 
           {activeTab === 'work' && (
-            <Step3Workbench 
-              slides={slides} setSlides={setSlides}
-              canvasWidth={canvasWidth} setCanvasWidth={setCanvasWidth}
-              onExport={() => {
-                setStep2Done(true); // Unlock Step 3 (03 결과 확인)!
-                setActiveTab('result');
-              }}
-            />
+            <ErrorBoundary>
+              <Step3Workbench 
+                slides={slides} setSlides={setSlides}
+                canvasWidth={canvasWidth} setCanvasWidth={setCanvasWidth}
+                onExport={() => {
+                  setStep2Done(true); // Unlock Step 3 (03 결과 확인)!
+                  setActiveTab('result');
+                }}
+              />
+            </ErrorBoundary>
           )}
 
           {activeTab === 'result' && (
