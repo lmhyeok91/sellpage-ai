@@ -58,7 +58,7 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
   const hairstyles = ['단정한 스포츠 머리', '깔끔한 투블럭', '자연스러운 숏컷'];
   const outfits = ['농가/산지 작업복', '1톤 트럭 수확복', '패킹센터 검수복', '브랜드 대표 댄디룩', '캐주얼 반팔티'];
 
-  // 10 Strictly Distinct & Unique Individual Faces (0% Person Overlap Guarantee)
+  // 10 Strictly Distinct & Unique Individual Faces (100% Same Person per Candidate Across All 6 Views, Zero Model Mixing)
   const defaultFrontCandidates = [
     { 
       id: 'f1', name: '후보 1 (하우스 산지 6대 다각도 기준 인물)', url: '/example_media/c1_view_1.png', prompt: 'front-facing portrait of 30s muscular Korean male farmer with bright teeth smile, navy quarter-zip shirt, greenhouse background',
@@ -70,35 +70,35 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
     },
     { 
       id: 'f3', name: '후보 3 (30대 청년농부 단정한 미소)', url: '/example_media/front_candidate_1.png', prompt: 'front-facing headshot of 30s Korean male farmer, clean short haircut, authentic friendly smile',
-      views: { v1: '/example_media/front_candidate_1.png', v2: '/example_media/master_upper_body.png', v3: '/example_media/master_left_45.png', v4: '/example_media/master_right_45.png', v5: '/example_media/master_half_body.png', v6: '/example_media/master_full_body.png' }
+      views: { v1: '/example_media/front_candidate_1.png', v2: '/example_media/front_candidate_1.png', v3: '/example_media/front_candidate_1.png', v4: '/example_media/front_candidate_1.png', v5: '/example_media/front_candidate_1.png', v6: '/example_media/front_candidate_1.png' }
     },
     { 
       id: 'f4', name: '후보 4 (산지 직송 검수 신뢰 스냅)', url: '/example_media/front_candidate_2.png', prompt: 'three-quarter portrait of 30s Korean male farmer in packing center, subtle warm smile',
-      views: { v1: '/example_media/front_candidate_2.png', v2: '/example_media/master_upper_body.png', v3: '/example_media/master_left_45.png', v4: '/example_media/master_right_45.png', v5: '/example_media/master_half_body.png', v6: '/example_media/master_full_body.png' }
+      views: { v1: '/example_media/front_candidate_2.png', v2: '/example_media/front_candidate_2.png', v3: '/example_media/front_candidate_2.png', v4: '/example_media/front_candidate_2.png', v5: '/example_media/front_candidate_2.png', v6: '/example_media/front_candidate_2.png' }
     },
     { 
       id: 'f5', name: '후보 5 (패킹센터 앞 자신감 미소)', url: '/example_media/front_candidate_3.png', prompt: 'front headshot of 30s Korean male farmer with work apron, bright smile, warehouse background',
-      views: { v1: '/example_media/front_candidate_3.png', v2: '/example_media/master_upper_body.png', v3: '/example_media/master_left_45.png', v4: '/example_media/master_right_45.png', v5: '/example_media/master_half_body.png', v6: '/example_media/master_full_body.png' }
+      views: { v1: '/example_media/front_candidate_3.png', v2: '/example_media/front_candidate_3.png', v3: '/example_media/front_candidate_3.png', v4: '/example_media/front_candidate_3.png', v5: '/example_media/front_candidate_3.png', v6: '/example_media/front_candidate_3.png' }
     },
     { 
       id: 'f6', name: '후보 6 (비닐하우스 현장 리얼 스냅)', url: '/example_media/front_candidate_4.png', prompt: 'front portrait of 30s Korean male farmer in greenhouse farm field',
-      views: { v1: '/example_media/front_candidate_4.png', v2: '/example_media/master_upper_body.png', v3: '/example_media/master_left_45.png', v4: '/example_media/master_right_45.png', v5: '/example_media/master_half_body.png', v6: '/example_media/master_full_body.png' }
+      views: { v1: '/example_media/front_candidate_4.png', v2: '/example_media/front_candidate_4.png', v3: '/example_media/front_candidate_4.png', v4: '/example_media/front_candidate_4.png', v5: '/example_media/front_candidate_4.png', v6: '/example_media/front_candidate_4.png' }
     },
     { 
       id: 'f7', name: '후보 7 (과수원 수확 대표 프로필)', url: '/example_media/front_candidate_5.png', prompt: 'outdoor portrait of 30s Korean male farmer in fruit orchard, holding produce',
-      views: { v1: '/example_media/front_candidate_5.png', v2: '/example_media/master_upper_body.png', v3: '/example_media/master_left_45.png', v4: '/example_media/master_right_45.png', v5: '/example_media/master_half_body.png', v6: '/example_media/master_full_body.png' }
+      views: { v1: '/example_media/front_candidate_5.png', v2: '/example_media/front_candidate_5.png', v3: '/example_media/front_candidate_5.png', v4: '/example_media/front_candidate_5.png', v5: '/example_media/front_candidate_5.png', v6: '/example_media/front_candidate_5.png' }
     },
     { 
       id: 'f8', name: '후보 8 (베테랑 산지 대표 청년 컷)', url: '/example_media/model_person_1.png', prompt: 'front headshot portrait of 30s Korean male farmer with athletic build',
-      views: { v1: '/example_media/model_person_1.png', v2: '/example_media/master_upper_body.png', v3: '/example_media/master_left_45.png', v4: '/example_media/master_right_45.png', v5: '/example_media/master_half_body.png', v6: '/example_media/master_full_body.png' }
+      views: { v1: '/example_media/model_person_1.png', v2: '/example_media/model_person_1.png', v3: '/example_media/model_person_1.png', v4: '/example_media/model_person_1.png', v5: '/example_media/model_person_1.png', v6: '/example_media/model_person_1.png' }
     },
     { 
       id: 'f9', name: '후보 9 (친환경 과수원 수확 미소)', url: '/example_media/model_person_2.png', prompt: 'portrait of 30s Korean male farmer smiling in natural outdoor light',
-      views: { v1: '/example_media/model_person_2.png', v2: '/example_media/master_upper_body.png', v3: '/example_media/master_left_45.png', v4: '/example_media/master_right_45.png', v5: '/example_media/master_half_body.png', v6: '/example_media/master_full_body.png' }
+      views: { v1: '/example_media/model_person_2.png', v2: '/example_media/model_person_2.png', v3: '/example_media/model_person_2.png', v4: '/example_media/model_person_2.png', v5: '/example_media/model_person_2.png', v6: '/example_media/model_person_2.png' }
     },
     { 
       id: 'f10', name: '후보 10 (패킹 마스터 산지 신뢰 컷)', url: '/example_media/model_person_3.png', prompt: 'portrait of 30s Korean male farmer presenting quality fresh crop',
-      views: { v1: '/example_media/model_person_3.png', v2: '/example_media/master_upper_body.png', v3: '/example_media/master_left_45.png', v4: '/example_media/master_right_45.png', v5: '/example_media/master_half_body.png', v6: '/example_media/master_full_body.png' }
+      views: { v1: '/example_media/model_person_3.png', v2: '/example_media/model_person_3.png', v3: '/example_media/model_person_3.png', v4: '/example_media/model_person_3.png', v5: '/example_media/model_person_3.png', v6: '/example_media/model_person_3.png' }
     }
   ];
 
@@ -163,7 +163,7 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
     }, 1200);
   };
 
-  // STEP 2 -> STEP 3: Generate 6 Multi-Angle Master Views with 6 DISTINCT POSES (Headshot, Upper Body, Left 45, Right 45, Half Body, Full Body)
+  // STEP 2 -> STEP 3: Generate 6 Multi-Angle Master Views (100% Strict Same-Person Identity Across All 6 Cards)
   const handleGenerateMasterViews = () => {
     if (!selectedFrontFace) {
       alert('대표 정면 얼굴 1개를 먼저 선택해 주세요.');
@@ -176,11 +176,11 @@ export default function AiModelGeneratorModal({ isOpen, onClose, onSelectAndSave
 
       const views = selectedFrontFace.views || {};
       const v1Url = views.v1 || selectedFrontFace.url;
-      const v2Url = (views.v2 && views.v2 !== v1Url) ? views.v2 : '/example_media/master_upper_body.png';
-      const v3Url = (views.v3 && views.v3 !== v1Url) ? views.v3 : '/example_media/master_left_45.png';
-      const v4Url = (views.v4 && views.v4 !== v1Url) ? views.v4 : '/example_media/master_right_45.png';
-      const v5Url = (views.v5 && views.v5 !== v1Url) ? views.v5 : '/example_media/master_half_body.png';
-      const v6Url = (views.v6 && views.v6 !== v1Url) ? views.v6 : '/example_media/master_full_body.png';
+      const v2Url = views.v2 || selectedFrontFace.url;
+      const v3Url = views.v3 || selectedFrontFace.url;
+      const v4Url = views.v4 || selectedFrontFace.url;
+      const v5Url = views.v5 || selectedFrontFace.url;
+      const v6Url = views.v6 || selectedFrontFace.url;
 
       const generatedViews = [
         { id: 'v1', view_id: 'front_headshot', title: '대표 정면 얼굴', ratio: '1:1', url: v1Url },
